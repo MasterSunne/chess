@@ -10,34 +10,47 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    private ChessGame.TeamColor pieceColor;
+    private final ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.type = type;
     }
 
     /**
      * The various different chess piece options
      */
     public enum PieceType {
-        KING,
-        QUEEN,
-        BISHOP,
-        KNIGHT,
-        ROOK,
-        PAWN
+        KING(new KingMovesCalculator()),
+        QUEEN(new QueenMovesCalculator()),
+        BISHOP(new BishopMovesCalculator()),
+        KNIGHT(new KnightMovesCalculator()),
+        ROOK(new RookMovesCalculator()),
+        PAWN(new PawnMovesCalculator());
+
+        private final PieceMovesCalculator moveCalculator;
+
+        PieceType(PieceMovesCalculator moveCalculator) {
+            this.moveCalculator = moveCalculator;
+        }
+
+        public PieceMovesCalculator getMoveCalculator() {
+            return moveCalculator;
+        }
     }
 
     /**
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -48,6 +61,6 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new ArrayList<ChessMove>();
+        return type.getMoveCalculator().pieceMoves(board, myPosition);
     }
 }
