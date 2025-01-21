@@ -10,10 +10,11 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private ChessGame.TeamColor pieceColor;
+    private final ChessGame.TeamColor pieceColor;
     private final ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
         this.type = type;
     }
 
@@ -37,6 +38,11 @@ public class ChessPiece {
         public PieceMovesCalculator getMoveCalculator() {
             return moveCalculator;
         }
+    }
+
+    @Override
+    public String toString() {
+        return pieceColor + " " + type.toString();
     }
 
     /**

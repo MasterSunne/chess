@@ -33,37 +33,40 @@ public class KingMovesCalculator implements PieceMovesCalculator {
             currentRow += direction[0];
             currentCol += direction[1];
 
-            // Check boundaries
+            // Check the boundaries (1-indexed?)
             if (currentRow < 1 || currentRow > 8 || currentCol < 1 || currentCol > 8) {
                 continue;
             }
 
-            // Create a new ChessPosition and log it
+            // Create the current position object
             ChessPosition currentPosition = new ChessPosition(currentRow, currentCol);
             System.out.println("Current position before getting piece: " + currentPosition);
 
-            // Get the piece at the current position and log it
-            ChessPiece pieceAtCurrent = board.getPiece(currentPosition);
-            if (pieceAtCurrent != null) {
-                System.out.println("Piece found at " + currentPosition + ": " + pieceAtCurrent);
+            // if there is another piece at the new position
+            if (board.getPiece(currentPosition) != null) {
+                ChessPiece obstaclePiece = board.getPiece(currentPosition);
+                System.out.println("Piece found at " + currentPosition + ": " + obstaclePiece);
 
-                // If it's the same team's piece, stop further movement in this direction
-                if (movingPiece.getTeamColor() == pieceAtCurrent.getTeamColor()) {
-                    break;
-                } else {
-                    // Opponent's piece: valid capture move
+                // if it's your same team's color then it's a barrier, break the calculator loop
+                if (movingPiece.getTeamColor() == obstaclePiece.getTeamColor()) {
+                    continue;
+                }
+                // if it's an opposing piece then it's a valid capture move, add it to the ArrayList
+                else {
                     ChessMove potentialMove = new ChessMove(position, currentPosition, null);
                     validMoves.add(potentialMove);
-                    break; // Stop further movement after capturing
+                    continue;
                 }
-            } else {
-                // Empty square: valid move
+            }
+            // the square is empty and valid, add it to the ArrayList
+            else {
                 System.out.println("No piece at " + currentPosition);
                 ChessMove potentialMove = new ChessMove(position, currentPosition, null);
                 validMoves.add(potentialMove);
+                continue;
             }
-
         }
+
         return validMoves;
 
     }

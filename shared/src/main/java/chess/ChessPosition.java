@@ -21,6 +21,22 @@ public class ChessPosition {
         return "{" + row + ", " + col + "}";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null){
+            return false;
+        }
+        // Check if both objects are the same reference
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof ChessPosition) {
+            ChessPosition other = (ChessPosition) obj;
+            return row == other.row && col == other.col;
+        }
+        return false;
+    }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
