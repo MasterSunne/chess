@@ -51,8 +51,9 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder boardText = new StringBuilder();
-        for (int row = 1; row <= 8; row++) {
+        for (int row = 8; row >= 1; row--) {
             for (int column = 1; column <= 8; column++) {
+                boardText.append('|');
                 ChessPosition position = new ChessPosition(row, column);
                 ChessPiece piece = this.getPiece(position);
 
@@ -66,7 +67,8 @@ public class ChessBoard {
                     boardText.append(' '); // Append a space for empty squares
                 }
             }
-            if (row < 8) { // Add a newline after each row except the last one
+            boardText.append('|');
+            if (row > 1) { // Add a newline after each row except the last one
                 boardText.append('\n');
             }
         }

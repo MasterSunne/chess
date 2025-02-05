@@ -117,5 +117,16 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return currentBoard;
     }
+    public static void main(String[] args) {
+        ChessGame game = new ChessGame();
 
+        printBoard(game.currentBoard);
+
+    }
+
+    // Helper method to print the board
+    private static void printBoard(ChessBoard board) {
+        System.out.println("Current Board State:");
+        System.out.println(board); // Assumes ChessBoard has a toString() method
+    }
 }
