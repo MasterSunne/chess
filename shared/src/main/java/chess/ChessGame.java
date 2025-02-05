@@ -61,12 +61,31 @@ public class ChessGame {
         if (currentBoard.getPiece(startPosition) != null) {
             ChessPiece movingPiece = currentBoard.getPiece(startPosition);
             Collection<ChessMove> pieceMoveList = movingPiece.pieceMoves(currentBoard, startPosition);
-            for (ChessMove move : pieceMoveList){
+            ArrayList<ChessMove> validMoveList = new ArrayList<>();
+            for (ChessMove move : pieceMoveList) {
                 //copy the current board and make the move
+                ChessBoard clonedBoard = currentBoard.clone();
+                //edit the cloned board to test the move for checks
+                if(move.getPromotionPiece() != null){ //change the pawn to promotion piece if valid
+                    ChessPiece promotionPiece = new ChessPiece(movingPiece.getTeamColor(),move.getPromotionPiece());
+                    clonedBoard.addPiece(move.getEndPosition(),promotionPiece);
+                    clonedBoard.addPiece(move.getStartPosition(),null);
+                } else {
+                    clonedBoard.addPiece(move.getEndPosition(),movingPiece);
+                    clonedBoard.addPiece(move.getStartPosition(),null);
+                }
                 //check and see if the correct king is now in check
                 //if not add to validMoveList
+                if(movingPiece.getTeamColor() == TeamColor.WHITE){
+                    if(! isInCheck(TeamColor.WHITE)){
+                        validMoveList.add(move);
+                    }
+                } else if (movingPiece.getTeamColor() == TeamColor.BLACK){
+                    if(! isInCheck(TeamColor.BLACK)){
+                        validMoveList.add(move);
+                    }
+                }
             }
-            ArrayList<ChessMove> validMoveList = new ArrayList<>();
             return validMoveList;
         }
         else{
@@ -87,7 +106,17 @@ public class ChessGame {
             if(movingPiece.getTeamColor() == teamTurn){
                 ArrayList<ChessMove> validMoveList = (ArrayList<ChessMove>) validMoves(startPosition);
                 if (validMoveList.contains(move)){
+                    ChessPosition endPosition = move.getEndPosition();
                     //edit the current board to reflect the valid move
+                    if(move.getPromotionPiece() != null){ //change the pawn to promotion piece if valid
+                        ChessPiece promotionPiece = new ChessPiece(movingPiece.getTeamColor(),move.getPromotionPiece());
+                        currentBoard.addPiece(endPosition,promotionPiece);
+                        currentBoard.addPiece(startPosition,null);
+                    } else {
+                        currentBoard.addPiece(endPosition,movingPiece);
+                        currentBoard.addPiece(startPosition,null);
+                    }
+
                     //change which team's turn it is
                     if(teamTurn == TeamColor.WHITE){
                         setTeamTurn(TeamColor.BLACK);
