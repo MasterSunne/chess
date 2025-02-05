@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,13 +40,46 @@ public class ChessBoard {
         return Arrays.deepHashCode(squares);
     }
 
-    /**
-     * Gets a chess piece on the chessboard
-     *
-     * @param position The position to get the piece from
-     * @return Either the piece at the position, or null if no piece is at that
-     * position
-     */
+    private static final Map<ChessPiece.PieceType, Character> TYPE_TO_CHAR_MAP = Map.of(
+             ChessPiece.PieceType.PAWN, 'p',
+             ChessPiece.PieceType.KNIGHT, 'n',
+             ChessPiece.PieceType.ROOK, 'r',
+             ChessPiece.PieceType.QUEEN, 'q',
+             ChessPiece.PieceType.KING, 'k',
+             ChessPiece.PieceType.BISHOP, 'b');
+
+    @Override
+    public String toString() {
+        StringBuilder boardText = new StringBuilder();
+        for (int row = 1; row <= 8; row++) {
+            for (int column = 1; column <= 8; column++) {
+                ChessPosition position = new ChessPosition(row, column);
+                ChessPiece piece = this.getPiece(position);
+
+                if (piece != null) {
+                    char pieceChar = TYPE_TO_CHAR_MAP.get(piece.getPieceType());
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        pieceChar = Character.toUpperCase(pieceChar);
+                    }
+                    boardText.append(pieceChar); // Append the piece character
+                } else {
+                    boardText.append(' '); // Append a space for empty squares
+                }
+            }
+            if (row < 8) { // Add a newline after each row except the last one
+                boardText.append('\n');
+            }
+        }
+        return boardText.toString();
+    }
+
+        /**
+         * Gets a chess piece on the chessboard
+         *
+         * @param position The position to get the piece from
+         * @return Either the piece at the position, or null if no piece is at that
+         * position
+         */
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow() - 1][position.getColumn() - 1];
     }
@@ -77,5 +112,27 @@ public class ChessBoard {
         addPiece(new ChessPosition(1,3),new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.BISHOP));
         addPiece(new ChessPosition(1,4),new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.QUEEN));
         addPiece(new ChessPosition(1,5),new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.KING));
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clone = (ChessBoard) super.clone();
+
+            ChessPiece[][] cloneSquares = new ChessPiece[8][8];
+            for(int i=0;i<8;i++){
+                for(int j=0;j<8;j++){
+                    if(squares[i][j] != null){
+                        ChessPosition positionToClone = new ChessPosition(i+1,j+1);
+                        ChessPiece pieceToClone = getPiece(positionToClone);
+                        cloneSquares[i][j] = pieceToClone;
+                    }
+                }
+            }
+            clone.squares = cloneSquares;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
