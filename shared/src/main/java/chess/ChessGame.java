@@ -58,21 +58,27 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        // make sure we aren't calculating for a null square
         if (currentBoard.getPiece(startPosition) != null) {
+            //initialize some useful local vars
             ChessPiece movingPiece = currentBoard.getPiece(startPosition);
             Collection<ChessMove> pieceMoveList = movingPiece.pieceMoves(currentBoard, startPosition);
             ArrayList<ChessMove> validMoveList = new ArrayList<>();
+
+            //iterate through the pieceMoveList to eliminate invalid moves
             for (ChessMove move : pieceMoveList) {
-                //copy the current board and make the move
+                //copy the current board and test the move on the clone
                 ChessBoard clonedBoard = currentBoard.clone();
-                //edit the cloned board to test the move for checks
+                ChessBoard originalBoard = getBoard();
+                setBoard(clonedBoard);
+                //edit the cloned board to test the move for check on the King
                 if(move.getPromotionPiece() != null){ //change the pawn to promotion piece if valid
                     ChessPiece promotionPiece = new ChessPiece(movingPiece.getTeamColor(),move.getPromotionPiece());
-                    clonedBoard.addPiece(move.getEndPosition(),promotionPiece);
-                    clonedBoard.addPiece(move.getStartPosition(),null);
+                    currentBoard.addPiece(move.getEndPosition(),promotionPiece);
+                    currentBoard.addPiece(move.getStartPosition(),null);
                 } else {
-                    clonedBoard.addPiece(move.getEndPosition(),movingPiece);
-                    clonedBoard.addPiece(move.getStartPosition(),null);
+                    currentBoard.addPiece(move.getEndPosition(),movingPiece);
+                    currentBoard.addPiece(move.getStartPosition(),null);
                 }
                 //check and see if the correct king is now in check
                 //if not add to validMoveList
@@ -85,6 +91,7 @@ public class ChessGame {
                         validMoveList.add(move);
                     }
                 }
+                setBoard(originalBoard);
             }
             return validMoveList;
         }
@@ -116,6 +123,7 @@ public class ChessGame {
                         currentBoard.addPiece(endPosition,movingPiece);
                         currentBoard.addPiece(startPosition,null);
                     }
+                    //check to see if it's checkmate or stalemate and the game should stop, not able to make more moves
 
                     //change which team's turn it is
                     if(teamTurn == TeamColor.WHITE){
@@ -137,8 +145,43 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-        // maybe have a move counter that won't worry about checks on the first move
+        //loop through the entire chessboard to find the king in question and a list of black piece locations
+        ArrayList<ChessPosition> enemyPositions = new ArrayList<>();
+        ChessPosition kingLocation = null;
+        for (int row = 8; row >= 1; row--) {
+            for (int column = 1; column <= 8; column++) {
+                ChessPosition scanningPosition = new ChessPosition(row, column);
+                if (currentBoard.getPiece(scanningPosition) != null) {
+                    ChessPiece foundPiece = currentBoard.getPiece(scanningPosition);
+                    if (foundPiece.getTeamColor() == teamColor) {
+                        if (foundPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                            //found the king, save his location
+                            kingLocation = scanningPosition;
+                        }
+                    }
+                    //enemy piece found, save its location
+                    else {
+                        enemyPositions.add(scanningPosition);
+                    }
+                }
+            }
+        }
+        //if the target location is empty then the king doesn't exist, throw error
+        if (kingLocation == null) {
+            throw new RuntimeException("King not found");
+        }
+        //scan enemy pieceMoves and see if they threaten the king (same position)
+        for(ChessPosition enemyLocation : enemyPositions){
+            ChessPiece enemy = currentBoard.getPiece(enemyLocation);
+            ArrayList<ChessMove> enemyMoves = (ArrayList<ChessMove>) enemy.pieceMoves(currentBoard, enemyLocation);
+            for(ChessMove enemyMove : enemyMoves){
+                ChessPosition targetPosition = enemyMove.getEndPosition();
+                if (targetPosition.equals(kingLocation)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -159,6 +202,10 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        //if getTeamTurn == teamColor
+            //for each piece in squares
+                //if validMoves == null
+                    //return true
         throw new RuntimeException("Not implemented");
     }
 

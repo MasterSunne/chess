@@ -13,6 +13,7 @@ import java.util.Objects;
 public final class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
     private final ChessPiece.PieceType type;
+    private final boolean hasMoved = false;
 
     @Override
     public boolean equals(Object o) {
