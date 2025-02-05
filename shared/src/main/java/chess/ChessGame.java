@@ -1,5 +1,7 @@
 package chess;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -10,7 +12,7 @@ import java.util.Collection;
  */
 public class ChessGame {
     private TeamColor teamTurn;
-    private ChessBoard currentBoard;
+    public ChessBoard currentBoard;
 
     // have a no-argument constructor for default values
     public ChessGame() {
@@ -56,7 +58,20 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        if (currentBoard.getPiece(startPosition) != null) {
+            ChessPiece movingPiece = currentBoard.getPiece(startPosition);
+            Collection<ChessMove> pieceMoveList = movingPiece.pieceMoves(currentBoard, startPosition);
+            for (ChessMove move : pieceMoveList){
+                //copy the current board and make the move
+                //check and see if the correct king is now in check
+                //if not add to validMoveList
+            }
+            ArrayList<ChessMove> validMoveList = new ArrayList<>();
+            return validMoveList;
+        }
+        else{
+            return null;
+        }
     }
 
     /**
@@ -66,7 +81,24 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        try {
+            ChessPosition startPosition = move.getStartPosition();
+            ChessPiece movingPiece = currentBoard.getPiece(startPosition);
+            if(movingPiece.getTeamColor() == teamTurn){
+                ArrayList<ChessMove> validMoveList = (ArrayList<ChessMove>) validMoves(startPosition);
+                if (validMoveList.contains(move)){
+                    //edit the current board to reflect the valid move
+                    //change which team's turn it is
+                    if(teamTurn == TeamColor.WHITE){
+                        setTeamTurn(TeamColor.BLACK);
+                    }else{
+                        setTeamTurn(TeamColor.WHITE);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new InvalidMoveException("Invalid Move");
+        }
     }
 
     /**
@@ -77,6 +109,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
+        // maybe have a move counter that won't worry about checks on the first move
     }
 
     /**
@@ -117,16 +150,20 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return currentBoard;
     }
-    public static void main(String[] args) {
-        ChessGame game = new ChessGame();
 
-        printBoard(game.currentBoard);
-
-    }
-
-    // Helper method to print the board
-    private static void printBoard(ChessBoard board) {
-        System.out.println("Current Board State:");
-        System.out.println(board); // Assumes ChessBoard has a toString() method
-    }
+//    public static void main(String[] args) {
+//        ChessGame game = new ChessGame();
+//        ChessBoard originalBoard = game.currentBoard;
+//        printBoard(originalBoard);
+//
+//        ChessBoard boardClone = originalBoard.clone();
+//
+//        printBoard(boardClone);
+//    }
+//
+//    // Helper method to print the board
+//    private static void printBoard(ChessBoard board) {
+//        System.out.println("Current Board State:");
+//        System.out.println(board); // Assumes ChessBoard has a toString() method
+//    }
 }
