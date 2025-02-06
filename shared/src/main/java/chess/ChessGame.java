@@ -134,6 +134,8 @@ public class ChessGame {
                     //check if a king or rook moved and set king or queen side booleans to true or false accordingly
                 } else if(validMoveList.isEmpty()){
                     throw new InvalidMoveException();
+                } else{
+                    throw new InvalidMoveException();
                 }
             }
         } catch (Exception e) {
