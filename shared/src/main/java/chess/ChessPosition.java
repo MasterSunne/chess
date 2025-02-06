@@ -37,8 +37,7 @@ public class ChessPosition {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof ChessPosition) {
-            ChessPosition other = (ChessPosition) obj;
+        if (obj instanceof ChessPosition other) {
             return row == other.row && col == other.col;
         }
         return false;

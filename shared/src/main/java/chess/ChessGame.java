@@ -1,6 +1,5 @@
 package chess;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -141,10 +140,10 @@ public class ChessGame {
                     //check to see if it's checkmate or stalemate and the game should stop, not able to make more moves
                     if(isInCheckmate(getTeamTurn())){
                         boolean checkmate = true;
-                        return;
+                        //return;
                     } else if (isInStalemate(getTeamTurn())){
                         boolean stalemate = true;
-                        return;
+                        //return;
                     }
 
                     //check if a king or rook moved and set king or queen side booleans to true or false accordingly
@@ -274,20 +273,4 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return currentBoard;
     }
-
-//    public static void main(String[] args) {
-//        ChessGame game = new ChessGame();
-//        ChessBoard originalBoard = game.currentBoard;
-//        printBoard(originalBoard);
-//
-//        ChessBoard boardClone = originalBoard.clone();
-//
-//        printBoard(boardClone);
-//    }
-//
-//    // Helper method to print the board
-//    private static void printBoard(ChessBoard board) {
-//        System.out.println("Current Board State:");
-//        System.out.println(board); // Assumes ChessBoard has a toString() method
-//    }
 }

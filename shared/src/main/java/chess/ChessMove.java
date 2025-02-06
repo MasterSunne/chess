@@ -9,9 +9,9 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessMove {
-    private ChessPosition startPosition;
-    private ChessPosition endPosition;
-    private ChessPiece.PieceType promotionPiece;
+    private final ChessPosition startPosition;
+    private final ChessPosition endPosition;
+    private final ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
@@ -29,8 +29,7 @@ public class ChessMove {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof ChessMove) {
-            ChessMove other = (ChessMove) obj;
+        if (obj instanceof ChessMove other) {
             return startPosition.equals(other.startPosition) && endPosition.equals(other.endPosition)
                     && ((promotionPiece == null && other.promotionPiece == null) || (promotionPiece != null && promotionPiece.equals(other.promotionPiece)));}
         return false;
