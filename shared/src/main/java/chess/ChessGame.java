@@ -109,6 +109,9 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         try {
             ChessPosition startPosition = move.getStartPosition();
+            if(currentBoard.getPiece(startPosition) == null){
+                throw new InvalidMoveException();
+            }
             ChessPiece movingPiece = currentBoard.getPiece(startPosition);
             if(movingPiece.getTeamColor() == teamTurn){
                 ArrayList<ChessMove> validMoveList = (ArrayList<ChessMove>) validMoves(startPosition);
@@ -117,9 +120,11 @@ public class ChessGame {
                     //edit the current board to reflect the valid move
                     if(move.getPromotionPiece() != null){ //change the pawn to promotion piece if valid
                         ChessPiece promotionPiece = new ChessPiece(movingPiece.getTeamColor(),move.getPromotionPiece());
+                        currentBoard.addPiece(endPosition, null);
                         currentBoard.addPiece(endPosition,promotionPiece);
                         currentBoard.addPiece(startPosition,null);
                     } else {
+                        currentBoard.addPiece(endPosition, null);
                         currentBoard.addPiece(endPosition,movingPiece);
                         currentBoard.addPiece(startPosition,null);
                     }
@@ -133,10 +138,12 @@ public class ChessGame {
                     }
                     //check if a king or rook moved and set king or queen side booleans to true or false accordingly
                 } else if(validMoveList.isEmpty()){
-                    throw new InvalidMoveException();
+                    throw new InvalidMoveException("Tried to move when no possible moves");
                 } else{
-                    throw new InvalidMoveException();
+                    throw new InvalidMoveException("The move was not found in validMoveList");
                 }
+            } else{
+                throw new InvalidMoveException("Tried to move enemy piece or on enemy's turn");
             }
         } catch (Exception e) {
             throw new InvalidMoveException();
