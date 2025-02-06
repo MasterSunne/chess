@@ -131,10 +131,13 @@ public class ChessGame {
                     }else{
                         setTeamTurn(TeamColor.WHITE);
                     }
+                    //check if a king or rook moved and set king or queen side booleans to true or false accordingly
+                } else if(validMoveList.isEmpty()){
+                    throw new InvalidMoveException();
                 }
             }
         } catch (Exception e) {
-            throw new InvalidMoveException("Invalid Move");
+            throw new InvalidMoveException();
         }
     }
 
