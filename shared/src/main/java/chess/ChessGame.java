@@ -134,17 +134,17 @@ public class ChessGame {
             }
             if (movingPiece.getPieceType() == ChessPiece.PieceType.KING) {
                 //check for castling moves
-                if(getQueenSideCastleWhite() && canCastleQueenSide(TeamColor.WHITE)){
+                if(teamTurn == TeamColor.WHITE && canCastleQueenSide(TeamColor.WHITE)){
                     ChessMove queenWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,3),null);
                     validMoveList.add(queenWhite);
-                } else if(getQueenSideCastleBlack() && canCastleQueenSide(TeamColor.BLACK)){
+                } else if(teamTurn == TeamColor.BLACK && canCastleQueenSide(TeamColor.BLACK)){
                     ChessMove queenBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,3),null);
                     validMoveList.add(queenBlack);
                 }
-                if(getKingSideCastleWhite() && canCastleKingSide(TeamColor.WHITE)){
+                if(teamTurn == TeamColor.WHITE && canCastleKingSide(TeamColor.WHITE)){
                     ChessMove kingWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,7),null);
                     validMoveList.add(kingWhite);
-                } else if(getKingSideCastleBlack() && canCastleKingSide(TeamColor.BLACK)){
+                } else if(teamTurn == TeamColor.BLACK && canCastleKingSide(TeamColor.BLACK)){
                     ChessMove kingBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,7),null);
                     validMoveList.add(kingBlack);
                 }
@@ -202,7 +202,7 @@ public class ChessGame {
             }
         }
         else if (teamColor == TeamColor.BLACK) {
-            ChessPosition kingPosition = new ChessPosition(1,5);
+            ChessPosition kingPosition = new ChessPosition(8,5);
             ChessPosition rookPosition = new ChessPosition(8,1);
             //make sure the king and rook are on original squares
             if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
