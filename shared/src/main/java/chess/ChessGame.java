@@ -15,6 +15,44 @@ public class ChessGame {
     private final boolean checkmate = false;
     private final boolean stalemate = false;
 
+    public boolean getKingSideCastleWhite() {
+        return kingSideCastleWhite;
+    }
+
+    public void setKingSideCastleWhite(boolean kingSideCastleWhite) {
+        this.kingSideCastleWhite = kingSideCastleWhite;
+    }
+
+    public boolean getKingSideCastleBlack() {
+        return kingSideCastleBlack;
+    }
+
+    public void setKingSideCastleBlack(boolean kingSideCastleBlack) {
+        this.kingSideCastleBlack = kingSideCastleBlack;
+    }
+
+    public boolean getQueenSideCastleWhite() {
+        return queenSideCastleWhite;
+    }
+
+    public void setQueenSideCastleWhite(boolean queenSideCastleWhite) {
+        this.queenSideCastleWhite = queenSideCastleWhite;
+    }
+
+    public boolean getQueenSideCastleBlack() {
+        return queenSideCastleBlack;
+    }
+
+    public void setQueenSideCastleBlack(boolean queenSideCastleBlack) {
+        this.queenSideCastleBlack = queenSideCastleBlack;
+    }
+
+    private boolean kingSideCastleWhite = true;
+    private boolean kingSideCastleBlack = true;
+    private boolean queenSideCastleWhite = true;
+    private boolean queenSideCastleBlack = true;
+
+
     // have a no-argument constructor for default values
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
@@ -129,7 +167,27 @@ public class ChessGame {
                         getBoard().addPiece(endPosition,movingPiece);
                         getBoard().addPiece(startPosition,null);
                     }
-
+                    //if the piece was a rook or king then disable ability to castle
+                    if(movingPiece.getPieceType() == ChessPiece.PieceType.KING){
+                        if(getTeamTurn() == TeamColor.WHITE){
+                            setKingSideCastleWhite(false);
+                            setQueenSideCastleWhite(false);
+                        } else{
+                            setKingSideCastleBlack(false);
+                            setQueenSideCastleBlack(false);
+                        }
+                    } else if(movingPiece.getPieceType() == ChessPiece.PieceType.ROOK){
+                        if(getTeamTurn() == TeamColor.WHITE && (startPosition.getRow() == 1 && startPosition.getColumn() == 1)){
+                            setQueenSideCastleWhite(false);
+                        } else if(getTeamTurn() == TeamColor.WHITE && (startPosition.getRow() == 1 && startPosition.getColumn() == 8)){
+                            setKingSideCastleWhite(false);
+                        }
+                        else if(getTeamTurn() == TeamColor.BLACK && (startPosition.getRow() == 8 && startPosition.getColumn() == 1)){
+                            setQueenSideCastleBlack(false);
+                        } else if(getTeamTurn() == TeamColor.BLACK && (startPosition.getRow() == 8 && startPosition.getColumn() == 8)){
+                            setKingSideCastleBlack(false);
+                        }
+                    }
                     //change which team's turn it is
                     if(getTeamTurn() == TeamColor.WHITE){
                         setTeamTurn(TeamColor.BLACK);

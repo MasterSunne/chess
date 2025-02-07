@@ -8,7 +8,6 @@ public class KingMovesCalculator implements PieceMovesCalculator {
         if (position == null) {
             throw new IllegalArgumentException("Position cannot be null");
         }
-//        System.out.println("Initial position: " + position);
 
         ArrayList<ChessMove> validMoves = new ArrayList<>();
         ChessPiece movingPiece = board.getPiece(position);
@@ -40,12 +39,10 @@ public class KingMovesCalculator implements PieceMovesCalculator {
 
             // Create the current position object
             ChessPosition currentPosition = new ChessPosition(currentRow, currentCol);
-//            System.out.println("Current position before getting piece: " + currentPosition);
 
             // if there is another piece at the new position
             if (board.getPiece(currentPosition) != null) {
                 ChessPiece obstaclePiece = board.getPiece(currentPosition);
-//                System.out.println("Piece found at " + currentPosition + ": " + obstaclePiece);
 
                 // if it's your same team's color then it's a barrier, break the calculator loop
                 if (movingPiece.getTeamColor() == obstaclePiece.getTeamColor()) {
