@@ -132,11 +132,143 @@ public class ChessGame {
                 }
                 setBoard(originalBoard);
             }
+            if (movingPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                //check for castling moves
+                if(getQueenSideCastleWhite() && canCastleQueenSide(TeamColor.WHITE)){
+                    ChessMove queenWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,3),null);
+                    validMoveList.add(queenWhite);
+                } else if(getQueenSideCastleBlack() && canCastleQueenSide(TeamColor.BLACK)){
+                    ChessMove queenBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,3),null);
+                    validMoveList.add(queenBlack);
+                }
+                if(getKingSideCastleWhite() && canCastleKingSide(TeamColor.WHITE)){
+                    ChessMove kingWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,7),null);
+                    validMoveList.add(kingWhite);
+                } else if(getKingSideCastleBlack() && canCastleKingSide(TeamColor.BLACK)){
+                    ChessMove kingBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,7),null);
+                    validMoveList.add(kingBlack);
+                }
+            }
             return validMoveList;
         }
         else{
             return null;
         }
+    }
+
+    private boolean canCastleKingSide(TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            ChessPosition kingPosition = new ChessPosition(1,5);
+            ChessPosition rookPosition = new ChessPosition(1,8);
+            //make sure the king and rook are on original squares
+            if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
+                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
+                    //make sure there aren't any pieces between them
+                    ChessPosition oneSix = new ChessPosition(1,6);
+                    ChessPosition oneSeven = new ChessPosition(1,7);
+                    return canCastleHelperKing(teamColor, kingPosition, oneSix, oneSeven);
+                }
+            }
+        }
+        else if(teamColor == TeamColor.BLACK) {
+            ChessPosition kingPosition = new ChessPosition(8,5);
+            ChessPosition rookPosition = new ChessPosition(8,8);
+            //make sure the king and rook are on original squares
+            if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
+                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
+                    //make sure there aren't any pieces between them
+                    ChessPosition eightSix = new ChessPosition(8,6);
+                    ChessPosition eightSeven = new ChessPosition(8,7);
+                    return canCastleHelperKing(teamColor, kingPosition, eightSix, eightSeven);
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean canCastleQueenSide(TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            ChessPosition kingPosition = new ChessPosition(1,5);
+            ChessPosition rookPosition = new ChessPosition(1,1);
+            //make sure the king and rook are on original squares
+            if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
+                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
+                    //make sure there aren't any pieces between them
+                    ChessPosition oneFour = new ChessPosition(1,4);
+                    ChessPosition oneThree = new ChessPosition(1,3);
+                    ChessPosition oneTwo = new ChessPosition(1,2);
+                    return canCastleHelperQueen(teamColor, kingPosition, oneFour, oneThree, oneTwo);
+                }
+            }
+        }
+        else if (teamColor == TeamColor.BLACK) {
+            ChessPosition kingPosition = new ChessPosition(1,5);
+            ChessPosition rookPosition = new ChessPosition(8,1);
+            //make sure the king and rook are on original squares
+            if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
+                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
+                    //make sure there aren't any pieces between them
+                    ChessPosition eightFour = new ChessPosition(8,4);
+                    ChessPosition eightThree = new ChessPosition(8,3);
+                    ChessPosition eightTwo = new ChessPosition(8,2);
+                    return canCastleHelperQueen(teamColor, kingPosition, eightFour, eightThree, eightTwo);
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean canCastleHelperKing(TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck) {
+        if(getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null){
+
+            //check for immediate check threats
+            if(! isInCheck(teamColor)){
+                ChessBoard originalBoard = getBoard();
+                ChessBoard clonedBoard = originalBoard.clone();
+                setBoard(clonedBoard);
+                getBoard().addPiece(kingPosition,null);
+                getBoard().addPiece(firstCheck,new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                //check first square
+                if(! isInCheck(teamColor)){
+                    ChessBoard clonedBoard2 = originalBoard.clone();
+                    setBoard(clonedBoard2);
+                    getBoard().addPiece(kingPosition,null);
+                    getBoard().addPiece(secondCheck,new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                    //check second square
+                    if(! isInCheck(teamColor)){
+                        setBoard(originalBoard);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    private boolean canCastleHelperQueen(TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck, ChessPosition thirdCheck) {
+        if(getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null && getBoard().getPiece(thirdCheck) == null){
+
+            //check for immediate check threats
+            if(! isInCheck(teamColor)){
+                ChessBoard originalBoard = getBoard();
+                ChessBoard clonedBoard = originalBoard.clone();
+                setBoard(clonedBoard);
+                getBoard().addPiece(kingPosition,null);
+                getBoard().addPiece(firstCheck,new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                //check first square
+                if(! isInCheck(teamColor)){
+                    ChessBoard clonedBoard2 = originalBoard.clone();
+                    setBoard(clonedBoard2);
+                    getBoard().addPiece(kingPosition,null);
+                    getBoard().addPiece(secondCheck,new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                    //check second square
+                    if(! isInCheck(teamColor)){
+                        setBoard(originalBoard);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -148,7 +280,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         try {
             ChessPosition startPosition = move.getStartPosition();
-            if(getBoard().getPiece(startPosition) == null){
+            if(getBoard().getPiece(startPosition) == null) {
                 throw new InvalidMoveException();
             }
             ChessPiece movingPiece = getBoard().getPiece(startPosition);
@@ -162,7 +294,28 @@ public class ChessGame {
                         getBoard().addPiece(endPosition, null);
                         getBoard().addPiece(endPosition,promotionPiece);
                         getBoard().addPiece(startPosition,null);
-                    } else {
+                    } // castling handler
+                    else if(movingPiece.getPieceType() == ChessPiece.PieceType.KING && Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) > 1){
+                        // king's side
+                        if (move.getStartPosition().getColumn() - move.getEndPosition().getColumn() == -2) {
+                            //rook
+                            ChessPosition rookPosition = new ChessPosition(move.getStartPosition().getRow(),6);
+                            getBoard().addPiece(rookPosition,new ChessPiece(getTeamTurn(), ChessPiece.PieceType.ROOK));
+                            getBoard().addPiece(new ChessPosition(move.getStartPosition().getRow(),8),null);
+                            //king
+                            getBoard().addPiece(endPosition,movingPiece);
+                            getBoard().addPiece(startPosition,null);
+                        } else if(move.getStartPosition().getColumn() - move.getEndPosition().getColumn() == 2){
+                            //rook
+                            ChessPosition rookPosition = new ChessPosition(move.getStartPosition().getRow(),4);
+                            getBoard().addPiece(rookPosition,new ChessPiece(getTeamTurn(), ChessPiece.PieceType.ROOK));
+                            getBoard().addPiece(new ChessPosition(move.getStartPosition().getRow(),1),null);
+                            //king
+                            getBoard().addPiece(endPosition,movingPiece);
+                            getBoard().addPiece(startPosition,null);
+                        }
+                    } // normal move handler
+                    else {
                         getBoard().addPiece(endPosition, null);
                         getBoard().addPiece(endPosition,movingPiece);
                         getBoard().addPiece(startPosition,null);
@@ -188,7 +341,7 @@ public class ChessGame {
                             setKingSideCastleBlack(false);
                         }
                     }
-                    //change which team's turn it is
+//                    //change which team's turn it is
                     if(getTeamTurn() == TeamColor.WHITE){
                         setTeamTurn(TeamColor.BLACK);
                     }else{
