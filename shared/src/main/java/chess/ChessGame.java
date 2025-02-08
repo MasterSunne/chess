@@ -109,7 +109,7 @@ public class ChessGame {
                 //copy the current board and test the move on the clone
                 ChessBoard clonedBoard = currentBoard.clone();
                 ChessBoard originalBoard = getBoard();
-                setBoard(clonedBoard);
+                setBoardInternal(clonedBoard);
                 //edit the cloned board to test the move for check on the King
                 if(move.getPromotionPiece() != null){ //change the pawn to promotion piece if valid
                     ChessPiece promotionPiece = new ChessPiece(movingPiece.getTeamColor(),move.getPromotionPiece());
@@ -130,23 +130,31 @@ public class ChessGame {
                         validMoveList.add(move);
                     }
                 }
-                setBoard(originalBoard);
+                setBoardInternal(originalBoard);
             }
             if (movingPiece.getPieceType() == ChessPiece.PieceType.KING) {
                 //check for castling moves
-                if(teamTurn == TeamColor.WHITE && canCastleQueenSide(TeamColor.WHITE)){
-                    ChessMove queenWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,3),null);
-                    validMoveList.add(queenWhite);
-                } else if(teamTurn == TeamColor.BLACK && canCastleQueenSide(TeamColor.BLACK)){
-                    ChessMove queenBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,3),null);
-                    validMoveList.add(queenBlack);
+                if(movingPiece.getTeamColor() == TeamColor.WHITE && canCastleQueenSide(TeamColor.WHITE)){
+                    if (getQueenSideCastleWhite()) {
+                        ChessMove queenWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,3),null);
+                        validMoveList.add(queenWhite);
+                    }
+                } else if(movingPiece.getTeamColor() == TeamColor.BLACK && canCastleQueenSide(TeamColor.BLACK)){
+                    if (getQueenSideCastleBlack()) {
+                        ChessMove queenBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,3),null);
+                        validMoveList.add(queenBlack);
+                    }
                 }
-                if(teamTurn == TeamColor.WHITE && canCastleKingSide(TeamColor.WHITE)){
-                    ChessMove kingWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,7),null);
-                    validMoveList.add(kingWhite);
-                } else if(teamTurn == TeamColor.BLACK && canCastleKingSide(TeamColor.BLACK)){
-                    ChessMove kingBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,7),null);
-                    validMoveList.add(kingBlack);
+                if(movingPiece.getTeamColor() == TeamColor.WHITE && canCastleKingSide(TeamColor.WHITE)){
+                    if (getKingSideCastleWhite()) {
+                        ChessMove kingWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,7),null);
+                        validMoveList.add(kingWhite);
+                    }
+                } else if(movingPiece.getTeamColor() == TeamColor.BLACK && canCastleKingSide(TeamColor.BLACK)){
+                    if (getKingSideCastleBlack()) {
+                        ChessMove kingBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,7),null);
+                        validMoveList.add(kingBlack);
+                    }
                 }
             }
             return validMoveList;
@@ -219,55 +227,59 @@ public class ChessGame {
     }
 
     private boolean canCastleHelperKing(TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck) {
-        if(getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null){
+        ChessBoard originalBoard = getBoard();
+        if (getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null) {
 
             //check for immediate check threats
-            if(! isInCheck(teamColor)){
-                ChessBoard originalBoard = getBoard();
+            if (!isInCheck(teamColor)) {
+                originalBoard = getBoard();
                 ChessBoard clonedBoard = originalBoard.clone();
-                setBoard(clonedBoard);
-                getBoard().addPiece(kingPosition,null);
-                getBoard().addPiece(firstCheck,new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                setBoardInternal(clonedBoard);
+                getBoard().addPiece(kingPosition, null);
+                getBoard().addPiece(firstCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
                 //check first square
-                if(! isInCheck(teamColor)){
+                if (!isInCheck(teamColor)) {
                     ChessBoard clonedBoard2 = originalBoard.clone();
-                    setBoard(clonedBoard2);
-                    getBoard().addPiece(kingPosition,null);
-                    getBoard().addPiece(secondCheck,new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                    setBoardInternal(clonedBoard2);
+                    getBoard().addPiece(kingPosition, null);
+                    getBoard().addPiece(secondCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
                     //check second square
-                    if(! isInCheck(teamColor)){
-                        setBoard(originalBoard);
+                    if (!isInCheck(teamColor)) {
+                        setBoardInternal(originalBoard);
                         return true;
                     }
                 }
             }
         }
+        setBoardInternal(originalBoard);
         return false;
     }
     private boolean canCastleHelperQueen(TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck, ChessPosition thirdCheck) {
-        if(getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null && getBoard().getPiece(thirdCheck) == null){
+        ChessBoard originalBoard = getBoard();
+        if (getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null && getBoard().getPiece(thirdCheck) == null) {
 
             //check for immediate check threats
-            if(! isInCheck(teamColor)){
-                ChessBoard originalBoard = getBoard();
+            if (!isInCheck(teamColor)) {
+                originalBoard = getBoard();
                 ChessBoard clonedBoard = originalBoard.clone();
-                setBoard(clonedBoard);
-                getBoard().addPiece(kingPosition,null);
-                getBoard().addPiece(firstCheck,new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                setBoardInternal(clonedBoard);
+                getBoard().addPiece(kingPosition, null);
+                getBoard().addPiece(firstCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
                 //check first square
-                if(! isInCheck(teamColor)){
+                if (!isInCheck(teamColor)) {
                     ChessBoard clonedBoard2 = originalBoard.clone();
-                    setBoard(clonedBoard2);
-                    getBoard().addPiece(kingPosition,null);
-                    getBoard().addPiece(secondCheck,new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                    setBoardInternal(clonedBoard2);
+                    getBoard().addPiece(kingPosition, null);
+                    getBoard().addPiece(secondCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
                     //check second square
-                    if(! isInCheck(teamColor)){
-                        setBoard(originalBoard);
+                    if (!isInCheck(teamColor)) {
+                        setBoardInternal(originalBoard);
                         return true;
                     }
                 }
             }
         }
+        setBoardInternal(originalBoard);
         return false;
     }
 
@@ -330,15 +342,19 @@ public class ChessGame {
                             setQueenSideCastleBlack(false);
                         }
                     } else if(movingPiece.getPieceType() == ChessPiece.PieceType.ROOK){
-                        if(getTeamTurn() == TeamColor.WHITE && (startPosition.getRow() == 1 && startPosition.getColumn() == 1)){
-                            setQueenSideCastleWhite(false);
-                        } else if(getTeamTurn() == TeamColor.WHITE && (startPosition.getRow() == 1 && startPosition.getColumn() == 8)){
-                            setKingSideCastleWhite(false);
+                        if(getTeamTurn() == TeamColor.WHITE){
+                            if(startPosition.getRow() == 1 && startPosition.getColumn() == 1){
+                                setQueenSideCastleWhite(false);
+                            } else if(startPosition.getRow() == 1 && startPosition.getColumn() == 8){
+                                setKingSideCastleWhite(false);
+                            }
                         }
-                        else if(getTeamTurn() == TeamColor.BLACK && (startPosition.getRow() == 8 && startPosition.getColumn() == 1)){
-                            setQueenSideCastleBlack(false);
-                        } else if(getTeamTurn() == TeamColor.BLACK && (startPosition.getRow() == 8 && startPosition.getColumn() == 8)){
-                            setKingSideCastleBlack(false);
+                        else {
+                            if (startPosition.getRow() == 8 && startPosition.getColumn() == 1) {
+                                setQueenSideCastleBlack(false);
+                            } else if (startPosition.getRow() == 8 && startPosition.getColumn() == 8) {
+                                setKingSideCastleBlack(false);
+                            }
                         }
                     }
 //                    //change which team's turn it is
@@ -473,6 +489,13 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
+        setQueenSideCastleBlack(true);
+        setQueenSideCastleWhite(true);
+        setKingSideCastleBlack(true);
+        setKingSideCastleWhite(true);
+        this.currentBoard = board;
+    }
+    public void setBoardInternal(ChessBoard board) {
         this.currentBoard = board;
     }
 
