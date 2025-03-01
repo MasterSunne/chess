@@ -17,3 +17,14 @@ When overriding the equals method for a class check to see if either instance is
 if it's not then use the built-in isInstance method to check that the 2nd is an instance of the
 same class as the first object. If it is then continue to compare internal variables for equality.
 
+# Anonymous Inner Classes
+The code looks weird and unconventional but these were invented for event handlers
+and are really useful for keeping code close to where it's needed/defined.
+
+# I/O
+Input stream is used to read bytes sequentially from a data src
+FileInputStream
+PipedInputStream (read data from a thread)
+URLConnection.getInputStream() allows you to connect a client and read data from server
+HttpExchange.getRequestBody() allows the server to read data from a client
+ResultSet.getBinaryStream(int columnIndex)
