@@ -28,3 +28,15 @@ PipedInputStream (read data from a thread)
 URLConnection.getInputStream() allows you to connect a client and read data from server
 HttpExchange.getRequestBody() allows the server to read data from a client
 ResultSet.getBinaryStream(int columnIndex)
+
+# Phase 3 Implementation Tips
+What do Web API handlers do?
+Put logic for validating an auth token in a handler base class so it can be shared by multiple handlers or a 
+Service class that can be shared by multiple services. pick whether to do it in the service or handler
+-deserialize JSON request body to Java request object
+-call service class to perform the requested function passing it to the Java request object
+-call service class to perform the requested function, passing it the Java request object
+-wait and receive the Java response object from service
+-serialize response obj to JSON
+-send HTTP response back to client w/status code and response body
+
