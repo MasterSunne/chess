@@ -32,4 +32,9 @@ public class MemoryGameDAO implements GameDAO{
 
         gameMap.put(id,newGame);
     }
+
+    @Override
+    public void clear() throws DataAccessException {
+        gameMap.clear();
+    }
 }

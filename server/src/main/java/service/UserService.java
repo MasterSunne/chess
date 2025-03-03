@@ -1,60 +1,58 @@
 package service;
 
-import Request.LoginRequest;
-import Request.LogoutRequest;
-import Request.RegisterRequest;
-import Result.LoginResult;
-import Result.LogoutResult;
-import Result.RegisterResult;
+import Request.*;
+import Result.*;
 import dataaccess.*;
 import model.AuthData;
+import model.UserData;
 
 public class UserService {
-    private final String dataAccess;
-    private AuthDAO authDAO;
-    private GameDAO gameDAO;
-    private UserDAO userDAO;
 
-    public UserService(String dataAccess) {
-        this.dataAccess = dataAccess;
-        initializeDAOs();
+    private final AuthDAO authDAO;
+    private final UserDAO userDAO;
+
+    public UserService(AuthDAO authDAO, UserDAO userDAO) {
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
+
     }
 
-    private void initializeDAOs() {
-        if ("MEMORY".equals(dataAccess)) {
-            authDAO = new MemoryAuthDAO();
-            gameDAO = new MemoryGameDAO();
-            userDAO = new MemoryUserDAO();
-        } else {
-            // sql dataAccess types here later
-            throw new IllegalArgumentException("Unsupported data access type");
-        }
-    }
-
-    public RegisterResult register(RegisterRequest registerRequest) {
+    public RegLogResult register(RegisterRequest registerRequest) throws ServiceException {
+        RegLogResult result = null;
         try {
-            if(userDAO.getUser(registerRequest.username()) == null){
-                  userDAO.createUser(userData);
-                  authDAO.createAuth(authData);
-             }
+            if (userDAO.getUser(registerRequest.username()) == null) {
+                UserData uData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+                userDAO.createUser(uData);
+                AuthData aDataWrapper = new AuthData(null, uData.username());
+                authDAO.createAuth(aDataWrapper);
+                String token = authDAO.findAuth(uData.username());
+                result = new RegLogResult(uData.username(), token);
+            }
+        } catch (DataAccessException e) {
+            throw new ServiceException(401, e.getMessage());
+        }
+        return result;
+    }
+
+    public RegLogResult login(LoginRequest loginRequest) throws DataAccessException {
+        RegLogResult result = null;
+        try {
+            if(userDAO.getUser(loginRequest.username()) != null){
+                AuthData aDataWrapper = new AuthData(null, loginRequest.username());
+                authDAO.createAuth(aDataWrapper);
+                String token = authDAO.findAuth(loginRequest.username());
+                result = new RegLogResult(loginRequest.username(), token);
+        }
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        return RegisterResult;
+        return result;
     }
 
-    public LoginResult login(LoginRequest loginRequest) {
-        if(userDAO.getUser(loginRequest.username()) != null){
-            authDAO.createAuth(authData);
-            return new LoginResult(username, authToken);
-    }
-    }
-
-    public void logout(LogoutRequest logoutRequest) {
-        AuthData aData = getAuth(authToken);
-      if(aData != null){
-            deleteAuth(aData);
-            return new LogoutResult();
-}
+    public void logout(LogoutRequest logoutRequest) throws DataAccessException {
+        AuthData aData = authDAO.getAuth(logoutRequest.authToken());
+        if(aData != null){
+            authDAO.deleteAuth(logoutRequest.authToken());
+        }
     }
 }
