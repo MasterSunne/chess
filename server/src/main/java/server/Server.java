@@ -1,18 +1,17 @@
 package server;
 
+import com.google.gson.Gson;
+import dataaccess.*;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
 public class Server {
-    private final AuthService aService;
-    private final GameService gService;
-    private final UserService uService;
-
-    public Server(AuthService aService, GameService gService, UserService uService) {
-        this.aService = aService;
-        this.gService = gService;
-        this.uService = uService;
-    }
+    private final GameService gService = new GameService(dataAccess);
+    private final UserService uService = new UserService(dataAccess);
+    private final AuthDAO aDAO;
+    private final GameDAO gDAO;
+    private final UserDAO uDAO;
 
 
     public run(int desiredPort) {
@@ -48,6 +47,14 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
+//    private Object registerUser(Request req, Response res) throws ResponseException {
+//        var pet = new Gson().fromJson(req.body(), RegisterRequest.class);
+//        pet = service.addPet(pet);
+//        webSocketHandler.makeNoise(pet.name(), pet.sound());
+//        return new Gson().toJson(pet);
+//    }
+
     private void exceptionHandler(ResponseException ex, Request req, Response res) {
         res.status(ex.StatusCode());
         res.body(ex.toJson());
