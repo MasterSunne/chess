@@ -1,13 +1,11 @@
 package dataaccess;
 
 import model.AuthData;
-import model.GameData;
-import java.util.Optional;
 
 public interface AuthDAO {
-    void createGame(AuthData a);
+    void createAuth(AuthData a) throws DataAccessException;
 
-    public Optional<GameData> getAuth(String token);
+    public AuthData getAuth(String token) throws DataAccessException;
 
-    void deleteAuth(String token);
+    void deleteAuth(String token) throws DataAccessException;
 }

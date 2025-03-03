@@ -1,17 +1,24 @@
 package dataaccess;
 
 import model.AuthData;
-import model.GameData;
-
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
-    @Override
-    public void createGame(AuthData a){throw new UnsupportedOperationException("Method not implemented yet");}
+    final private HashMap<String, AuthData> authMap = new HashMap<>();
+    public static String generateToken() {
+        return UUID.randomUUID().toString();}
 
-    @Override
-    public Optional<GameData> getAuth(String token){throw new UnsupportedOperationException("Method not implemented yet"); }
+    public void createAuth(AuthData a){
+        if (a.username() != null){
+            String token = generateToken();
+            AuthData authenticated = new AuthData(token,a.username());
 
-    @Override
-    public void deleteAuth(String token){throw new UnsupportedOperationException("Method not implemented yet");}
+            authMap.put(token,authenticated);
+        }
+    }
+
+    public AuthData getAuth(String token){ return authMap.get(token); }
+
+    public void deleteAuth(String token){ authMap.remove(token); }
 }

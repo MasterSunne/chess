@@ -2,12 +2,17 @@ package dataaccess;
 
 import model.UserData;
 
-import java.util.Optional;
+import java.util.HashMap;
 
 public class MemoryUserDAO implements UserDAO{
-    @Override
-    public void createUser(UserData u) {throw new UnsupportedOperationException("Method not implemented yet");}
+    final private HashMap<String,UserData> userMap = new HashMap<>();
 
-    @Override
-    public Optional<UserData> getUser(String username){throw new UnsupportedOperationException("Method not implemented yet");}
+    public void createUser(UserData u) {
+        // happens after the service checking that the username isn't taken already
+        userMap.put(u.username(),u);
+    }
+
+    public UserData getUser(String username){
+        return userMap.get(username);
+    }
 }

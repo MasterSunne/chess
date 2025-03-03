@@ -2,14 +2,13 @@ package dataaccess;
 
 import model.GameData;
 import java.util.*;
-import java.util.Optional;
 
 public interface GameDAO {
-    void createGame(GameData g);
+    void createGame(GameData g) throws DataAccessException;
 
-    public Optional<GameData> getGame(int id);
+    public GameData getGame(int id) throws DataAccessException;
 
-    public List<GameData> listGames();
+    public List<GameData> listGames() throws DataAccessException;
 
-    public void updateGame(int id);
+    public void updateGame(String newUser, String newColor, int id) throws DataAccessException;
 }

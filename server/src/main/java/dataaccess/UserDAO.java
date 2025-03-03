@@ -1,10 +1,9 @@
 package dataaccess;
 
 import model.UserData;
-import java.util.Optional;
 
 public interface UserDAO {
-    void createUser(UserData u);
+    void createUser(UserData u) throws DataAccessException;
 
-    public Optional<UserData> getUser(String username);
+    public UserData getUser(String username) throws DataAccessException;
 }
