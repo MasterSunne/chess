@@ -121,7 +121,7 @@ public class Server {
 
     }
 
-    private Object logoutUser(Request req, Response res) throws RequestException, DataAccessException {
+    private Object logoutUser(Request req, Response res) throws DataAccessException, ServiceException {
         try {
             String token = req.headers("Authorization");
             if (token != null) {
@@ -131,7 +131,9 @@ public class Server {
             }
             return "{}";
         }  catch (DataAccessException ex) {
-            throw new RequestException(ex.StatusCode(), ex.getMessage());
+            throw new DataAccessException(ex.StatusCode(), ex.getMessage());
+        } catch (ServiceException e) {
+            throw new ServiceException(e.StatusCode(), e.getMessage());
         }
     }
 

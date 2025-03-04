@@ -57,9 +57,11 @@ public class UserService {
         throw new DataAccessException(401, "Error: unauthorized");
     }
 
-    public void logout(LogoutRequest logoutRequest) throws DataAccessException {
+    public void logout(LogoutRequest logoutRequest) throws DataAccessException, ServiceException {
         if(authDAO.getAuth(logoutRequest.authToken()) != null){
             authDAO.deleteAuth(logoutRequest.authToken());
+        } else{
+            throw new DataAccessException(401, "Error: unauthorized");
         }
     }
 }
