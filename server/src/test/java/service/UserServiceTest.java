@@ -77,5 +77,6 @@ class UserServiceTest {
     void TestCreateGameSuccess() throws DataAccessException{}
     @Test
     void TestJoinGameSuccess() throws DataAccessException{}
-    @Test TestClearSuccess() throws DataAccessException{}
+    @Test
+    void TestClearSuccess() throws DataAccessException{}
 }

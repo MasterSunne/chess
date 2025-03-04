@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.*;
 import service.GameService;
-import service.DataAccessException;
+import dataaccess.DataAccessException;
 import service.UserService;
 import spark.*;
 import Request.*;
@@ -45,12 +45,16 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object clearAll(Request req, Response res) {
-        aDAO.clear();
-        gDAO.clear();
-        uDAO.clear();
-        res.status(200);
-        return "";
+    private Object clearAll(Request req, Response res) throws DataAccessException {
+        try {
+            aDAO.clear();
+            gDAO.clear();
+            uDAO.clear();
+            res.status(200);
+            return "";
+        } catch (DataAccessException e) {
+            throw new DataAccessException(e.StatusCode(),e.getMessage());
+        }
     }
 
     private Object createGame(Request req, Response res) throws DataAccessException {
