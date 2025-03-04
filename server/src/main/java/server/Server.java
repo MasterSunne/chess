@@ -3,7 +3,6 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.*;
-import org.eclipse.jetty.util.log.Log;
 import service.GameService;
 import service.ServiceException;
 import service.UserService;
@@ -84,6 +83,7 @@ public class Server {
         } catch (JsonSyntaxException e) {
             throw new RequestException(400,"Error: bad request");
         }
+        return null;
     }
 
     private void exceptionHandler(DataAccessException ex, Request req, Response res) {

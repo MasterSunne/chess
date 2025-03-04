@@ -8,7 +8,7 @@ public interface GameDAO {
 
     public GameData getGame(int id) throws DataAccessException;
 
-    public List<GameData> listGames() throws DataAccessException;
+    public ArrayList<GameData> listGames() throws DataAccessException;
 
     public void updateGame(String newUser, String newColor, int id) throws DataAccessException;
 

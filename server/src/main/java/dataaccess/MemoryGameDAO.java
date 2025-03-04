@@ -2,8 +2,9 @@ package dataaccess;
 
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 
 public class MemoryGameDAO implements GameDAO{
@@ -17,7 +18,13 @@ public class MemoryGameDAO implements GameDAO{
 
     public GameData getGame(int id){ return gameMap.get(id); }
 
-    public List<GameData> listGames(){throw new UnsupportedOperationException("Method not implemented yet");}
+    public ArrayList<GameData> listGames(){
+        ArrayList<GameData> games = new ArrayList<>();
+        for (Map.Entry<Integer, GameData> entry : gameMap.entrySet()) {
+            games.add(entry.getValue());
+        }
+        return games;
+    }
 
     public void updateGame(String newUser, String newColor, int id){
         GameData changingGame = gameMap.get(id);
