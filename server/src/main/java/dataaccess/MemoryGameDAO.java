@@ -51,7 +51,7 @@ public class MemoryGameDAO implements GameDAO{
         gameMap.remove(id);
         GameData newGame = null;
 
-        if (newColor.equals("WHITE")) {
+        if (newColor != null && newColor.equals("WHITE")) {
             newGame = new GameData(id, newUser, changingGame.blackUsername(), changingGame.gameName(), changingGame.game());
         } else if (newColor.equals("BLACK")){
             newGame = new GameData(id,changingGame.whiteUsername(), newUser, changingGame.gameName(), changingGame.game());

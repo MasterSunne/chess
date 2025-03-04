@@ -75,6 +75,11 @@ public class Server {
             String token = req.headers("Authorization");
             if (token != null) {
                 var joinGameRequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
+                if (joinGameRequest.playerColor() == null ||
+                        joinGameRequest.playerColor().isEmpty() ||
+                        !isValidTeamColor(joinGameRequest.playerColor())) {
+                    throw new RequestException(400,"Error: bad request");
+                }
                 gService.joinGame(token,joinGameRequest);
                 res.status(200);
                 return "{}";
@@ -83,6 +88,10 @@ public class Server {
             throw new RequestException(400,"Error: bad request");
         }
         throw new RequestException(401,"Error: unauthorized");
+    }
+
+    private boolean isValidTeamColor(String s) {
+        return s.equals("WHITE") || s.equals("BLACK");
     }
 
     private Object listGames(Request req, Response res) throws RequestException, DataAccessException {
