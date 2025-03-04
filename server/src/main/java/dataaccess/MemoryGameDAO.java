@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.GameData;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,11 @@ public class MemoryGameDAO implements GameDAO{
     public void createGame(GameData g) throws DataAccessException{
         //only done after authenticating the user and checking that no game exists with the same name
         //service handles game ID creation
-        gameMap.put(g.gameID(),g);
+        try {
+            gameMap.put(g.gameID(),g);
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     }
 
     @Override
@@ -33,39 +38,53 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public GameData getGame(Integer id) throws DataAccessException {
-        return gameMap.get(id);
+        try {
+            return gameMap.get(id);
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     }
 
     @Override
-    public ArrayList<GameData> listGames(){
-        ArrayList<GameData> games = new ArrayList<>();
-        for (Map.Entry<Integer, GameData> entry : gameMap.entrySet()) {
-            games.add(entry.getValue());
+    public ArrayList<GameData> listGames() throws DataAccessException {
+        try {
+            ArrayList<GameData> games = new ArrayList<>();
+            for (Map.Entry<Integer, GameData> entry : gameMap.entrySet()) {
+                games.add(entry.getValue());
+            }
+            return games;
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
         }
-        return games;
     }
 
     @Override
     public void updateGame(String newUser, String newColor, int id) throws DataAccessException {
-        GameData changingGame = gameMap.get(id);
-        gameMap.remove(id);
-        GameData newGame = null;
+        try {
+            GameData changingGame = gameMap.get(id);
+            gameMap.remove(id);
+            GameData newGame = null;
 
-        if ((newColor.equals("WHITE") && changingGame.whiteUsername() != null)||(newColor.equals("BLACK") && changingGame.blackUsername() != null)) {
-            throw new DataAccessException(403,"Error: already taken");
-        }
+            if ((newColor.equals("WHITE") && changingGame.whiteUsername() != null)||(newColor.equals("BLACK") && changingGame.blackUsername() != null)) {
+                throw new DataAccessException(403,"Error: already taken");
+            }
             if (newColor.equals("WHITE")) {
                 newGame = new GameData(id, newUser, changingGame.blackUsername(), changingGame.gameName(), changingGame.game());
             } else if (newColor.equals("BLACK")){
                 newGame = new GameData(id,changingGame.whiteUsername(), newUser, changingGame.gameName(), changingGame.game());
             }
-
-
-        gameMap.put(id,newGame);
+            gameMap.put(id,newGame);
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     }
 
     @Override
     public void clear() throws DataAccessException {
-        gameMap.clear();
+        try {
+            gameMap.clear();
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     }
 }

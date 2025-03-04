@@ -10,10 +10,10 @@ import java.util.Map;
 /**
  * Indicates there was an error connecting to the database
  */
-public class ServiceException extends Exception{
+public class DataAccessException extends Exception{
   final private int statusCode;
 
-  public ServiceException(int statusCode, String message) {
+  public DataAccessException(int statusCode, String message) {
     super(message);
     this.statusCode = statusCode;
   }
@@ -22,11 +22,11 @@ public class ServiceException extends Exception{
     return new Gson().toJson(Map.of("message", getMessage(), "status", statusCode));
   }
 
-  public static ServiceException fromJson(InputStream stream) {
+  public static DataAccessException fromJson(InputStream stream) {
     var map = new Gson().fromJson(new InputStreamReader(stream), HashMap.class);
     var status = ((Double)map.get("status")).intValue();
     String message = map.get("message").toString();
-    return new ServiceException(status, message);
+    return new DataAccessException(status, message);
   }
 
   public int StatusCode() {

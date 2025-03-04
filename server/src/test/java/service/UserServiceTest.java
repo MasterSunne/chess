@@ -10,6 +10,7 @@ import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
@@ -26,7 +27,7 @@ class UserServiceTest {
     }
 
     @Test
-    void TestRegisterSuccess() throws ServiceException {
+    void TestRegisterSuccess() throws DataAccessException {
         // if
         RegisterRequest request = new RegisterRequest("testUser", "password", "testUser@test.com");
 
@@ -38,9 +39,8 @@ class UserServiceTest {
         assertEquals("testUser", result.username());
         assertNotNull( result.authToken());
     }
-
     @Test
-    void TestLoginSuccess() throws ServiceException, DataAccessException {
+    void TestLoginSuccess() throws DataAccessException {
         // if
         UserData uData = new UserData("testUser", "password", "testUser@test.com");
         userDAO.createUser(uData);
@@ -54,9 +54,8 @@ class UserServiceTest {
         assertEquals("testUser", result.username());
         assertNotNull( result.authToken());
     }
-
     @Test
-    void TestLogoutSuccess() throws ServiceException, DataAccessException {
+    void TestLogoutSuccess() throws DataAccessException {
         // if
         UserData uData = new UserData("testUser", "password", "testUser@test.com");
         userDAO.createUser(uData);
@@ -72,4 +71,11 @@ class UserServiceTest {
         assertNull(authDAO.findAuth("testUser"));
         assertNull(authDAO.getAuth(token));
     }
+    @Test
+    void TestListGamesSuccess() throws DataAccessException{}
+    @Test
+    void TestCreateGameSuccess() throws DataAccessException{}
+    @Test
+    void TestJoinGameSuccess() throws DataAccessException{}
+    @Test TestClearSuccess() throws DataAccessException{}
 }

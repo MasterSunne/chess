@@ -14,11 +14,14 @@ public class MemoryAuthDAO implements AuthDAO{
 
     @Override
     public void createAuth(AuthData a) throws DataAccessException {
-        if (a.username() != null){
-            String token = generateToken();
-            AuthData authenticated = new AuthData(token,a.username());
-
-            authMap.put(token,authenticated);
+        try {
+            if (a.username() != null){
+                String token = generateToken();
+                AuthData authenticated = new AuthData(token,a.username());
+                authMap.put(token,authenticated);
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
         }
     }
 
@@ -34,11 +37,17 @@ public class MemoryAuthDAO implements AuthDAO{
         } catch (Exception e) {
             throw new DataAccessException(401,"Error: unauthorized");
         }
-        throw new DataAccessException(401,"Error: unauthorized");
+        return null;
     }
 
     @Override
-    public AuthData getAuth(String token) throws DataAccessException { return authMap.get(token); }
+    public AuthData getAuth(String token) throws DataAccessException {
+        try {
+            return authMap.get(token);
+        } catch (Exception e) {
+            throw new DataAccessException(401, "Error: unauthorized");
+        }
+    }
 
     @Override
     public void deleteAuth(String token) throws DataAccessException {

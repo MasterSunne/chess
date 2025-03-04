@@ -8,18 +8,30 @@ public class MemoryUserDAO implements UserDAO{
     final private HashMap<String,UserData> userMap = new HashMap<>();
 
     @Override
-    public void createUser(UserData u) {
+    public void createUser(UserData u) throws DataAccessException{
         // happens after the service checking that the username isn't taken already
-        userMap.put(u.username(),u);
+        try {
+            userMap.put(u.username(),u);
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     }
 
     @Override
-    public UserData getUser(String username){
-        return userMap.get(username);
+    public UserData getUser(String username) throws DataAccessException{
+        try {
+            return userMap.get(username);
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     }
 
     @Override
     public void clear() throws DataAccessException {
-        userMap.clear();
+        try {
+            userMap.clear();
+        } catch (Exception e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     }
 }

@@ -24,21 +24,21 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException, ServiceException {
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException {
         try {
             if(authDAO.getAuth(listGamesRequest.authToken()) != null){
                 ArrayList<GameData> games = gameDAO.listGames();
                 return new ListGamesResult(games);
              }
         } catch (DataAccessException e) {
-            throw new ServiceException(401,"Error: unauthorized");
+            throw new DataAccessException(401,"Error: unauthorized");
         }
-        throw new ServiceException(401,"Error: unauthorized");
+        return null;
     }
 
-    static int x = 1;
 
-    public CreateGameResult createGame(String authToken,CreateGameRequest createGameRequest) throws DataAccessException, ServiceException {
+    static int x = 1;
+    public CreateGameResult createGame(String authToken,CreateGameRequest createGameRequest) throws DataAccessException {
         if(authDAO.getAuth(authToken) != null){
             if(gameDAO.findGame(createGameRequest.gameName()) == null){
                 ChessGame newGame = new ChessGame();
@@ -47,9 +47,9 @@ public class GameService {
                 return new CreateGameResult(gData.gameID());
             }
         } else{
-            throw new ServiceException(401, "Error: unauthorized");
+            throw new DataAccessException(401, "Error: unauthorized");
             }
-        throw new ServiceException(401, "Error: unauthorized");
+        return null;
     }
 
     public void joinGame(String authToken,JoinGameRequest joinGameRequest) throws DataAccessException {

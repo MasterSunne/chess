@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.*;
 import service.GameService;
-import service.ServiceException;
+import service.DataAccessException;
 import service.UserService;
 import spark.*;
 import Request.*;
@@ -35,28 +35,25 @@ public class Server {
         Spark.delete("/db", this::clearAll);
         Spark.exception(DataAccessException.class, this::exceptionHandler);
 
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-//        Spark.init();
-
         Spark.awaitInitialization();
         return Spark.port();
     }
 
+    // all http handlers listed belows:
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
     }
 
-    private Object clearAll(Request req, Response res) throws RequestException, DataAccessException {
+    private Object clearAll(Request req, Response res) {
         aDAO.clear();
         gDAO.clear();
         uDAO.clear();
         res.status(200);
-        return "{}";
+        return "";
     }
 
-    private Object createGame(Request req, Response res) throws RequestException, DataAccessException, ServiceException {
+    private Object createGame(Request req, Response res) throws DataAccessException {
         try {
             String token = req.headers("Authorization");
             if (token != null) {
@@ -64,13 +61,13 @@ public class Server {
                 CreateGameResult result = gService.createGame(token,createGameRequest);
                 return new Gson().toJson(result);
             }
-        } catch (ServiceException e) {
-            throw new ServiceException(401, "Error: unauthorized");
+        } catch (DataAccessException e) {
+            throw new DataAccessException(401, "Error: unauthorized");
         }
-        throw new RequestException(401,"Error: unauthorized");
+        return "";
     }
 
-    private Object joinGame(Request req, Response res) throws RequestException, DataAccessException {
+    private Object joinGame(Request req, Response res) throws DataAccessException {
         try {
             String token = req.headers("Authorization");
             if (token != null) {
@@ -78,23 +75,23 @@ public class Server {
                 if (joinGameRequest.playerColor() == null ||
                         joinGameRequest.playerColor().isEmpty() ||
                         !isValidTeamColor(joinGameRequest.playerColor())) {
-                    throw new RequestException(400,"Error: bad request");
+                    throw new DataAccessException(400,"Error: bad request");
                 }
                 gService.joinGame(token,joinGameRequest);
                 res.status(200);
                 return "{}";
             }
         } catch (JsonSyntaxException e) {
-            throw new RequestException(400,"Error: bad request");
+            throw new DataAccessException(400,"Error: bad request");
         }
-        throw new RequestException(401,"Error: unauthorized");
+        return "";
     }
 
     private boolean isValidTeamColor(String s) {
         return s.equals("WHITE") || s.equals("BLACK");
     }
 
-    private Object listGames(Request req, Response res) throws RequestException, DataAccessException {
+    private Object listGames(Request req, Response res) throws DataAccessException {
         try {
             String token = req.headers("Authorization");
             if (token != null) {
@@ -103,34 +100,33 @@ public class Server {
                 return new Gson().toJson(result);
             }
         } catch (JsonSyntaxException e) {
-            throw new RequestException(400,"Error: bad request");
-        } catch (ServiceException e) {
+            throw new DataAccessException(400,"Error: bad request");
+        } catch (DataAccessException e) {
             throw new DataAccessException(401,e.getMessage());
         }
-        throw new RequestException(401,"Error: unauthorized");
+        return "";
     }
 
-    private Object registerUser(Request req, Response res) throws RequestException, DataAccessException {
+    private Object registerUser(Request req, Response res) throws DataAccessException, DataAccessException {
         try {
             var registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
             RegLogResult rResult = uService.register(registerRequest);
             return new Gson().toJson(rResult);
 
         } catch (JsonSyntaxException e) {
-            throw new RequestException(400,"Error: bad request");
-        } catch (ServiceException e) {
+            throw new DataAccessException(400,"Error: bad request");
+        } catch (DataAccessException e) {
             throw new DataAccessException(e.StatusCode(),e.getMessage());
         }
     }
 
-    private Object loginUser(Request req, Response res) throws RequestException, DataAccessException {
+    private Object loginUser(Request req, Response res) throws DataAccessException, DataAccessException {
         var loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
         RegLogResult rResult = uService.login(loginRequest);
         return new Gson().toJson(rResult);
-
     }
 
-    private Object logoutUser(Request req, Response res) throws DataAccessException, ServiceException {
+    private Object logoutUser(Request req, Response res) throws DataAccessException, DataAccessException {
         try {
             String token = req.headers("Authorization");
             if (token != null) {
@@ -138,14 +134,13 @@ public class Server {
                 uService.logout(request);
                 res.status(200);
             }
-            return "{}";
         }  catch (DataAccessException ex) {
             throw new DataAccessException(ex.StatusCode(), ex.getMessage());
-        } catch (ServiceException e) {
-            throw new ServiceException(e.StatusCode(), e.getMessage());
         }
+        return "";
     }
 
+    // handles any exception thrown by the web API and turns it into JSON
     private void exceptionHandler(DataAccessException ex, Request req, Response res) {
         res.status(ex.StatusCode());
         res.body(ex.toJson());
