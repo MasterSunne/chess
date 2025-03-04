@@ -110,7 +110,7 @@ public class Server {
         } catch (JsonSyntaxException e) {
             throw new RequestException(400,"Error: bad request");
         } catch (ServiceException e) {
-            throw new DataAccessException(401,e.getMessage());
+            throw new DataAccessException(e.StatusCode(),e.getMessage());
         }
     }
 
