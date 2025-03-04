@@ -56,7 +56,7 @@ public class Server {
         return "{}";
     }
 
-    private Object createGame(Request req, Response res) throws RequestException, DataAccessException {
+    private Object createGame(Request req, Response res) throws RequestException, DataAccessException, ServiceException {
         try {
             String token = req.headers("Authorization");
             if (token != null) {
@@ -64,8 +64,8 @@ public class Server {
                 CreateGameResult result = gService.createGame(token,createGameRequest);
                 return new Gson().toJson(result);
             }
-        } catch (JsonSyntaxException e) {
-            throw new RequestException(400,"Error: bad request");
+        } catch (ServiceException e) {
+            throw new ServiceException(e.StatusCode(),e.getMessage());
         }
         throw new RequestException(401,"Error: unauthorized");
     }

@@ -38,16 +38,18 @@ public class GameService {
 
     static int x = 1;
 
-    public CreateGameResult createGame(String authToken,CreateGameRequest createGameRequest) throws DataAccessException {
+    public CreateGameResult createGame(String authToken,CreateGameRequest createGameRequest) throws DataAccessException, ServiceException {
         if(authDAO.getAuth(authToken) != null){
             if(gameDAO.findGame(createGameRequest.gameName()) == null){
                 ChessGame newGame = new ChessGame();
                 GameData gData = new GameData(x++, null, null,createGameRequest.gameName(),newGame);
                 gameDAO.createGame(gData);
                 return new CreateGameResult(gData.gameID());
-    }
-    }
-        return null;
+            }
+        } else{
+            throw new ServiceException(401, "Error: unauthorized");
+            }
+        throw new ServiceException(401, "Error: unauthorized");
     }
 
     public void joinGame(String authToken,JoinGameRequest joinGameRequest) throws DataAccessException {
@@ -55,6 +57,8 @@ public class GameService {
             AuthData aData = new AuthData(authToken,authDAO.getAuth(authToken).username());
 //            GameData searchingGame = gameDAO.getGame(joinGameRequest.gameID());
             gameDAO.updateGame(aData.username(),joinGameRequest.playerColor(),joinGameRequest.gameID());
-        }
+        }else{
+          throw new DataAccessException(401, "Error: unauthorized");
+      }
     }
 }
