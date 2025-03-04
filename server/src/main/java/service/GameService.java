@@ -31,9 +31,9 @@ public class GameService {
                 return new ListGamesResult(games);
              }
         } catch (DataAccessException e) {
-            throw new ServiceException(400,e.getMessage());
+            throw new ServiceException(401,"Error: unauthorized");
         }
-        return null;
+        throw new ServiceException(401,"Error: unauthorized");
     }
 
     static int x = 1;

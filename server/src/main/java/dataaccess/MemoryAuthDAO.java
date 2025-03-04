@@ -34,7 +34,7 @@ public class MemoryAuthDAO implements AuthDAO{
         } catch (Exception e) {
             throw new DataAccessException(401,"Error: unauthorized");
         }
-        return null;
+        throw new DataAccessException(401,"Error: unauthorized");
     }
 
     @Override

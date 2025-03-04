@@ -45,6 +45,10 @@ public class UserService {
         try {
             String user = loginRequest.username();
             if(userDAO.getUser(user) != null && userDAO.getUser(user).password().equals(loginRequest.password())){
+                if (authDAO.findAuth(loginRequest.username()) != null){
+                    String oldToken = authDAO.findAuth(loginRequest.username());
+                    authDAO.deleteAuth(oldToken);
+                }
                 AuthData aDataWrapper = new AuthData(null, loginRequest.username());
                 authDAO.createAuth(aDataWrapper);
                 String token = authDAO.findAuth(loginRequest.username());
