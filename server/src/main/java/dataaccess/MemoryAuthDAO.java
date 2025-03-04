@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.AuthData;
 
-import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -13,16 +12,18 @@ public class MemoryAuthDAO implements AuthDAO{
         return UUID.randomUUID().toString();}
 
     @Override
-    public void createAuth(AuthData a) throws DataAccessException {
+    public AuthData createAuth(AuthData a) throws DataAccessException {
         try {
             if (a.username() != null){
                 String token = generateToken();
                 AuthData authenticated = new AuthData(token,a.username());
                 authMap.put(token,authenticated);
+                return authenticated;
             }
         } catch (Exception e) {
             throw new DataAccessException(500, e.getMessage());
         }
+        return null;
     }
 
     //finds authToken given username
