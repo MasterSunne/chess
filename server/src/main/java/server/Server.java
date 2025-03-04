@@ -115,14 +115,10 @@ public class Server {
     }
 
     private Object loginUser(Request req, Response res) throws RequestException, DataAccessException {
-        try {
-            var loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
-            RegLogResult rResult = uService.login(loginRequest);
-            return new Gson().toJson(rResult);
+        var loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
+        RegLogResult rResult = uService.login(loginRequest);
+        return new Gson().toJson(rResult);
 
-        } catch (JsonSyntaxException e) {
-            throw new RequestException(400,"Error: bad request");
-        }
     }
 
     private Object logoutUser(Request req, Response res) throws RequestException, DataAccessException {

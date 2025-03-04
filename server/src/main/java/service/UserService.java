@@ -49,13 +49,12 @@ public class UserService {
                 authDAO.createAuth(aDataWrapper);
                 String token = authDAO.findAuth(loginRequest.username());
                 result = new RegLogResult(loginRequest.username(), token);
-            } else{
-                throw new DataAccessException(401, "Error: unauthorized");
+                return result;
             }
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(401, "Error: unauthorized");
         }
-        return result;
+        throw new DataAccessException(401, "Error: unauthorized");
     }
 
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
