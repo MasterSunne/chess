@@ -34,7 +34,7 @@ public class UserService {
                 throw new DataAccessException(400, "Error: bad request");
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(500, e.getMessage());
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
     }
 
@@ -52,16 +52,20 @@ public class UserService {
                 return new RegLogResult(loginRequest.username(), token);
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(401, "Error: unauthorized");
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
         return null;
     }
 
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
-        if(authDAO.getAuth(logoutRequest.authToken()) != null){
-            authDAO.deleteAuth(logoutRequest.authToken());
-        } else{
-            throw new DataAccessException(401, "Error: unauthorized");
+        try {
+            if(authDAO.getAuth(logoutRequest.authToken()) != null){
+                authDAO.deleteAuth(logoutRequest.authToken());
+            } else{
+                throw new DataAccessException(401, "Error: unauthorized");
+            }
+        } catch (DataAccessException e) {
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
     }
 }

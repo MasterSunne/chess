@@ -10,6 +10,8 @@ import spark.*;
 import Request.*;
 import Result.*;
 
+import javax.xml.crypto.Data;
+
 public class Server {
 
     AuthDAO aDAO = new MemoryAuthDAO();
@@ -66,7 +68,7 @@ public class Server {
                 return new Gson().toJson(result);
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(401, "Error: unauthorized");
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
         return "";
     }
@@ -85,8 +87,8 @@ public class Server {
                 res.status(200);
                 return "{}";
             }
-        } catch (JsonSyntaxException e) {
-            throw new DataAccessException(400,"Error: bad request");
+        } catch (DataAccessException e) {
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
         return "";
     }
@@ -103,34 +105,34 @@ public class Server {
                 ListGamesResult result = gService.listGames(request);
                 return new Gson().toJson(result);
             }
-        } catch (JsonSyntaxException e) {
-            throw new DataAccessException(400,"Error: bad request");
         } catch (DataAccessException e) {
-            throw new DataAccessException(401,e.getMessage());
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
         return "";
     }
 
-    private Object registerUser(Request req, Response res) throws DataAccessException, DataAccessException {
+    private Object registerUser(Request req, Response res) throws DataAccessException {
         try {
             var registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
             RegLogResult rResult = uService.register(registerRequest);
             return new Gson().toJson(rResult);
 
-        } catch (JsonSyntaxException e) {
-            throw new DataAccessException(400,"Error: bad request");
         } catch (DataAccessException e) {
             throw new DataAccessException(e.StatusCode(),e.getMessage());
         }
     }
 
-    private Object loginUser(Request req, Response res) throws DataAccessException, DataAccessException {
-        var loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
-        RegLogResult rResult = uService.login(loginRequest);
-        return new Gson().toJson(rResult);
+    private Object loginUser(Request req, Response res) throws DataAccessException {
+        try {
+            var loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
+            RegLogResult rResult = uService.login(loginRequest);
+            return new Gson().toJson(rResult);
+        } catch (DataAccessException e){
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
+        }
     }
 
-    private Object logoutUser(Request req, Response res) throws DataAccessException, DataAccessException {
+    private Object logoutUser(Request req, Response res) throws DataAccessException {
         try {
             String token = req.headers("Authorization");
             if (token != null) {
@@ -138,8 +140,8 @@ public class Server {
                 uService.logout(request);
                 res.status(200);
             }
-        }  catch (DataAccessException ex) {
-            throw new DataAccessException(ex.StatusCode(), ex.getMessage());
+        }  catch (DataAccessException e) {
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
         return "";
     }
