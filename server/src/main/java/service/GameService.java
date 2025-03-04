@@ -27,11 +27,12 @@ public class GameService {
             if(authDAO.getAuth(listGamesRequest.authToken()) != null){
                 ArrayList<GameData> games = gameDAO.listGames();
                 return new ListGamesResult(games);
-             }
+             } else{
+                throw new DataAccessException(401,"Error: unauthorized");
+            }
         } catch (DataAccessException e) {
             throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
-        return null;
     }
 
 
