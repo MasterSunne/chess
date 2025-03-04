@@ -4,10 +4,12 @@ import Request.CreateGameRequest;
 import Request.JoinGameRequest;
 import Request.ListGamesRequest;
 import Result.*;
+import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import model.AuthData;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -16,20 +18,17 @@ import java.util.List;
 public class GameService {
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
-    private final UserDAO userDAO;
 
-    public GameService(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+    public GameService(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
-        this.userDAO = userDAO;
     }
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException, ServiceException {
         try {
             if(authDAO.getAuth(listGamesRequest.authToken()) != null){
                 ArrayList<GameData> games = gameDAO.listGames();
-                ListGamesResult result = new ListGamesResult(games);
-                return result;
+                return new ListGamesResult(games);
              }
         } catch (DataAccessException e) {
             throw new ServiceException(400,e.getMessage());
@@ -37,20 +36,25 @@ public class GameService {
         return null;
     }
 
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) {
-        if(authDAO.getAuth(createGameRequest.) != null){
-            if(getGame(gameName) = null){
-                createGame(gameName);
+    static int x = 1;
+
+    public CreateGameResult createGame(String authToken,CreateGameRequest createGameRequest) throws DataAccessException {
+        if(authDAO.getAuth(authToken) != null){
+            if(gameDAO.findGame(createGameRequest.gameName()) == null){
+                ChessGame newGame = new ChessGame();
+                GameData gData = new GameData(x++, null, null,createGameRequest.gameName(),newGame);
+                gameDAO.createGame(gData);
                 return new CreateGameResult();
     }
     }
+        return null;
     }
 
-    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) {
-      if(getAuth(authToken) != null){
-            GameData searchingGame = findGame(gameID);
-            updateGame(username,playerColor,searchingGame);
-            return new LogoutResult();
-}
+    public void joinGame(String authToken,JoinGameRequest joinGameRequest) throws DataAccessException {
+      if(authDAO.getAuth(authToken) != null){
+            AuthData aData = new AuthData(authToken,authDAO.getAuth(authToken).username());
+//            GameData searchingGame = gameDAO.getGame(joinGameRequest.gameID());
+            gameDAO.updateGame(aData.username(),joinGameRequest.playerColor(),joinGameRequest.gameID());
+        }
     }
 }

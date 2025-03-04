@@ -50,8 +50,7 @@ public class UserService {
     }
 
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
-        AuthData aData = authDAO.getAuth(logoutRequest.authToken());
-        if(aData != null){
+        if(authDAO.getAuth(logoutRequest.authToken()) != null){
             authDAO.deleteAuth(logoutRequest.authToken());
         }
     }
