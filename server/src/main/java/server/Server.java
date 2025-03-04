@@ -128,12 +128,11 @@ public class Server {
                 LogoutRequest request = new LogoutRequest(token);
                 uService.logout(request);
                 res.status(200);
-                return "{}";
             }
-        } catch (JsonSyntaxException e) {
-            throw new RequestException(400,"Error: bad request");
+            return "{}";
+        }  catch (DataAccessException ex) {
+            throw new RequestException(ex.StatusCode(), ex.getMessage());
         }
-        throw new RequestException(401,"Error: unauthorized");
     }
 
     private void exceptionHandler(DataAccessException ex, Request req, Response res) {
