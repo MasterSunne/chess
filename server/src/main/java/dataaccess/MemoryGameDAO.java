@@ -25,10 +25,10 @@ public class MemoryGameDAO implements GameDAO{
                     return gData;
                 }
             }
+            return null;
         } catch (Exception e) {
             throw new DataAccessException(400,e.getMessage());
         }
-        return null;
     }
 
     @Override

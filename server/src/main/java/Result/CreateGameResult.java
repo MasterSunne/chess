@@ -1,4 +1,4 @@
 package Result;
 
-public class CreateGameResult {
+public record CreateGameResult (int gameID) {
 }

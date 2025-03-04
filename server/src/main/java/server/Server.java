@@ -21,7 +21,7 @@ public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
-        Spark.staticFiles.location("web");
+        Spark.staticFiles.location("/web");
 
 //        Spark.webSocket("/ws", webSocketHandler);
 
@@ -37,7 +37,7 @@ public class Server {
 
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+//        Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -49,14 +49,11 @@ public class Server {
     }
 
     private Object clearAll(Request req, Response res) throws RequestException, DataAccessException {
-        try{
-            aDAO.clear();
-            gDAO.clear();
-            uDAO.clear();
-        } catch (DataAccessException e) {
-            throw new RequestException(400, "Error: bad request");
-        }
-        return null;
+        aDAO.clear();
+        gDAO.clear();
+        uDAO.clear();
+        res.status(200);
+        return "{}";
     }
 
     private Object createGame(Request req, Response res) throws RequestException, DataAccessException {
@@ -80,6 +77,7 @@ public class Server {
                 var joinGameRequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
                 gService.joinGame(token,joinGameRequest);
                 res.status(200);
+                return "{}";
             }
         } catch (JsonSyntaxException e) {
             throw new RequestException(400,"Error: bad request");
@@ -134,6 +132,7 @@ public class Server {
                 LogoutRequest request = new LogoutRequest(token);
                 uService.logout(request);
                 res.status(200);
+                return "{}";
             }
         } catch (JsonSyntaxException e) {
             throw new RequestException(400,"Error: bad request");
