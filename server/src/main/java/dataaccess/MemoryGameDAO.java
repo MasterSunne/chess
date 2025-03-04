@@ -74,8 +74,11 @@ public class MemoryGameDAO implements GameDAO{
                 newGame = new GameData(id,changingGame.whiteUsername(), newUser, changingGame.gameName(), changingGame.game());
             }
             gameMap.put(id,newGame);
-        } catch (Exception e) {
-            throw new DataAccessException(500, e.getMessage());
+        } catch(DataAccessException e){
+            throw new DataAccessException(e.StatusCode(), e.getMessage());
+        }
+        catch (Exception ex) {
+            throw new DataAccessException(500, ex.getMessage());
         }
     }
 

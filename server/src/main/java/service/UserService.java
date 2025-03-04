@@ -50,11 +50,12 @@ public class UserService {
                 authDAO.createAuth(aDataWrapper);
                 String token = authDAO.findAuth(loginRequest.username());
                 return new RegLogResult(loginRequest.username(), token);
+            } else{
+                throw new DataAccessException(401, "Error: unauthorized");
             }
         } catch (DataAccessException e) {
             throw new DataAccessException(e.StatusCode(), e.getMessage());
         }
-        return null;
     }
 
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
