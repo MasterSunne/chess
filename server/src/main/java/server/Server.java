@@ -65,7 +65,7 @@ public class Server {
                 return new Gson().toJson(result);
             }
         } catch (ServiceException e) {
-            throw new ServiceException(e.StatusCode(),e.getMessage());
+            throw new ServiceException(401, "Error: unauthorized");
         }
         throw new RequestException(401,"Error: unauthorized");
     }
