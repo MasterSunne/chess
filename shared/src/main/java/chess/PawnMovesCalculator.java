@@ -8,23 +8,21 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
         if (position == null) {
             throw new IllegalArgumentException("Position cannot be null");
         }
-//        System.out.println("Initial position: " + position);
-
-        ArrayList<ChessMove> validMoves = new ArrayList<>();
-        ChessPiece movingPiece = board.getPiece(position);
-        int startRow = position.getRow();
-        int startCol = position.getColumn();
         int[][] whiteDirectionArray = {
                 {1, 0},
                 {1, 1},
                 {1, -1},
-                // add in functionality for the initial move of 2 spaces
         };
         int[][] blackDirectionArray = {
                 {-1, 0},
                 {-1, 1},
                 {-1, -1},
         };
+        ArrayList<ChessMove> validMoves = new ArrayList<>();
+        ChessPiece movingPiece = board.getPiece(position);
+        int startRow = position.getRow();
+        int startCol = position.getColumn();
+
         int[][] correctDirectionArray;
         int movementTracker = 0;
         if (movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE){
@@ -37,32 +35,22 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
         for (int[] direction : correctDirectionArray) {
             movementTracker++;
             // Move in the direction selected by the for loop
-            int currentRow = startRow;
-            int currentCol = startCol;
+            int currentRow = (startRow + direction[0]);
+            int currentCol = (startCol + direction[1]);
 
-            currentRow += direction[0];
-            currentCol += direction[1];
-
-            // Check the boundaries (1-indexed?)
+            // Check the boundaries (1-indexed)
             if (currentRow < 1 || currentRow > 8 || currentCol < 1 || currentCol > 8) {
                 continue;
             }
 
             // Create the current position object
             ChessPosition currentPosition = new ChessPosition(currentRow, currentCol);
-//            System.out.println("Current position before getting piece: " + currentPosition);
 
             // if there is another piece at the new position
             if (board.getPiece(currentPosition) != null) {
-                ChessPiece obstaclePiece = board.getPiece(currentPosition);
-//                System.out.println("Piece found at " + currentPosition + ": " + obstaclePiece);
 
-                // if pawn tries to move forward then barrier no matter what
-                if (movementTracker < 2){
-                    continue;
-                }
-                // pawn can capture diagonally
-                else{
+                // if pawn tries to move forward then barrier no matter what -> pawn can capture diagonally
+                if(movementTracker > 1){
                     ChessPiece victimPiece = board.getPiece(currentPosition);
                     if ((correctDirectionArray == whiteDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.BLACK)|| (correctDirectionArray == blackDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ){
                         pawnPromotionHelper(position, currentPosition, movingPiece, validMoves);
@@ -80,11 +68,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                         currentRow++;
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
 
-                        // if there is another piece at the new position
-                        if (board.getPiece(doublePosition) != null) {
-                            ChessPiece obstaclePiece = board.getPiece(doublePosition);
-                        }
-                        else {
+                        // if there isn't another piece at the new position
+                        if (board.getPiece(doublePosition) == null) {
                             ChessMove doubleMove = new ChessMove(position, doublePosition, null);
                             validMoves.add(doubleMove);}
                     }
@@ -92,19 +77,12 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                         currentRow--;
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
                         // if there is another piece at the new position
-                        if (board.getPiece(doublePosition) != null) {
-                            ChessPiece obstaclePiece = board.getPiece(doublePosition);
-                            // if pawn tries to move forward then barrier no matter what
-                        }
-                        else {
+                        if (board.getPiece(doublePosition) == null) {
                             ChessMove doubleMove = new ChessMove(position, doublePosition, null);
                             validMoves.add(doubleMove);}
                     }
                 }
-                else {
-                    // can't move diagonal w/o capturing
-                    continue;
-                }
+                // can't move diagonal w/o capturing
             }
         }
     return validMoves;
