@@ -12,6 +12,8 @@ public class KingMovesCalculator extends SingleSpaceCalculator implements PieceM
             {-1, 1},
             {-1, -1}
     };
-
-
+    @Override
+    protected int[][] getDirectionArray(){
+        return directionArray;
+    }
 }

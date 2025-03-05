@@ -3,7 +3,7 @@ package chess;
 import java.util.ArrayList;
 
 public abstract class SingleSpaceCalculator implements PieceMovesCalculator {
-    private final int[][] directionArray = null;
+    protected abstract int[][] getDirectionArray();
 
     @Override
     public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
@@ -17,7 +17,7 @@ public abstract class SingleSpaceCalculator implements PieceMovesCalculator {
         int startRow = position.getRow();
         int startCol = position.getColumn();
 
-        for (int[] direction : directionArray) {
+        for (int[] direction : getDirectionArray()) {
             // Move in the direction selected by the for loop
             int currentRow = startRow;
             int currentCol = startCol;

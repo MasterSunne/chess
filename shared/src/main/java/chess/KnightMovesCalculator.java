@@ -12,4 +12,8 @@ public class KnightMovesCalculator extends SingleSpaceCalculator implements Piec
             {-1, -2},
             {-2, -1}
     };
+    @Override
+    protected int[][] getDirectionArray(){
+        return directionArray;
+    }
 }
