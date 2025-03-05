@@ -147,31 +147,7 @@ public class ChessGame {
                 }
                 setBoardInternal(originalBoard);
             }
-            //check for castling moves
-            if (movingPiece.getPieceType() == ChessPiece.PieceType.KING) {
-                if(movingPiece.getTeamColor() == TeamColor.WHITE && canCastleQueenSide(TeamColor.WHITE)){
-                    if (getQueenSideCastleWhite()) {
-                        ChessMove queenWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,3),null);
-                        validMoveList.add(queenWhite);
-                    }
-                } else if(movingPiece.getTeamColor() == TeamColor.BLACK && canCastleQueenSide(TeamColor.BLACK)){
-                    if (getQueenSideCastleBlack()) {
-                        ChessMove queenBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,3),null);
-                        validMoveList.add(queenBlack);
-                    }
-                }
-                if(movingPiece.getTeamColor() == TeamColor.WHITE && canCastleKingSide(TeamColor.WHITE)){
-                    if (getKingSideCastleWhite()) {
-                        ChessMove kingWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,7),null);
-                        validMoveList.add(kingWhite);
-                    }
-                } else if(movingPiece.getTeamColor() == TeamColor.BLACK && canCastleKingSide(TeamColor.BLACK)){
-                    if (getKingSideCastleBlack()) {
-                        ChessMove kingBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,7),null);
-                        validMoveList.add(kingBlack);
-                    }
-                }
-            }
+            checkValidCastlingMoves(movingPiece, validMoveList);
             //check for en passant moves
             if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN){
                 if(canEnPassantWhite && movingPiece.getTeamColor() == TeamColor.WHITE){
@@ -187,13 +163,7 @@ public class ChessGame {
                     ChessPosition leftCapture = new ChessPosition(startPosition.getRow(),newColMinus);
 
                     if(newColMinus >= 1 && getBoard().getPiece(leftCapture) != null && getBoard().getPiece(leftCapture).getPieceType() == ChessPiece.PieceType.PAWN ){
-                        clonedBoard1.addPiece(leftTry,movingPiece);
-                        clonedBoard1.addPiece(startPosition,null);
-                        clonedBoard1.addPiece(leftCapture,null);
-                        if(! isInCheck(TeamColor.WHITE)){
-                            ChessMove leftPassant = new ChessMove(startPosition,leftTry,null);
-                            validMoveList.add(leftPassant);
-                        }
+                        enPassantTestWhite(startPosition, movingPiece, validMoveList, clonedBoard1, leftTry, leftCapture);
                     }
 
                     setBoardInternal(clonedBoard2);
@@ -201,13 +171,7 @@ public class ChessGame {
                     ChessPosition rightCapture = new ChessPosition(startPosition.getRow(),newColPlus);
 
                     if(newColPlus <= 8 && getBoard().getPiece(rightCapture) != null && getBoard().getPiece(rightCapture).getPieceType() == ChessPiece.PieceType.PAWN){
-                        clonedBoard1.addPiece(rightTry,movingPiece);
-                        clonedBoard1.addPiece(startPosition,null);
-                        clonedBoard1.addPiece(rightCapture,null);
-                        if(! isInCheck(TeamColor.WHITE)){
-                            ChessMove rightPassant = new ChessMove(startPosition,rightTry,null);
-                            validMoveList.add(rightPassant);
-                        }
+                        enPassantTestWhite(startPosition, movingPiece, validMoveList, clonedBoard1, rightTry, rightCapture);
                     }
                     setBoardInternal(originalBoard);
                 }else if (canEnPassantBlack && movingPiece.getTeamColor() == TeamColor.BLACK){
@@ -222,13 +186,7 @@ public class ChessGame {
                     ChessPosition leftCapture = new ChessPosition(startPosition.getRow(),newColMinus);
 
                     if(newColMinus >= 1 && getBoard().getPiece(leftCapture) != null && getBoard().getPiece(leftCapture).getPieceType() == ChessPiece.PieceType.PAWN){
-                        clonedBoard1.addPiece(leftTry,movingPiece);
-                        clonedBoard1.addPiece(startPosition,null);
-                        clonedBoard1.addPiece(leftCapture,null);
-                        if(! isInCheck(TeamColor.BLACK)){
-                            ChessMove leftPassant = new ChessMove(startPosition,leftTry,null);
-                            validMoveList.add(leftPassant);
-                        }
+                        enPassantTestBlack(startPosition, movingPiece, validMoveList, clonedBoard1, leftTry, leftCapture);
                     }
 
                     ChessBoard clonedBoard2 = originalBoard.clone();
@@ -237,13 +195,7 @@ public class ChessGame {
                     ChessPosition rightCapture = new ChessPosition(startPosition.getRow(),newColPlus);
 
                     if(newColPlus <= 8 && getBoard().getPiece(rightCapture) != null && getBoard().getPiece(rightCapture).getPieceType() == ChessPiece.PieceType.PAWN){
-                        clonedBoard1.addPiece(rightTry,movingPiece);
-                        clonedBoard1.addPiece(startPosition,null);
-                        clonedBoard1.addPiece(rightCapture,null);
-                        if(! isInCheck(TeamColor.BLACK)){
-                            ChessMove rightPassant = new ChessMove(startPosition,rightTry,null);
-                            validMoveList.add(rightPassant);
-                        }
+                        enPassantTestBlack(startPosition, movingPiece, validMoveList, clonedBoard1, rightTry, rightCapture);
                     }
                     setBoardInternal(originalBoard);
                 }
@@ -252,6 +204,54 @@ public class ChessGame {
         }
         else{
             return null;
+        }
+    }
+
+    private void enPassantTestBlack(ChessPosition startPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoveList, ChessBoard clonedBoard1, ChessPosition leftTry, ChessPosition leftCapture) {
+        clonedBoard1.addPiece(leftTry,movingPiece);
+        clonedBoard1.addPiece(startPosition,null);
+        clonedBoard1.addPiece(leftCapture,null);
+        if(! isInCheck(TeamColor.BLACK)){
+            ChessMove leftPassant = new ChessMove(startPosition,leftTry,null);
+            validMoveList.add(leftPassant);
+        }
+    }
+
+    private void enPassantTestWhite(ChessPosition startPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoveList, ChessBoard clonedBoard1, ChessPosition leftTry, ChessPosition leftCapture) {
+        clonedBoard1.addPiece(leftTry,movingPiece);
+        clonedBoard1.addPiece(startPosition,null);
+        clonedBoard1.addPiece(leftCapture,null);
+        if(! isInCheck(TeamColor.WHITE)){
+            ChessMove leftPassant = new ChessMove(startPosition,leftTry,null);
+            validMoveList.add(leftPassant);
+        }
+    }
+
+    private void checkValidCastlingMoves(ChessPiece movingPiece, ArrayList<ChessMove> validMoveList) {
+        //check for castling moves
+        if (movingPiece.getPieceType() == ChessPiece.PieceType.KING) {
+            if(movingPiece.getTeamColor() == TeamColor.WHITE && canCastleQueenSide(TeamColor.WHITE)){
+                if (getQueenSideCastleWhite()) {
+                    ChessMove queenWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,3),null);
+                    validMoveList.add(queenWhite);
+                }
+            } else if(movingPiece.getTeamColor() == TeamColor.BLACK && canCastleQueenSide(TeamColor.BLACK)){
+                if (getQueenSideCastleBlack()) {
+                    ChessMove queenBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,3),null);
+                    validMoveList.add(queenBlack);
+                }
+            }
+            if(movingPiece.getTeamColor() == TeamColor.WHITE && canCastleKingSide(TeamColor.WHITE)){
+                if (getKingSideCastleWhite()) {
+                    ChessMove kingWhite = new ChessMove(new ChessPosition(1,5),new ChessPosition(1,7),null);
+                    validMoveList.add(kingWhite);
+                }
+            } else if(movingPiece.getTeamColor() == TeamColor.BLACK && canCastleKingSide(TeamColor.BLACK)){
+                if (getKingSideCastleBlack()) {
+                    ChessMove kingBlack = new ChessMove(new ChessPosition(8,5),new ChessPosition(8,7),null);
+                    validMoveList.add(kingBlack);
+                }
+            }
         }
     }
 
