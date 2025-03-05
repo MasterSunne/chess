@@ -1,9 +1,9 @@
 package service;
 
-import Request.CreateGameRequest;
-import Request.JoinGameRequest;
-import Request.ListGamesRequest;
-import Result.*;
+import request.CreateGameRequest;
+import request.JoinGameRequest;
+import request.ListGamesRequest;
+import result.*;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -31,7 +31,7 @@ public class GameService {
                 throw new DataAccessException(401,"Error: unauthorized");
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
     }
 
@@ -50,7 +50,7 @@ public class GameService {
                 throw new DataAccessException(401, "Error: unauthorized");
                 }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(),e.getMessage());
+            throw new DataAccessException(e.statusCode(),e.getMessage());
         }
         return null;
     }
@@ -69,7 +69,7 @@ public class GameService {
                 throw new DataAccessException(401, "Error: unauthorized");
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
     }
 }

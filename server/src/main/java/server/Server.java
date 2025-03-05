@@ -1,16 +1,13 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import dataaccess.*;
 import service.GameService;
 import dataaccess.DataAccessException;
 import service.UserService;
 import spark.*;
-import Request.*;
-import Result.*;
-
-import javax.xml.crypto.Data;
+import request.*;
+import result.*;
 
 public class Server {
 
@@ -55,7 +52,7 @@ public class Server {
             res.status(200);
             return "";
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(),e.getMessage());
+            throw new DataAccessException(e.statusCode(),e.getMessage());
         }
     }
 
@@ -68,7 +65,7 @@ public class Server {
                 return new Gson().toJson(result);
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
         return "";
     }
@@ -88,7 +85,7 @@ public class Server {
                 return "{}";
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
         return "";
     }
@@ -106,7 +103,7 @@ public class Server {
                 return new Gson().toJson(result);
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
         return "";
     }
@@ -118,7 +115,7 @@ public class Server {
             return new Gson().toJson(rResult);
 
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(),e.getMessage());
+            throw new DataAccessException(e.statusCode(),e.getMessage());
         }
     }
 
@@ -128,7 +125,7 @@ public class Server {
             RegLogResult rResult = uService.login(loginRequest);
             return new Gson().toJson(rResult);
         } catch (DataAccessException e){
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
     }
 
@@ -141,14 +138,14 @@ public class Server {
                 res.status(200);
             }
         }  catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
         return "";
     }
 
     // handles any exception thrown by the web API and turns it into JSON
     private void exceptionHandler(DataAccessException ex, Request req, Response res) {
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
         res.body(ex.toJson());
     }
 

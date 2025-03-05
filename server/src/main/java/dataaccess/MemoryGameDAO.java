@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.GameData;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +74,7 @@ public class MemoryGameDAO implements GameDAO{
             }
             gameMap.put(id,newGame);
         } catch(DataAccessException e){
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
         catch (Exception ex) {
             throw new DataAccessException(500, ex.getMessage());

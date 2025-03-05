@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -63,6 +64,20 @@ public class ChessGame {
     public ChessGame(TeamColor teamTurn, ChessBoard currentBoard) {
         this.teamTurn = teamTurn;
         this.currentBoard = currentBoard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return checkmate == chessGame.checkmate && stalemate == chessGame.stalemate && getKingSideCastleWhite() == chessGame.getKingSideCastleWhite() && getKingSideCastleBlack() == chessGame.getKingSideCastleBlack() && getQueenSideCastleWhite() == chessGame.getQueenSideCastleWhite() && getQueenSideCastleBlack() == chessGame.getQueenSideCastleBlack() && canEnPassantWhite == chessGame.canEnPassantWhite && canEnPassantBlack == chessGame.canEnPassantBlack && getTeamTurn() == chessGame.getTeamTurn() && Objects.equals(currentBoard, chessGame.currentBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTeamTurn(), currentBoard, checkmate, stalemate, getKingSideCastleWhite(), getKingSideCastleBlack(), getQueenSideCastleWhite(), getQueenSideCastleBlack(), canEnPassantWhite, canEnPassantBlack);
     }
 
     /**

@@ -1,9 +1,7 @@
 package service;
 
-import Request.LoginRequest;
-import Request.LogoutRequest;
-import Request.RegisterRequest;
-import Result.RegLogResult;
+import request.*;
+import result.RegLogResult;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
@@ -27,7 +25,7 @@ class UserServiceTest {
     }
 
     @Test
-    void TestRegisterSuccess() throws DataAccessException {
+    void testRegisterSuccess() throws DataAccessException {
         // if
         RegisterRequest request = new RegisterRequest("testUser", "password", "testUser@test.com");
 
@@ -40,7 +38,7 @@ class UserServiceTest {
         assertNotNull( result.authToken());
     }
     @Test
-    void TestLoginSuccess() throws DataAccessException {
+    void testLoginSuccess() throws DataAccessException {
         // if
         UserData uData = new UserData("testUser", "password", "testUser@test.com");
         userDAO.createUser(uData);
@@ -55,7 +53,7 @@ class UserServiceTest {
         assertNotNull( result.authToken());
     }
     @Test
-    void TestLogoutSuccess() throws DataAccessException {
+    void testLogoutSuccess() throws DataAccessException {
         // if
         UserData uData = new UserData("testUser", "password", "testUser@test.com");
         userDAO.createUser(uData);
@@ -71,12 +69,4 @@ class UserServiceTest {
         assertNull(authDAO.findAuth("testUser"));
         assertNull(authDAO.getAuth(token));
     }
-    @Test
-    void TestListGamesSuccess() throws DataAccessException{}
-    @Test
-    void TestCreateGameSuccess() throws DataAccessException{}
-    @Test
-    void TestJoinGameSuccess() throws DataAccessException{}
-    @Test
-    void TestClearSuccess() throws DataAccessException{}
 }

@@ -1,7 +1,7 @@
 package service;
 
-import Request.*;
-import Result.*;
+import request.*;
+import result.*;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
@@ -34,7 +34,7 @@ public class UserService {
                 throw new DataAccessException(400, "Error: bad request");
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
     }
 
@@ -50,7 +50,7 @@ public class UserService {
                 throw new DataAccessException(401, "Error: unauthorized");
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
     }
 
@@ -62,7 +62,7 @@ public class UserService {
                 throw new DataAccessException(401, "Error: unauthorized");
             }
         } catch (DataAccessException e) {
-            throw new DataAccessException(e.StatusCode(), e.getMessage());
+            throw new DataAccessException(e.statusCode(), e.getMessage());
         }
     }
 }
