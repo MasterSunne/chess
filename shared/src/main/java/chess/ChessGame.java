@@ -318,55 +318,37 @@ public class ChessGame {
     }
 
     private boolean canCastleHelperKing(TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck) {
-        ChessBoard originalBoard = getBoard();
         if (getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null) {
-
-            //check for immediate check threats
-            if (!isInCheck(teamColor)) {
-                originalBoard = getBoard();
-                ChessBoard clonedBoard = originalBoard.clone();
-                setBoardInternal(clonedBoard);
-                getBoard().addPiece(kingPosition, null);
-                getBoard().addPiece(firstCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
-                //check first square
-                if (!isInCheck(teamColor)) {
-                    ChessBoard clonedBoard2 = originalBoard.clone();
-                    setBoardInternal(clonedBoard2);
-                    getBoard().addPiece(kingPosition, null);
-                    getBoard().addPiece(secondCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
-                    //check second square
-                    if (!isInCheck(teamColor)) {
-                        setBoardInternal(originalBoard);
-                        return true;
-                    }
-                }
-            }
+            return canCastleHelperBody(teamColor,kingPosition,firstCheck,secondCheck,null);
         }
-        setBoardInternal(originalBoard);
         return false;
     }
     private boolean canCastleHelperQueen(TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck, ChessPosition thirdCheck) {
-        ChessBoard originalBoard = getBoard();
         if (getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null && getBoard().getPiece(thirdCheck) == null) {
+            return canCastleHelperBody(teamColor,kingPosition,firstCheck,secondCheck,thirdCheck);
+        }
+        return false;
+    }
 
-            //check for immediate check threats
+    private boolean canCastleHelperBody(TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck, ChessPosition thirdCheck){
+        ChessBoard originalBoard = getBoard();
+        //check for immediate check threats
+        if (!isInCheck(teamColor)) {
+            originalBoard = getBoard();
+            ChessBoard clonedBoard = originalBoard.clone();
+            setBoardInternal(clonedBoard);
+            getBoard().addPiece(kingPosition, null);
+            getBoard().addPiece(firstCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+            //check first square
             if (!isInCheck(teamColor)) {
-                originalBoard = getBoard();
-                ChessBoard clonedBoard = originalBoard.clone();
-                setBoardInternal(clonedBoard);
+                ChessBoard clonedBoard2 = originalBoard.clone();
+                setBoardInternal(clonedBoard2);
                 getBoard().addPiece(kingPosition, null);
-                getBoard().addPiece(firstCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
-                //check first square
+                getBoard().addPiece(secondCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                //check second square
                 if (!isInCheck(teamColor)) {
-                    ChessBoard clonedBoard2 = originalBoard.clone();
-                    setBoardInternal(clonedBoard2);
-                    getBoard().addPiece(kingPosition, null);
-                    getBoard().addPiece(secondCheck, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
-                    //check second square
-                    if (!isInCheck(teamColor)) {
-                        setBoardInternal(originalBoard);
-                        return true;
-                    }
+                    setBoardInternal(originalBoard);
+                    return true;
                 }
             }
         }
