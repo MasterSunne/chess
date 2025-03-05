@@ -65,31 +65,7 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 else{
                     ChessPiece victimPiece = board.getPiece(currentPosition);
                     if ((correctDirectionArray == whiteDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.BLACK)|| (correctDirectionArray == blackDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ){
-                        if(currentPosition.getRow() == 8 && movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                            ChessMove potentialMove = new ChessMove(position, currentPosition, ChessPiece.PieceType.QUEEN);
-                            validMoves.add(potentialMove);
-                            ChessMove potentialMove2 = new ChessMove(position, currentPosition, ChessPiece.PieceType.ROOK);
-                            validMoves.add(potentialMove2);
-                            ChessMove potentialMove3 = new ChessMove(position, currentPosition, ChessPiece.PieceType.BISHOP);
-                            validMoves.add(potentialMove3);
-                            ChessMove potentialMove4 = new ChessMove(position, currentPosition, ChessPiece.PieceType.KNIGHT);
-                            validMoves.add(potentialMove4);
-                            continue;
-                        }
-                        else if(currentPosition.getRow() == 1 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK){
-                            ChessMove potentialMove = new ChessMove(position, currentPosition, ChessPiece.PieceType.QUEEN);
-                            validMoves.add(potentialMove);
-                            ChessMove potentialMove2 = new ChessMove(position, currentPosition, ChessPiece.PieceType.ROOK);
-                            validMoves.add(potentialMove2);
-                            ChessMove potentialMove3 = new ChessMove(position, currentPosition, ChessPiece.PieceType.BISHOP);
-                            validMoves.add(potentialMove3);
-                            ChessMove potentialMove4 = new ChessMove(position, currentPosition, ChessPiece.PieceType.KNIGHT);
-                            validMoves.add(potentialMove4);
-                            continue;
-                        }
-                        ChessMove potentialMove = new ChessMove(position, currentPosition, null);
-                        validMoves.add(potentialMove);
-                        continue;
+                        pawnPromotionHelper(position, currentPosition, movingPiece, validMoves);
                     }
                 }
             }
@@ -97,74 +73,33 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
             else {
                 if (movementTracker < 2){
                     // check for promotion
-                    if(currentPosition.getRow() == 8 && movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                        ChessMove potentialMove = new ChessMove(position, currentPosition, ChessPiece.PieceType.QUEEN);
-                        validMoves.add(potentialMove);
-                        ChessMove potentialMove2 = new ChessMove(position, currentPosition, ChessPiece.PieceType.ROOK);
-                        validMoves.add(potentialMove2);
-                        ChessMove potentialMove3 = new ChessMove(position, currentPosition, ChessPiece.PieceType.BISHOP);
-                        validMoves.add(potentialMove3);
-                        ChessMove potentialMove4 = new ChessMove(position, currentPosition, ChessPiece.PieceType.KNIGHT);
-                        validMoves.add(potentialMove4);
-                        continue;
-                    }
-                    else if(currentPosition.getRow() == 1 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK){
-                        ChessMove potentialMove = new ChessMove(position, currentPosition, ChessPiece.PieceType.QUEEN);
-                        validMoves.add(potentialMove);
-                        ChessMove potentialMove2 = new ChessMove(position, currentPosition, ChessPiece.PieceType.ROOK);
-                        validMoves.add(potentialMove2);
-                        ChessMove potentialMove3 = new ChessMove(position, currentPosition, ChessPiece.PieceType.BISHOP);
-                        validMoves.add(potentialMove3);
-                        ChessMove potentialMove4 = new ChessMove(position, currentPosition, ChessPiece.PieceType.KNIGHT);
-                        validMoves.add(potentialMove4);
-                        continue;
-                    }
-
-                    ChessMove potentialMove = new ChessMove(position, currentPosition, null);
-                    validMoves.add(potentialMove);
+                    pawnPromotionHelper(position, currentPosition, movingPiece, validMoves);
 
                     // next check if the startRow is correct for a double move
                     if(startRow == 2 && movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE){
                         currentRow++;
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
-//                        System.out.println("Current position before getting piece: " + doublePosition);
 
                         // if there is another piece at the new position
                         if (board.getPiece(doublePosition) != null) {
                             ChessPiece obstaclePiece = board.getPiece(doublePosition);
-//                            System.out.println("Piece found at " + doublePosition + ": " + obstaclePiece);
-
-                            // if pawn tries to move forward then barrier no matter what
-                            if (movementTracker < 2){
-                                continue;
-                            }
                         }
                         else {
-//                            System.out.println("No piece at " + doublePosition);
                             ChessMove doubleMove = new ChessMove(position, doublePosition, null);
                             validMoves.add(doubleMove);}
                     }
                     else if(startRow == 7 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK){
                         currentRow--;
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
-//                        System.out.println("Current position before getting piece: " + doublePosition);
-
                         // if there is another piece at the new position
                         if (board.getPiece(doublePosition) != null) {
                             ChessPiece obstaclePiece = board.getPiece(doublePosition);
-//                            System.out.println("Piece found at " + doublePosition + ": " + obstaclePiece);
-
                             // if pawn tries to move forward then barrier no matter what
-                            if (movementTracker < 2){
-                                continue;
-                            }
                         }
                         else {
-//                            System.out.println("No piece at " + doublePosition);
                             ChessMove doubleMove = new ChessMove(position, doublePosition, null);
                             validMoves.add(doubleMove);}
                     }
-
                 }
                 else {
                     // can't move diagonal w/o capturing
@@ -172,7 +107,22 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 }
             }
         }
-
     return validMoves;
+    }
+
+    private static void pawnPromotionHelper(ChessPosition position, ChessPosition currentPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoves) {
+        if((currentPosition.getRow() == 8 && movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE)||(currentPosition.getRow() == 1 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK)){
+            ChessMove potentialMove = new ChessMove(position, currentPosition, ChessPiece.PieceType.QUEEN);
+            validMoves.add(potentialMove);
+            ChessMove potentialMove2 = new ChessMove(position, currentPosition, ChessPiece.PieceType.ROOK);
+            validMoves.add(potentialMove2);
+            ChessMove potentialMove3 = new ChessMove(position, currentPosition, ChessPiece.PieceType.BISHOP);
+            validMoves.add(potentialMove3);
+            ChessMove potentialMove4 = new ChessMove(position, currentPosition, ChessPiece.PieceType.KNIGHT);
+            validMoves.add(potentialMove4);
+            return;
+        }
+        ChessMove potentialMove = new ChessMove(position, currentPosition, null);
+        validMoves.add(potentialMove);
     }
 }
