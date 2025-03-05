@@ -38,6 +38,23 @@ class UserServiceTest {
         assertNotNull( result.authToken());
     }
     @Test
+    // no email
+    void testRegisterFailure() throws DataAccessException {
+        // if
+        RegisterRequest request = new RegisterRequest("testUser", "password", null);
+
+
+        // when/then
+        DataAccessException exception = assertThrows(DataAccessException.class,() -> {
+            uService.register(request);
+        });
+
+        assertEquals(400, exception.statusCode());
+        assertEquals("Error: bad request", exception.getMessage());
+    }
+
+
+    @Test
     void testLoginSuccess() throws DataAccessException {
         // if
         UserData uData = new UserData("testUser", "password", "testUser@test.com");
@@ -52,6 +69,24 @@ class UserServiceTest {
         assertEquals("testUser", result.username());
         assertNotNull( result.authToken());
     }
+    @Test
+    //bad pswd
+    void testLoginFailure() throws DataAccessException {
+        // if
+        UserData uData = new UserData("testUser", "password", "testUser@test.com");
+        userDAO.createUser(uData);
+        LoginRequest request = new LoginRequest("testUser", "pswd");
+
+        // when/then
+        DataAccessException exception = assertThrows(DataAccessException.class,() -> {
+            uService.login(request);
+        });
+
+        assertEquals(401, exception.statusCode());
+        assertEquals("Error: unauthorized", exception.getMessage());
+    }
+
+
     @Test
     void testLogoutSuccess() throws DataAccessException {
         // if
@@ -68,5 +103,23 @@ class UserServiceTest {
         // then
         assertNull(authDAO.findAuth("testUser"));
         assertNull(authDAO.getAuth(token));
+    }
+    @Test
+    void testLogoutFailure() throws DataAccessException {
+        // if
+        UserData uData = new UserData("testUser", "password", "testUser@test.com");
+        userDAO.createUser(uData);
+        AuthData aData = new AuthData(null,"testUser");
+        authDAO.createAuth(aData);
+        String token = authDAO.findAuth("testUser");
+        LogoutRequest request = new LogoutRequest("12345");
+
+        // when/then
+        DataAccessException exception = assertThrows(DataAccessException.class,() -> {
+            uService.logout(request);
+        });
+
+        assertEquals(401, exception.statusCode());
+        assertEquals("Error: unauthorized", exception.getMessage());
     }
 }
