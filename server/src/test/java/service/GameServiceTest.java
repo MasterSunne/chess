@@ -195,29 +195,4 @@ class GameServiceTest {
         assertNull(gameDAO.getGame(1));
         assertNull(gameDAO.findGame("testGame"));
     }
-    @Test
-    void testClearFailure() throws DataAccessException{
-        // if
-        UserData uData = new UserData("testUser", "password", "testUser@test.com");
-        userDAO.createUser(uData);
-        AuthData aData = new AuthData(null,"testUser");
-        authDAO.createAuth(aData);
-        String token = authDAO.findAuth("testUser");
-        CreateGameRequest gameRequest = new CreateGameRequest("testGame");
-        gService.createGame(token,gameRequest);
-        JoinGameRequest request = new JoinGameRequest(token,"WHITE",1);
-        gService.joinGame(token,request);
-
-        // when
-        authDAO.clear();
-        userDAO.clear();
-        gameDAO.clear();
-
-        // then
-        assertNull(authDAO.getAuth(token));
-        assertNull(authDAO.findAuth("testUser"));
-        assertNull(userDAO.getUser("testUser"));
-        assertNull(gameDAO.getGame(1));
-        assertNull(gameDAO.findGame("testGame"));
-    }
 }
