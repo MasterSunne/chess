@@ -31,7 +31,8 @@ public class ChessMove {
         }
         if (obj instanceof ChessMove other) {
             return startPosition.equals(other.startPosition) && endPosition.equals(other.endPosition)
-                    && ((promotionPiece == null && other.promotionPiece == null) || (promotionPiece != null && promotionPiece.equals(other.promotionPiece)));}
+                    && ((promotionPiece == null && other.promotionPiece == null)
+                    || (promotionPiece != null && promotionPiece.equals(other.promotionPiece)));}
         return false;
     }
 

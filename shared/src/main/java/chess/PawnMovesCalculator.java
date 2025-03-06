@@ -70,23 +70,25 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
 
                         // if there isn't another piece at the new position
-                        if (board.getPiece(doublePosition) == null) {
-                            ChessMove doubleMove = new ChessMove(position, doublePosition, null);
-                            validMoves.add(doubleMove);}
+                        addDoubleMove(board, position, doublePosition, validMoves);
                     }
                     else if(startRow == 7 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK){
                         currentRow--;
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
                         // if there is another piece at the new position
-                        if (board.getPiece(doublePosition) == null) {
-                            ChessMove doubleMove = new ChessMove(position, doublePosition, null);
-                            validMoves.add(doubleMove);}
+                        addDoubleMove(board, position, doublePosition, validMoves);
                     }
                 }
                 // can't move diagonal w/o capturing
             }
         }
     return validMoves;
+    }
+
+    private static void addDoubleMove(ChessBoard board, ChessPosition position, ChessPosition doublePosition, ArrayList<ChessMove> validMoves) {
+        if (board.getPiece(doublePosition) == null) {
+            ChessMove doubleMove = new ChessMove(position, doublePosition, null);
+            validMoves.add(doubleMove);}
     }
 
     private static void pawnPromotionHelper(ChessPosition position, ChessPosition currentPosition,
