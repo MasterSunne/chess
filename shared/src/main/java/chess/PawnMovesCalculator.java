@@ -52,7 +52,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 // if pawn tries to move forward then barrier no matter what -> pawn can capture diagonally
                 if(movementTracker > 1){
                     ChessPiece victimPiece = board.getPiece(currentPosition);
-                    if ((correctDirectionArray == whiteDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.BLACK)|| (correctDirectionArray == blackDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ){
+                    if ((correctDirectionArray == whiteDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.BLACK)
+                            || (correctDirectionArray == blackDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ){
                         pawnPromotionHelper(position, currentPosition, movingPiece, validMoves);
                     }
                 }
@@ -88,8 +89,10 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
     return validMoves;
     }
 
-    private static void pawnPromotionHelper(ChessPosition position, ChessPosition currentPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoves) {
-        if((currentPosition.getRow() == 8 && movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE)||(currentPosition.getRow() == 1 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK)){
+    private static void pawnPromotionHelper(ChessPosition position, ChessPosition currentPosition,
+                                            ChessPiece movingPiece, ArrayList<ChessMove> validMoves) {
+        if((currentPosition.getRow() == 8 && movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE)
+                ||(currentPosition.getRow() == 1 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK)){
             ChessMove potentialMove = new ChessMove(position, currentPosition, ChessPiece.PieceType.QUEEN);
             validMoves.add(potentialMove);
             ChessMove potentialMove2 = new ChessMove(position, currentPosition, ChessPiece.PieceType.ROOK);

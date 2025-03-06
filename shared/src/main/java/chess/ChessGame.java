@@ -74,12 +74,22 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return checkmate == chessGame.checkmate && stalemate == chessGame.stalemate && getKingSideCastleWhite() == chessGame.getKingSideCastleWhite() && getKingSideCastleBlack() == chessGame.getKingSideCastleBlack() && getQueenSideCastleWhite() == chessGame.getQueenSideCastleWhite() && getQueenSideCastleBlack() == chessGame.getQueenSideCastleBlack() && canEnPassantWhite == chessGame.canEnPassantWhite && canEnPassantBlack == chessGame.canEnPassantBlack && getTeamTurn() == chessGame.getTeamTurn() && Objects.equals(currentBoard, chessGame.currentBoard);
+        return checkmate == chessGame.checkmate
+                && stalemate == chessGame.stalemate
+                && getKingSideCastleWhite() == chessGame.getKingSideCastleWhite()
+                && getKingSideCastleBlack() == chessGame.getKingSideCastleBlack()
+                && getQueenSideCastleWhite() == chessGame.getQueenSideCastleWhite()
+                && getQueenSideCastleBlack() == chessGame.getQueenSideCastleBlack()
+                && canEnPassantWhite == chessGame.canEnPassantWhite
+                && canEnPassantBlack == chessGame.canEnPassantBlack
+                && getTeamTurn() == chessGame.getTeamTurn()
+                && Objects.equals(currentBoard, chessGame.currentBoard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTeamTurn(), currentBoard, checkmate, stalemate, getKingSideCastleWhite(), getKingSideCastleBlack(), getQueenSideCastleWhite(), getQueenSideCastleBlack(), canEnPassantWhite, canEnPassantBlack);
+        return Objects.hash(getTeamTurn(), currentBoard, checkmate, stalemate, getKingSideCastleWhite(),
+                getKingSideCastleBlack(), getQueenSideCastleWhite(), getQueenSideCastleBlack(), canEnPassantWhite, canEnPassantBlack);
     }
 
     /**
@@ -134,7 +144,8 @@ public class ChessGame {
                         canEnPassantBlack = false;
                         canEnPassantWhite = false;
                     } // castling handler
-                    else if(movingPiece.getPieceType() == ChessPiece.PieceType.KING && Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) > 1){
+                    else if(movingPiece.getPieceType() == ChessPiece.PieceType.KING
+                            && Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) > 1){
                         // king's side
                         if (move.getStartPosition().getColumn() - move.getEndPosition().getColumn() == -2) {
                             //rook
@@ -157,7 +168,8 @@ public class ChessGame {
                         canEnPassantWhite = false;
                     }
                     // En Passant trigger
-                    else if(movingPiece.getPieceType() == ChessPiece.PieceType.PAWN &&  Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) > 1){
+                    else if(movingPiece.getPieceType() == ChessPiece.PieceType.PAWN
+                            &&  Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) > 1){
                         if(movingPiece.getTeamColor() == TeamColor.WHITE){
                             canEnPassantBlack = true;
                         } else{
@@ -168,7 +180,16 @@ public class ChessGame {
                         getBoard().addPiece(startPosition,null);
                     }
                     // En Passant handler
-                    else if(movingPiece.getPieceType() == ChessPiece.PieceType.PAWN && getBoard().getPiece(endPosition) == null && ((move.getEndPosition().getRow() == move.getStartPosition().getRow() + 1 && move.getEndPosition().getColumn() == move.getStartPosition().getColumn() + 1) || (move.getEndPosition().getRow() == move.getStartPosition().getRow() + 1 && move.getEndPosition().getColumn() == move.getStartPosition().getColumn() - 1) || (move.getEndPosition().getRow() == move.getStartPosition().getRow() - 1 && move.getEndPosition().getColumn() == move.getStartPosition().getColumn() + 1) || (move.getEndPosition().getRow() == move.getStartPosition().getRow() - 1 && move.getEndPosition().getColumn() == move.getStartPosition().getColumn() - 1))){
+                    else if(movingPiece.getPieceType() == ChessPiece.PieceType.PAWN
+                            && getBoard().getPiece(endPosition) == null
+                            && ((move.getEndPosition().getRow() == move.getStartPosition().getRow() + 1
+                                && move.getEndPosition().getColumn() == move.getStartPosition().getColumn() + 1)
+                            || (move.getEndPosition().getRow() == move.getStartPosition().getRow() + 1
+                                && move.getEndPosition().getColumn() == move.getStartPosition().getColumn() - 1)
+                            || (move.getEndPosition().getRow() == move.getStartPosition().getRow() - 1
+                                && move.getEndPosition().getColumn() == move.getStartPosition().getColumn() + 1)
+                            || (move.getEndPosition().getRow() == move.getStartPosition().getRow() - 1
+                                && move.getEndPosition().getColumn() == move.getStartPosition().getColumn() - 1))){
                         ChessPosition capturePosition = new ChessPosition(startPosition.getRow(),endPosition.getColumn());
                         getBoard().addPiece(startPosition,null);
                         getBoard().addPiece(endPosition,movingPiece);
