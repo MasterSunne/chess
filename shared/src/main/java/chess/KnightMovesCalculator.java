@@ -1,5 +1,5 @@
 package chess;
-import java.util.ArrayList;
+import chess.base.SingleSpaceCalculator;
 
 public class KnightMovesCalculator extends SingleSpaceCalculator implements PieceMovesCalculator {
     private final int[][] directionArray = {
