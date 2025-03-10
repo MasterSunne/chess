@@ -76,7 +76,7 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                     else if(startRow == 7 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK){
                         currentRow--;
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
-                        // if there is another piece at the new position
+                        // if there isn't another piece at the new position
                         if (board.getPiece(doublePosition) == null) {
                             ChessMove doubleMove = new ChessMove(position, doublePosition, null);
                             validMoves.add(doubleMove);}
