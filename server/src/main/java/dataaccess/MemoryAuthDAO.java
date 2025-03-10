@@ -1,7 +1,6 @@
 package dataaccess;
 
 import model.AuthData;
-
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -41,6 +40,7 @@ public class MemoryAuthDAO implements AuthDAO{
         return null;
     }
 
+    //returns AuthData given an authToken
     @Override
     public AuthData getAuth(String token) throws DataAccessException {
         try {
