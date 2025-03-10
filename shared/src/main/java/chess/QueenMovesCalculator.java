@@ -1,5 +1,5 @@
 package chess;
-import java.util.ArrayList;
+import chess.base.MultiSpaceCalculator;
 
 public class QueenMovesCalculator extends MultiSpaceCalculator implements PieceMovesCalculator {
     private final int[][] directionArray = {

@@ -83,7 +83,8 @@ public class ChessGameValidMoves {
                     ChessPosition leftTry = new ChessPosition(newRow,newColMinus);
                     ChessPosition leftCapture = new ChessPosition(startPosition.getRow(),newColMinus);
 
-                    if(newColMinus >= 1 && getBoard().getPiece(leftCapture) != null && getBoard().getPiece(leftCapture).getPieceType() == ChessPiece.PieceType.PAWN ){
+                    if(newColMinus >= 1 && getBoard().getPiece(leftCapture) != null
+                            && getBoard().getPiece(leftCapture).getPieceType() == ChessPiece.PieceType.PAWN ){
                         enPassantTestWhite(startPosition, movingPiece, validMoveList, clonedBoard1, leftTry, leftCapture);
                     }
 
@@ -91,7 +92,8 @@ public class ChessGameValidMoves {
                     ChessPosition rightTry = new ChessPosition(newRow,newColPlus);
                     ChessPosition rightCapture = new ChessPosition(startPosition.getRow(),newColPlus);
 
-                    if(newColPlus <= 8 && getBoard().getPiece(rightCapture) != null && getBoard().getPiece(rightCapture).getPieceType() == ChessPiece.PieceType.PAWN){
+                    if(newColPlus <= 8 && getBoard().getPiece(rightCapture) != null
+                            && getBoard().getPiece(rightCapture).getPieceType() == ChessPiece.PieceType.PAWN){
                         enPassantTestWhite(startPosition, movingPiece, validMoveList, clonedBoard1, rightTry, rightCapture);
                     }
                     setBoardInternal(originalBoard);
@@ -106,7 +108,8 @@ public class ChessGameValidMoves {
                     ChessPosition leftTry = new ChessPosition(newRow,newColMinus);
                     ChessPosition leftCapture = new ChessPosition(startPosition.getRow(),newColMinus);
 
-                    if(newColMinus >= 1 && getBoard().getPiece(leftCapture) != null && getBoard().getPiece(leftCapture).getPieceType() == ChessPiece.PieceType.PAWN){
+                    if(newColMinus >= 1 && getBoard().getPiece(leftCapture) != null
+                            && getBoard().getPiece(leftCapture).getPieceType() == ChessPiece.PieceType.PAWN){
                         enPassantTestBlack(startPosition, movingPiece, validMoveList, clonedBoard1, leftTry, leftCapture);
                     }
 
@@ -115,7 +118,8 @@ public class ChessGameValidMoves {
                     ChessPosition rightTry = new ChessPosition(newRow,newColPlus);
                     ChessPosition rightCapture = new ChessPosition(startPosition.getRow(),newColPlus);
 
-                    if(newColPlus <= 8 && getBoard().getPiece(rightCapture) != null && getBoard().getPiece(rightCapture).getPieceType() == ChessPiece.PieceType.PAWN){
+                    if(newColPlus <= 8 && getBoard().getPiece(rightCapture) != null
+                            && getBoard().getPiece(rightCapture).getPieceType() == ChessPiece.PieceType.PAWN){
                         enPassantTestBlack(startPosition, movingPiece, validMoveList, clonedBoard1, rightTry, rightCapture);
                     }
                     setBoardInternal(originalBoard);
@@ -128,7 +132,8 @@ public class ChessGameValidMoves {
         }
     }
 
-    private void enPassantTestBlack(ChessPosition startPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoveList, ChessBoard clonedBoard1, ChessPosition leftTry, ChessPosition leftCapture) {
+    private void enPassantTestBlack(ChessPosition startPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoveList,
+                                    ChessBoard clonedBoard1, ChessPosition leftTry, ChessPosition leftCapture) {
         clonedBoard1.addPiece(leftTry,movingPiece);
         clonedBoard1.addPiece(startPosition,null);
         clonedBoard1.addPiece(leftCapture,null);
@@ -138,7 +143,8 @@ public class ChessGameValidMoves {
         }
     }
 
-    private void enPassantTestWhite(ChessPosition startPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoveList, ChessBoard clonedBoard1, ChessPosition leftTry, ChessPosition leftCapture) {
+    private void enPassantTestWhite(ChessPosition startPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoveList,
+                                    ChessBoard clonedBoard1, ChessPosition leftTry, ChessPosition leftCapture) {
         clonedBoard1.addPiece(leftTry,movingPiece);
         clonedBoard1.addPiece(startPosition,null);
         clonedBoard1.addPiece(leftCapture,null);
@@ -182,7 +188,8 @@ public class ChessGameValidMoves {
             ChessPosition rookPosition = new ChessPosition(1,8);
             //make sure the king and rook are on original squares
             if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
-                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
+                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING
+                        && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
                     //make sure there aren't any pieces between them
                     ChessPosition oneSix = new ChessPosition(1,6);
                     ChessPosition oneSeven = new ChessPosition(1,7);
@@ -195,7 +202,8 @@ public class ChessGameValidMoves {
             ChessPosition rookPosition = new ChessPosition(8,8);
             //make sure the king and rook are on original squares
             if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
-                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
+                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING
+                        && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
                     //make sure there aren't any pieces between them
                     ChessPosition eightSix = new ChessPosition(8,6);
                     ChessPosition eightSeven = new ChessPosition(8,7);
@@ -212,7 +220,8 @@ public class ChessGameValidMoves {
             ChessPosition rookPosition = new ChessPosition(1,1);
             //make sure the king and rook are on original squares
             if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
-                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
+                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING
+                        && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
                     //make sure there aren't any pieces between them
                     ChessPosition oneFour = new ChessPosition(1,4);
                     ChessPosition oneThree = new ChessPosition(1,3);
@@ -226,7 +235,8 @@ public class ChessGameValidMoves {
             ChessPosition rookPosition = new ChessPosition(8,1);
             //make sure the king and rook are on original squares
             if (getBoard().getPiece(kingPosition) != null && getBoard().getPiece(rookPosition) != null) {
-                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
+                if(getBoard().getPiece(kingPosition).getPieceType() == ChessPiece.PieceType.KING
+                        && getBoard().getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK){
                     //make sure there aren't any pieces between them
                     ChessPosition eightFour = new ChessPosition(8,4);
                     ChessPosition eightThree = new ChessPosition(8,3);
@@ -238,14 +248,16 @@ public class ChessGameValidMoves {
         return false;
     }
 
-    private boolean canCastleHelperKing(ChessGame.TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck) {
+    private boolean canCastleHelperKing(ChessGame.TeamColor teamColor, ChessPosition kingPosition,
+                                        ChessPosition firstCheck, ChessPosition secondCheck) {
         if (getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null) {
 
             return canCastleHelperBody(teamColor, kingPosition, firstCheck, secondCheck, null);
         }
         return false;
     }
-    private boolean canCastleHelperQueen(ChessGame.TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck, ChessPosition thirdCheck) {
+    private boolean canCastleHelperQueen(ChessGame.TeamColor teamColor, ChessPosition kingPosition,
+                                         ChessPosition firstCheck, ChessPosition secondCheck, ChessPosition thirdCheck) {
         if (getBoard().getPiece(firstCheck) == null && getBoard().getPiece(secondCheck) == null && getBoard().getPiece(thirdCheck) == null) {
 
             return canCastleHelperBody(teamColor, kingPosition, firstCheck, secondCheck, thirdCheck);
@@ -253,7 +265,8 @@ public class ChessGameValidMoves {
         return false;
     }
 
-    private boolean canCastleHelperBody(ChessGame.TeamColor teamColor, ChessPosition kingPosition, ChessPosition firstCheck, ChessPosition secondCheck, ChessPosition thirdCheck) {
+    private boolean canCastleHelperBody(ChessGame.TeamColor teamColor, ChessPosition kingPosition,
+                                        ChessPosition firstCheck, ChessPosition secondCheck, ChessPosition thirdCheck) {
         ChessBoard originalBoard = getBoard();
         //check for immediate check threats
         if (!currentGame.isInCheck(teamColor)) {

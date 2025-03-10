@@ -1,6 +1,7 @@
 package passoff.chess.extracredit;
 
 import chess.*;
+import chess.InvalidMoveException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

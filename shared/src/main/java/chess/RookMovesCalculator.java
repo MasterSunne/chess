@@ -1,5 +1,7 @@
 package chess;
 
+import chess.base.MultiSpaceCalculator;
+
 public class RookMovesCalculator extends MultiSpaceCalculator implements PieceMovesCalculator {
 
     private final int[][] directionArray = {

@@ -1,5 +1,5 @@
 package chess;
-import java.util.ArrayList;
+import chess.base.MultiSpaceCalculator;
 
 
 public class BishopMovesCalculator extends MultiSpaceCalculator implements PieceMovesCalculator {

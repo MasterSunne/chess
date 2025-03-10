@@ -64,7 +64,8 @@ public class MemoryGameDAO implements GameDAO{
             gameMap.remove(id);
             GameData newGame = null;
 
-            if ((newColor.equals("WHITE") && changingGame.whiteUsername() != null)||(newColor.equals("BLACK") && changingGame.blackUsername() != null)) {
+            if ((newColor.equals("WHITE") && changingGame.whiteUsername() != null)
+                    ||(newColor.equals("BLACK") && changingGame.blackUsername() != null)) {
                 throw new DataAccessException(403,"Error: already taken");
             }
             if (newColor.equals("WHITE")) {

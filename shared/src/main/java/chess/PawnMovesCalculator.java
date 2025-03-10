@@ -52,7 +52,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 // if pawn tries to move forward then barrier no matter what -> pawn can capture diagonally
                 if(movementTracker > 1){
                     ChessPiece victimPiece = board.getPiece(currentPosition);
-                    if ((correctDirectionArray == whiteDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.BLACK)|| (correctDirectionArray == blackDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ){
+                    if ((correctDirectionArray == whiteDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.BLACK)
+                            || (correctDirectionArray == blackDirectionArray && victimPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ){
                         pawnPromotionHelper(position, currentPosition, movingPiece, validMoves);
                     }
                 }
@@ -69,17 +70,13 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
 
                         // if there isn't another piece at the new position
-                        if (board.getPiece(doublePosition) == null) {
-                            ChessMove doubleMove = new ChessMove(position, doublePosition, null);
-                            validMoves.add(doubleMove);}
+                        addDoubleMove(board, position, doublePosition, validMoves);
                     }
                     else if(startRow == 7 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK){
                         currentRow--;
                         ChessPosition doublePosition = new ChessPosition(currentRow, currentCol);
-                        // if there isn't another piece at the new position
-                        if (board.getPiece(doublePosition) == null) {
-                            ChessMove doubleMove = new ChessMove(position, doublePosition, null);
-                            validMoves.add(doubleMove);}
+                        // if there is another piece at the new position
+                        addDoubleMove(board, position, doublePosition, validMoves);
                     }
                 }
                 // can't move diagonal w/o capturing
@@ -88,8 +85,16 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
     return validMoves;
     }
 
-    private static void pawnPromotionHelper(ChessPosition position, ChessPosition currentPosition, ChessPiece movingPiece, ArrayList<ChessMove> validMoves) {
-        if((currentPosition.getRow() == 8 && movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE)||(currentPosition.getRow() == 1 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK)){
+    private static void addDoubleMove(ChessBoard board, ChessPosition position, ChessPosition doublePosition, ArrayList<ChessMove> validMoves) {
+        if (board.getPiece(doublePosition) == null) {
+            ChessMove doubleMove = new ChessMove(position, doublePosition, null);
+            validMoves.add(doubleMove);}
+    }
+
+    private static void pawnPromotionHelper(ChessPosition position, ChessPosition currentPosition,
+                                            ChessPiece movingPiece, ArrayList<ChessMove> validMoves) {
+        if((currentPosition.getRow() == 8 && movingPiece.getTeamColor() == ChessGame.TeamColor.WHITE)
+                ||(currentPosition.getRow() == 1 && movingPiece.getTeamColor() == ChessGame.TeamColor.BLACK)){
             ChessMove potentialMove = new ChessMove(position, currentPosition, ChessPiece.PieceType.QUEEN);
             validMoves.add(potentialMove);
             ChessMove potentialMove2 = new ChessMove(position, currentPosition, ChessPiece.PieceType.ROOK);
