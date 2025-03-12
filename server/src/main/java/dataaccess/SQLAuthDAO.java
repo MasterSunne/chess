@@ -89,13 +89,13 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
 
 
     private final String[] createStatements = {
-            """
-            
-            -- -----------------------------------------------------
-            -- Table `AuthData`
-            -- -----------------------------------------------------
-            DROP TABLE IF EXISTS `AuthData` ;
-            """,
+//            """
+//
+//            -- -----------------------------------------------------
+//            -- Table `AuthData`
+//            -- -----------------------------------------------------
+//            DROP TABLE IF EXISTS `AuthData` ;
+//            """,
 
             """
             CREATE TABLE IF NOT EXISTS `authdata` (
@@ -104,12 +104,12 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
               UNIQUE INDEX `token_UNIQUE` (`authToken` ASC) VISIBLE)
             ENGINE = InnoDB;
             """,
-            """
-            -- -----------------------------------------------------
-            -- Table `GameData`
-            -- -----------------------------------------------------
-            DROP TABLE IF EXISTS `GameData` ;
-            """,
+//            """
+//            -- -----------------------------------------------------
+//            -- Table `GameData`
+//            -- -----------------------------------------------------
+//            DROP TABLE IF EXISTS `GameData` ;
+//            """,
 
             """
             CREATE TABLE IF NOT EXISTS `gamedata` (
@@ -123,13 +123,13 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
               UNIQUE INDEX `gameName_UNIQUE` (`gameName` ASC) VISIBLE)
             ENGINE = InnoDB;
             """,
-
-            """
-            -- -----------------------------------------------------
-            -- Table `UserData`
-            -- -----------------------------------------------------
-            DROP TABLE IF EXISTS `UserData` ;
-            """,
+//
+//            """
+//            -- -----------------------------------------------------
+//            -- Table `UserData`
+//            -- -----------------------------------------------------
+//            DROP TABLE IF EXISTS `UserData` ;
+//            """,
             """
             CREATE TABLE IF NOT EXISTS `userdata` (
               `id` INT NOT NULL AUTO_INCREMENT,
