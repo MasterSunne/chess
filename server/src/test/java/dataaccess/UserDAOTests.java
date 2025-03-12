@@ -60,14 +60,12 @@ public class UserDAOTests {
     public void testGetUserFailure() throws DataAccessException {
         //takes in username, outputs UserData
         // if
-        UserData expectedData = new UserData("newUser","newPassword","new@mail.com");
+        UserData expectedData = new UserData("someUser","somePassword","something@mail.com");
         userDAO.createUser(expectedData);
         // when
         UserData testData = userDAO.getUser("newUser");
         // then
-        assertEquals(expectedData.username(),testData.username());
-        assertEquals(expectedData.email(),testData.email());
-        assertEquals(60, testData.password().length());
+        assertNull(testData);
     }
 
 
