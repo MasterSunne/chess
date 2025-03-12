@@ -33,7 +33,7 @@ public class SQLGameDAO extends SQL_DAO implements GameDAO {
     @Override
     public GameData findGame(String gameName) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameName FROM gamedata WHERE gameName=?";
+            var statement = "SELECT id, whiteUsername, blackUsername, gameName, gameJSON FROM gamedata WHERE gameName=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, gameName);
                 try (var rs = ps.executeQuery()) {
@@ -51,7 +51,7 @@ public class SQLGameDAO extends SQL_DAO implements GameDAO {
     @Override
     public GameData getGame(Integer id) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT id FROM gamedata WHERE id=?";
+            var statement = "SELECT id, whiteUsername, blackUsername, gameName, gameJSON FROM gamedata WHERE id=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, id);
                 try (var rs = ps.executeQuery()) {
@@ -87,7 +87,7 @@ public class SQLGameDAO extends SQL_DAO implements GameDAO {
     @Override
     public void updateGame(String newUser, String newColor, int id) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT id FROM gamedata WHERE id=?";
+            var statement = "SELECT id, whiteUsername, blackUsername, gameName, gameJSON FROM gamedata WHERE id=?";
             try(var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, id);
                 try (var rs = ps.executeQuery()) {
@@ -98,11 +98,11 @@ public class SQLGameDAO extends SQL_DAO implements GameDAO {
                             throw new DataAccessException(403, "Error: already taken");
                         }
                         if (newColor.equals("WHITE")) {
-                            var statement2 = "UPDATE gamedata SET whiteUsername = 'newUser' WHERE id=?";
+                            var statement2 = "UPDATE gamedata SET whiteUsername = '" + newUser + "' WHERE id=?";
                             executeUpdate(statement2,id);
 
                         } else if (newColor.equals("BLACK")) {
-                            var statement3 = "UPDATE gamedata SET blackUsername = 'newUser' WHERE id=?";
+                            var statement3 = "UPDATE gamedata SET blackUsername = '" + newUser + "' WHERE id=?";
                             executeUpdate(statement3,id);
                         }
                     }

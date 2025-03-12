@@ -18,14 +18,9 @@ public class SQLUserDAO extends SQL_DAO implements UserDAO {
             String hashedPassword = BCrypt.hashpw(u.password(), BCrypt.gensalt());
             String email = u.email();
 
-            System.out.println("Attempting to insert: " + username + ", " + hashedPassword + ", " + email);
-
             executeUpdate(statement, username, hashedPassword, email);
 
-            System.out.println("Insertion successful.");
-
         } catch (DataAccessException e) {
-            System.out.println("Error inserting user: " + e.getMessage());
             throw new DataAccessException(500,e.getMessage());
         }
     }
