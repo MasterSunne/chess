@@ -136,7 +136,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
               `id` INT NOT NULL AUTO_INCREMENT,
               `username` VARCHAR(30) NOT NULL,
               `email` VARCHAR(150) NOT NULL,
-              `password` VARCHAR(40) NOT NULL,
+              `password` VARCHAR(100) NOT NULL,
               UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
               UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
               UNIQUE INDEX `password_UNIQUE` (`password` ASC) VISIBLE,
