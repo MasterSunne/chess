@@ -6,6 +6,7 @@ import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import dataaccess.DataAccessException;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
 
@@ -41,7 +42,9 @@ public class UserService {
     public RegLogResult login(LoginRequest loginRequest) throws DataAccessException {
         try {
             String user = loginRequest.username();
-            if(userDAO.getUser(user) != null && userDAO.getUser(user).password().equals(loginRequest.password())){
+            if(userDAO.getUser(user) != null
+                    && Bcrypt.checkpw(loginRequest.password(),userDAO.getUser(user).password())){
+
                 AuthData aDataWrapper = new AuthData(null, loginRequest.username());
                 AuthData aData = authDAO.createAuth(aDataWrapper);
                 String token = aData.authToken();

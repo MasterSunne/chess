@@ -4,7 +4,8 @@ import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.HashMap;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SQLUserDAO extends SQL_DAO implements UserDAO {
 
@@ -38,6 +39,13 @@ public class SQLUserDAO extends SQL_DAO implements UserDAO {
             throw new DataAccessException(500, String.format("Unable to read data: %s", e.getMessage()));
         }
         return null;
+    }
+
+    private UserData readUser(ResultSet rs) throws SQLException {
+        var username = rs.getString("username");
+        var hashedPassword = rs.getString("password");
+        var email = rs.getString("email");
+        return new UserData(username, hashedPassword,email);
     }
 
     @Override

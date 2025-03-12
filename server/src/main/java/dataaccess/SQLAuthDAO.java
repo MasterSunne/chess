@@ -90,31 +90,30 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
 
     private final String[] createStatements = {
             """
-            -- -----------------------------------------------------
-            -- Schema chess_server
-            -- -----------------------------------------------------
-            CREATE SCHEMA IF NOT EXISTS `chess_server` DEFAULT CHARACTER SET utf8 ;
-            USE `chess_server` ;
             
             -- -----------------------------------------------------
-            -- Table `chess_server`.`AuthData`
+            -- Table `AuthData`
             -- -----------------------------------------------------
-            DROP TABLE IF EXISTS `chess_server`.`AuthData` ;
-            
-            CREATE TABLE IF NOT EXISTS `chess_server`.`AuthData` (
+            DROP TABLE IF EXISTS `AuthData` ;
+            """,
+
+            """
+            CREATE TABLE IF NOT EXISTS `AuthData` (
               `username` VARCHAR(30) NOT NULL,
               `authToken` VARCHAR(60) NOT NULL,
               UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
               UNIQUE INDEX `token_UNIQUE` (`authToken` ASC) VISIBLE)
             ENGINE = InnoDB;
-            
-            
+            """,
+            """
             -- -----------------------------------------------------
-            -- Table `chess_server`.`GameData`
+            -- Table `GameData`
             -- -----------------------------------------------------
-            DROP TABLE IF EXISTS `chess_server`.`GameData` ;
-            
-            CREATE TABLE IF NOT EXISTS `chess_server`.`GameData` (
+            DROP TABLE IF EXISTS `GameData` ;
+            """,
+
+            """
+            CREATE TABLE IF NOT EXISTS `GameData` (
               `idGameData` INT NOT NULL AUTO_INCREMENT,
               `whiteUsername` VARCHAR(30) NULL,
               `blackUsername` VARCHAR(30) NULL,
@@ -124,14 +123,16 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
               UNIQUE INDEX `idGameData_UNIQUE` (`idGameData` ASC) VISIBLE,
               UNIQUE INDEX `gameName_UNIQUE` (`gameName` ASC) VISIBLE)
             ENGINE = InnoDB;
-            
-            
+            """,
+
+            """
             -- -----------------------------------------------------
-            -- Table `chess_server`.`UserData`
+            -- Table `UserData`
             -- -----------------------------------------------------
-            DROP TABLE IF EXISTS `chess_server`.`UserData` ;
-            
-            CREATE TABLE IF NOT EXISTS `chess_server`.`UserData` (
+            DROP TABLE IF EXISTS `UserData` ;
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS `UserData` (
               `id` INT NOT NULL AUTO_INCREMENT,
               `username` VARCHAR(30) NOT NULL,
               `email` VARCHAR(150) NOT NULL,
