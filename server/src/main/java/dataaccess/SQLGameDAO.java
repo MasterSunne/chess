@@ -86,7 +86,31 @@ public class SQLGameDAO extends SQL_DAO implements GameDAO {
 
     @Override
     public void updateGame(String newUser, String newColor, int id) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT id FROM GameData WHERE id=?";
+            try(var ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, id);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        GameData changingGame = readGame(rs);
+                        if ((newColor.equals("WHITE") && changingGame.whiteUsername() != null)
+                                || (newColor.equals("BLACK") && changingGame.blackUsername() != null)) {
+                            throw new DataAccessException(403, "Error: already taken");
+                        }
+                        if (newColor.equals("WHITE")) {
+                            var statement2 = "UPDATE GameData SET whiteUsername = 'newUser' WHERE id=?";
+                            executeUpdate(statement2,id);
 
+                        } else if (newColor.equals("BLACK")) {
+                            var statement3 = "UPDATE GameData SET blackUsername = 'newUser' WHERE id=?";
+                            executeUpdate(statement3,id);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
     }
 
     private GameData readGame(ResultSet rs) throws SQLException {

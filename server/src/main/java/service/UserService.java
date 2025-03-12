@@ -43,7 +43,7 @@ public class UserService {
         try {
             String user = loginRequest.username();
             if(userDAO.getUser(user) != null
-                    && Bcrypt.checkpw(loginRequest.password(),userDAO.getUser(user).password())){
+                    && BCrypt.checkpw(loginRequest.password(),userDAO.getUser(user).password())){
 
                 AuthData aDataWrapper = new AuthData(null, loginRequest.username());
                 AuthData aData = authDAO.createAuth(aDataWrapper);
