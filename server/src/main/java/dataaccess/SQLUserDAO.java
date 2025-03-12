@@ -1,13 +1,12 @@
 package dataaccess;
 
-import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SQLUserDAO extends SQL_DAO implements UserDAO {
+public class SQLUserDAO extends SqlDaoBase implements UserDAO {
 
 
     @Override
@@ -23,6 +22,11 @@ public class SQLUserDAO extends SQL_DAO implements UserDAO {
         } catch (DataAccessException e) {
             throw new DataAccessException(500,e.getMessage());
         }
+    }
+
+    @Override
+    public boolean verifyPassword(String cleanPassword, String hashedPassword){
+        return BCrypt.checkpw(cleanPassword,hashedPassword);
     }
 
     @Override

@@ -2,18 +2,13 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
-
-public class SQLGameDAO extends SQL_DAO implements GameDAO {
+public class SQLGameDAO extends SqlDaoBase implements GameDAO {
 
     @Override
     public void createGame(GameData g) throws DataAccessException {
@@ -22,9 +17,13 @@ public class SQLGameDAO extends SQL_DAO implements GameDAO {
             int id = g.gameID();
             String whiteUser = g.whiteUsername();
             String blackUser = g.blackUsername();
-            String name = g.gameName();
-            String json = new Gson().toJson(g.game());
-            executeUpdate(statement, id, whiteUser, blackUser, name, json);
+            if (g.gameName() != null && g.game() != null) {
+                String name = g.gameName();
+                String json = new Gson().toJson(g.game());
+                executeUpdate(statement, id, whiteUser, blackUser, name, json);
+            } else{
+                throw new DataAccessException(500,"can't be null");
+            }
         } catch (DataAccessException e) {
             throw new DataAccessException(500,e.getMessage());
         }
@@ -91,25 +90,29 @@ public class SQLGameDAO extends SQL_DAO implements GameDAO {
             try(var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, id);
                 try (var rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        GameData changingGame = readGame(rs);
-                        if ((newColor.equals("WHITE") && changingGame.whiteUsername() != null)
-                                || (newColor.equals("BLACK") && changingGame.blackUsername() != null)) {
-                            throw new DataAccessException(403, "Error: already taken");
-                        }
-                        if (newColor.equals("WHITE")) {
-                            var statement2 = "UPDATE gamedata SET whiteUsername = '" + newUser + "' WHERE id=?";
-                            executeUpdate(statement2,id);
-
-                        } else if (newColor.equals("BLACK")) {
-                            var statement3 = "UPDATE gamedata SET blackUsername = '" + newUser + "' WHERE id=?";
-                            executeUpdate(statement3,id);
-                        }
-                    }
+                    updateGameHelper(newUser, newColor, id, rs);
                 }
             }
         } catch (SQLException e) {
             throw new DataAccessException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
+    }
+
+    private void updateGameHelper(String newUser, String newColor, int id, ResultSet rs) throws SQLException, DataAccessException {
+        if (rs.next()) {
+            GameData changingGame = readGame(rs);
+            if ((newColor.equals("WHITE") && changingGame.whiteUsername() != null)
+                    || (newColor.equals("BLACK") && changingGame.blackUsername() != null)) {
+                throw new DataAccessException(403, "Error: already taken");
+            }
+            if (newColor.equals("WHITE")) {
+                var statement2 = "UPDATE gamedata SET whiteUsername = '" + newUser + "' WHERE id=?";
+                executeUpdate(statement2, id);
+
+            } else if (newColor.equals("BLACK")) {
+                var statement3 = "UPDATE gamedata SET blackUsername = '" + newUser + "' WHERE id=?";
+                executeUpdate(statement3, id);
+            }
         }
     }
 

@@ -8,4 +8,6 @@ public interface UserDAO {
     public UserData getUser(String username) throws DataAccessException;
 
     void clear() throws DataAccessException;
+
+    boolean verifyPassword(String password, String dbPass);
 }

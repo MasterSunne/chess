@@ -58,7 +58,8 @@ class UserServiceTest {
     void testLoginSuccess() throws DataAccessException {
         // if
         UserData uData = new UserData("testUser", "password", "testUser@test.com");
-        userDAO.createUser(uData);
+        RegisterRequest rr = new RegisterRequest(uData.username(),uData.password(),uData.email());
+        uService.register(rr);
         LoginRequest request = new LoginRequest("testUser", "password");
 
         // when

@@ -42,18 +42,21 @@ public class UserService {
     public RegLogResult login(LoginRequest loginRequest) throws DataAccessException {
         try {
             String user = loginRequest.username();
-            if(userDAO.getUser(user) != null
-                    && BCrypt.checkpw(loginRequest.password(),userDAO.getUser(user).password())){
-
-                AuthData aDataWrapper = new AuthData(null, loginRequest.username());
-                AuthData aData = authDAO.createAuth(aDataWrapper);
-                String token = aData.authToken();
-                return new RegLogResult(loginRequest.username(), token);
+            if(userDAO.getUser(user) != null){
+                String dbPass = userDAO.getUser(user).password();
+                if (userDAO.verifyPassword(loginRequest.password(),dbPass)) {
+                    AuthData aDataWrapper = new AuthData(null, loginRequest.username());
+                    AuthData aData = authDAO.createAuth(aDataWrapper);
+                    String token = aData.authToken();
+                    return new RegLogResult(loginRequest.username(), token);
+                }else{
+                    throw new DataAccessException(401, "Error: unauthorized");
+                }
             } else{
                 throw new DataAccessException(401, "Error: unauthorized");
             }
-        } catch (DataAccessException e) {
-            throw new DataAccessException(e.statusCode(), e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new DataAccessException(401, "Error: unauthorized");
         }
     }
 

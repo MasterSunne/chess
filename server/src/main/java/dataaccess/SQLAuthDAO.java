@@ -6,11 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 
-
-public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
+public class SQLAuthDAO extends SqlDaoBase implements AuthDAO{
 
     public SQLAuthDAO() throws DataAccessException{
         configureDatabase();
@@ -89,13 +86,6 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
 
 
     private final String[] createStatements = {
-//            """
-//
-//            -- -----------------------------------------------------
-//            -- Table `AuthData`
-//            -- -----------------------------------------------------
-//            DROP TABLE IF EXISTS `AuthData` ;
-//            """,
 
             """
             CREATE TABLE IF NOT EXISTS `authdata` (
@@ -104,12 +94,6 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
               UNIQUE INDEX `token_UNIQUE` (`authToken` ASC) VISIBLE)
             ENGINE = InnoDB;
             """,
-//            """
-//            -- -----------------------------------------------------
-//            -- Table `GameData`
-//            -- -----------------------------------------------------
-//            DROP TABLE IF EXISTS `GameData` ;
-//            """,
 
             """
             CREATE TABLE IF NOT EXISTS `gamedata` (
@@ -123,13 +107,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
               UNIQUE INDEX `gameName_UNIQUE` (`gameName` ASC) VISIBLE)
             ENGINE = InnoDB;
             """,
-//
-//            """
-//            -- -----------------------------------------------------
-//            -- Table `UserData`
-//            -- -----------------------------------------------------
-//            DROP TABLE IF EXISTS `UserData` ;
-//            """,
+
             """
             CREATE TABLE IF NOT EXISTS `userdata` (
               `id` INT NOT NULL AUTO_INCREMENT,
