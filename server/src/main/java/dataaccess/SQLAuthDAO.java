@@ -117,7 +117,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
               `whiteUsername` VARCHAR(30) NULL,
               `blackUsername` VARCHAR(30) NULL,
               `gameName` VARCHAR(45) NULL,
-              `gameJSON` VARCHAR(400) NOT NULL,
+              `gameJSON` VARCHAR(3000) NOT NULL,
               PRIMARY KEY (`id`),
               UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
               UNIQUE INDEX `gameName_UNIQUE` (`gameName` ASC) VISIBLE)
