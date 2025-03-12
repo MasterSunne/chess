@@ -22,7 +22,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
     @Override
     public AuthData createAuth(AuthData a) throws DataAccessException {
         try {
-            var statement = "INSERT INTO AuthData (username, authToken) VALUES (?, ?)";
+            var statement = "INSERT INTO authdata (username, authToken) VALUES (?, ?)";
             String token = generateToken();
             String username = a.username();
             var id = executeUpdate(statement, username, token);
@@ -35,7 +35,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
     @Override
     public String findAuth(String user) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT authToken, username FROM AuthData WHERE username=?";
+            var statement = "SELECT authToken, username FROM authdata WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, user);
                 try (var rs = ps.executeQuery()) {
@@ -54,7 +54,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
     @Override
     public AuthData getAuth(String token) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT authToken, username FROM AuthData WHERE authToken=?";
+            var statement = "SELECT authToken, username FROM authdata WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, token);
                 try (var rs = ps.executeQuery()) {
@@ -71,7 +71,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
 
     @Override
     public void deleteAuth(String token) throws DataAccessException {
-        var statement = "DELETE FROM AuthData WHERE authToken=?";
+        var statement = "DELETE FROM authdata WHERE authToken=?";
         executeUpdate(statement, token);
     }
 
@@ -83,7 +83,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE AuthData";
+        var statement = "TRUNCATE authdata";
         executeUpdate(statement);
     }
 
@@ -98,10 +98,9 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
             """,
 
             """
-            CREATE TABLE IF NOT EXISTS `AuthData` (
+            CREATE TABLE IF NOT EXISTS `authdata` (
               `username` VARCHAR(30) NOT NULL,
               `authToken` VARCHAR(60) NOT NULL,
-              UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
               UNIQUE INDEX `token_UNIQUE` (`authToken` ASC) VISIBLE)
             ENGINE = InnoDB;
             """,
@@ -113,7 +112,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
             """,
 
             """
-            CREATE TABLE IF NOT EXISTS `GameData` (
+            CREATE TABLE IF NOT EXISTS `gamedata` (
               `idGameData` INT NOT NULL AUTO_INCREMENT,
               `whiteUsername` VARCHAR(30) NULL,
               `blackUsername` VARCHAR(30) NULL,
@@ -132,7 +131,7 @@ public class SQLAuthDAO extends SQL_DAO implements AuthDAO{
             DROP TABLE IF EXISTS `UserData` ;
             """,
             """
-            CREATE TABLE IF NOT EXISTS `UserData` (
+            CREATE TABLE IF NOT EXISTS `userdata` (
               `id` INT NOT NULL AUTO_INCREMENT,
               `username` VARCHAR(30) NOT NULL,
               `email` VARCHAR(150) NOT NULL,

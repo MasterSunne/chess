@@ -13,7 +13,7 @@ public class SQLUserDAO extends SQL_DAO implements UserDAO {
     @Override
     public void createUser(UserData u) throws DataAccessException {
         try {
-            var statement = "INSERT INTO UserData (username, password, email) VALUES (?, ?, ?)";
+            var statement = "INSERT INTO userdata (username, password, email) VALUES (?, ?, ?)";
             String username = u.username();
             String hashedPassword = BCrypt.hashpw(u.password(), BCrypt.gensalt());
             String email = u.email();
@@ -33,7 +33,7 @@ public class SQLUserDAO extends SQL_DAO implements UserDAO {
     @Override
     public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username FROM UserData WHERE username=?";
+            var statement = "SELECT username, password, email FROM userdata WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
@@ -57,7 +57,7 @@ public class SQLUserDAO extends SQL_DAO implements UserDAO {
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE UserData";
+        var statement = "TRUNCATE userdata";
         executeUpdate(statement);
     }
 }
