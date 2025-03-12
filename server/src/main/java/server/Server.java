@@ -11,9 +11,18 @@ import result.*;
 
 public class Server {
 
-    AuthDAO aDAO = new MemoryAuthDAO();
-    GameDAO gDAO = new MemoryGameDAO();
-    UserDAO uDAO = new MemoryUserDAO();
+    AuthDAO aDAO;
+
+    {
+        try {
+            aDAO = new SQLAuthDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    GameDAO gDAO = new SQLGameDAO();
+    UserDAO uDAO = new SQLUserDAO();
     GameService gService = new GameService(aDAO,gDAO);
     UserService uService = new UserService(aDAO,uDAO);
 

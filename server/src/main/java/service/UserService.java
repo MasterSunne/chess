@@ -24,8 +24,8 @@ public class UserService {
                     UserData uData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
                     userDAO.createUser(uData);
                     AuthData aDataWrapper = new AuthData(null, uData.username());
-                    authDAO.createAuth(aDataWrapper);
-                    String token = authDAO.findAuth(uData.username());
+                    AuthData newAuth = authDAO.createAuth(aDataWrapper);
+                    String token = newAuth.authToken();
                     return new RegLogResult(uData.username(), token);
                 } else {
                     throw new DataAccessException(403, "Error: already taken");

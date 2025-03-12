@@ -6,8 +6,6 @@ import java.util.HashMap;
 
 public class SQLUserDAO implements UserDAO{
 
-    final private HashMap<String,UserData> userMap = new HashMap<>();
-
 
     @Override
     public void createUser(UserData u) throws DataAccessException {
@@ -21,6 +19,7 @@ public class SQLUserDAO implements UserDAO{
 
     @Override
     public void clear() throws DataAccessException {
-
+        var statement = "TRUNCATE UserData";
+        executeUpdate(statement);
     }
 }
