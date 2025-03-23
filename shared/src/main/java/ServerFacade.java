@@ -23,8 +23,8 @@ public class ServerFacade {
     }
 
     public Object createGame (int id) throws ResponseException {
-        var path = String.format("/pet/%s", id);
-        this.makeRequest("DELETE", path, null, null);
+        var path = String.format("/game/%s", id);
+        this.makeRequest("POST", path, null, null);
     }
 
     public void deleteAllPets() throws ResponseException {
