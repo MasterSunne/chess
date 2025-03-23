@@ -41,12 +41,17 @@ public class ServerFacade {
     }
 
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authHeader) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            // Add authorization header if provided
+            if (authHeader != null && !authHeader.isEmpty()) {
+                http.setRequestProperty("Authorization", authHeader);
+            }
 
             writeBody(request, http);
             http.connect();
