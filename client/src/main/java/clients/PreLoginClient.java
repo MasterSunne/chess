@@ -1,6 +1,6 @@
 package java.clients;
 
-import java.Repl;
+import clients.Repl;
 
 public class PreLoginClient {
     public PreLoginClient(String serverUrl, Repl repl) {

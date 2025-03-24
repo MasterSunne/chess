@@ -1,6 +1,5 @@
-package java;
+package clients;
 
-import java.clients.*;
 import java.websocket.NotificationHandler;
 import webSocketMessages.Notification;
 
@@ -10,12 +9,12 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class Repl implements NotificationHandler {
-    private final PreLoginClient preLoginClient;
+    private final java.clients.PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private State state = State.LOGGED_OUT;
 
     public Repl(String serverUrl) {
-        preLoginClient = new PreLoginClient(serverUrl, this);
+        preLoginClient = new java.clients.PreLoginClient(serverUrl, this);
         postLoginClient = new PostLoginClient(serverUrl, this);
     }
 

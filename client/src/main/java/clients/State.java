@@ -1,4 +1,4 @@
-package java;
+package clients;
 
 public enum State {
     LOGGED_OUT,

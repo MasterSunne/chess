@@ -1,6 +1,6 @@
 package java.clients;
 
-import java.Repl;
+import clients.Repl;
 
 public class PostLoginClient {
     public PostLoginClient(String serverUrl, Repl repl) {
