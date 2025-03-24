@@ -59,7 +59,7 @@ public class Repl {
     }
 
     private void printPrompt(State state) {
-        System.out.print("\n[" + SET_TEXT_COLOR_BLACK + state + "] >>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n[" + state + "] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
 }
