@@ -48,7 +48,7 @@ public class PreLoginClient {
             RegLogResult result = server.loginUser(lr);
             return String.format("You signed in as %s.", result.username());
         }
-        throw new ResponseException(400, "Expected: <yourname>, <yourpassword>");
+        throw new ResponseException(400, "Expected: <yourName>, <yourPassword>");
     }
 
     public String register(Repl repl, String... params) throws ResponseException {
@@ -65,9 +65,10 @@ public class PreLoginClient {
 
     public String help() {
         return """
-                - register <yourname>, <password>, <email>
-                - login <yourname>
-                - quit
+                register <your_name>, <password>, <email>  - to create an account
+                login <your_name>  - to play chess
+                quit  - playing chess
+                help  - for possible commands
                 """;
 
     }

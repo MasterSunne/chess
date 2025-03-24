@@ -27,7 +27,7 @@ public class Repl {
     }
 
     public void run() {
-        System.out.println(BLACK_QUEEN + " Welcome to Will Larsen's 240 Chess Program! Type help to get started. " + BLACK_QUEEN);
+        System.out.println(BLACK_QUEEN + " Welcome to Will Larsen's 240 Chess Program! " + BLACK_QUEEN);
         System.out.print(preLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
@@ -39,7 +39,7 @@ public class Repl {
             if (state == State.LOGGED_OUT) {
                 try {
                     result = preLoginClient.eval(line);
-                    System.out.print(SET_TEXT_COLOR_BLUE + result);
+                    System.out.print(RESET_TEXT_COLOR + result);
                 } catch (Throwable e) {
                     var msg = e.toString();
                     System.out.print(msg);

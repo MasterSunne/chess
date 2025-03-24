@@ -1,6 +1,7 @@
 package service;
 
-import result.RegLogResult;
+import request.*;
+import result.*;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;

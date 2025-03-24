@@ -2,8 +2,8 @@ package service;
 
 import chess.ChessGame;
 import model.GameData;
-import result.CreateGameResult;
-import result.ListGamesResult;
+import request.*;
+import result.*;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
