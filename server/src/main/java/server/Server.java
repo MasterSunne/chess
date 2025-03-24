@@ -53,70 +53,6 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object clearAll(Request req, Response res) throws DataAccessException {
-        try {
-            aDAO.clear();
-            gDAO.clear();
-            uDAO.clear();
-            res.status(200);
-            return "";
-        } catch (DataAccessException e) {
-            throw new DataAccessException(e.statusCode(),e.getMessage());
-        }
-    }
-
-    private Object createGame(Request req, Response res) throws DataAccessException {
-        try {
-            String token = req.headers("Authorization");
-            if (token != null) {
-                var createGameRequest = new Gson().fromJson(req.body(), CreateGameRequest.class);
-                CreateGameResult result = gService.createGame(token,createGameRequest);
-                return new Gson().toJson(result);
-            }
-        } catch (DataAccessException e) {
-            throw new DataAccessException(e.statusCode(), e.getMessage());
-        }
-        return "";
-    }
-
-    private Object joinGame(Request req, Response res) throws DataAccessException {
-        try {
-            String token = req.headers("Authorization");
-            if (token != null) {
-                var joinGameRequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
-                if (joinGameRequest.playerColor() == null ||
-                        joinGameRequest.playerColor().isEmpty() ||
-                        !isValidTeamColor(joinGameRequest.playerColor())) {
-                    throw new DataAccessException(400,"Error: bad request");
-                }
-                gService.joinGame(token,joinGameRequest);
-                res.status(200);
-                return "{}";
-            }
-        } catch (DataAccessException e) {
-            throw new DataAccessException(e.statusCode(), e.getMessage());
-        }
-        return "";
-    }
-
-    private boolean isValidTeamColor(String s) {
-        return s.equals("WHITE") || s.equals("BLACK");
-    }
-
-    private Object listGames(Request req, Response res) throws DataAccessException {
-        try {
-            String token = req.headers("Authorization");
-            if (token != null) {
-                ListGamesRequest request = new ListGamesRequest(token);
-                ListGamesResult result = gService.listGames(request);
-                return new Gson().toJson(result);
-            }
-        } catch (DataAccessException e) {
-            throw new DataAccessException(e.statusCode(), e.getMessage());
-        }
-        return "";
-    }
-
     private Object registerUser(Request req, Response res) throws DataAccessException {
         try {
             var registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
@@ -150,6 +86,71 @@ public class Server {
             throw new DataAccessException(e.statusCode(), e.getMessage());
         }
         return "";
+    }
+
+    private Object createGame(Request req, Response res) throws DataAccessException {
+        try {
+            String token = req.headers("Authorization");
+            if (token != null) {
+                var createGameRequest = new Gson().fromJson(req.body(), CreateGameRequest.class);
+                CreateGameResult result = gService.createGame(token,createGameRequest);
+                return new Gson().toJson(result);
+            }
+        } catch (DataAccessException e) {
+            throw new DataAccessException(e.statusCode(), e.getMessage());
+        }
+        return "";
+    }
+
+    private Object listGames(Request req, Response res) throws DataAccessException {
+        try {
+            String token = req.headers("Authorization");
+            if (token != null) {
+                ListGamesRequest request = new ListGamesRequest(token);
+                ListGamesResult result = gService.listGames(request);
+                return new Gson().toJson(result);
+            }
+        } catch (DataAccessException e) {
+            throw new DataAccessException(e.statusCode(), e.getMessage());
+        }
+        return "";
+    }
+
+
+    private Object joinGame(Request req, Response res) throws DataAccessException {
+        try {
+            String token = req.headers("Authorization");
+            if (token != null) {
+                var joinGameRequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
+                if (joinGameRequest.playerColor() == null ||
+                        joinGameRequest.playerColor().isEmpty() ||
+                        !isValidTeamColor(joinGameRequest.playerColor())) {
+                    throw new DataAccessException(400,"Error: bad request");
+                }
+                gService.joinGame(token,joinGameRequest);
+                res.status(200);
+                return "{}";
+            }
+        } catch (DataAccessException e) {
+            throw new DataAccessException(e.statusCode(), e.getMessage());
+        }
+        return "";
+    }
+
+    private boolean isValidTeamColor(String s) {
+        return s.equals("WHITE") || s.equals("BLACK");
+    }
+
+    private Object clearAll(Request req, Response res) throws DataAccessException {
+        try {
+            aDAO.clear();
+            gDAO.clear();
+            uDAO.clear();
+            res.status(200);
+            return "";
+        } catch (DataAccessException e) {
+            throw new DataAccessException(e.statusCode(),e.getMessage());
+        }
     }
 
     // handles any exception thrown by the web API and turns it into JSON

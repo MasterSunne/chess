@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.*;
 
 public class ServerFacade {
 
@@ -16,20 +17,21 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-
-    public void clearAll() throws ResponseException {
-        var path = "/db";
-        this.makeRequest("DELETE", path, null, null, null);
+    public Object registerUser(String username, String password, String email) throws ResponseException {
+        var path = "/user";
+        Map<String, String> data = Map.of(
+                "username", username,
+                "password", password,
+                "email", email
+        );
+        record registerResponse(String username, String authToken){}
+        var response = this.makeRequest("POST", path, data, registerResponse.class,null);
+        return response.username();
     }
 
     public Object createGame (String authToken) throws ResponseException {
         var path = "/game";
         return this.makeRequest("POST", path, null, null, authToken);
-    }
-
-    public void deleteAllPets() throws ResponseException {
-        var path = "/pet";
-        this.makeRequest("DELETE", path, null, null, null);
     }
 
 //    public Pet[] listPets() throws ResponseException {
@@ -40,6 +42,10 @@ public class ServerFacade {
 //        return response.pet();
 //    }
 
+    public void clearAll() throws ResponseException {
+        var path = "/db";
+        this.makeRequest("DELETE", path, null, null, null);
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authHeader) throws ResponseException {
         try {

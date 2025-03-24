@@ -33,4 +33,36 @@ public class ServerFacadeTests {
         assertTrue(authData.authToken().length() > 10);
     }
 
+    @Test
+    public void testRegisterUser_Success() throws ResponseException {
+        // Arrange
+        String serverUrl = "http://test-server.com";
+        ServerFacade serverFacade = new ServerFacade(serverUrl);
+        String username = "testUser";
+        String password = "testPass123";
+        String email = "test@example.com";
+
+        // Act
+        Object result = serverFacade.registerUser(username, password, email);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(username, result);
+    }
+    @Test
+    public void testRegisterUser_Failure() {
+        // Arrange
+        String serverUrl = "http://test-server.com";
+        ServerFacade serverFacade = new ServerFacade(serverUrl);
+        String username = "existingUser";
+        String password = "testPass123";
+        String email = "existing@example.com";
+        serverFacade.registerUser(username, password, email);
+
+        // Act & Assert
+        assertThrows(ResponseException.class, () -> {
+            serverFacade.registerUser(username, password, email);
+        });
+    }
+
 }
