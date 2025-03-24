@@ -1,4 +1,6 @@
 import com.google.gson.Gson;
+import model.AuthData;
+import model.GameData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +19,7 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public Object registerUser(String username, String password, String email) throws ResponseException {
+    public AuthData registerUser(String username, String password, String email) throws ResponseException {
         var path = "/user";
         Map<String, String> data = Map.of(
                 "username", username,
@@ -26,21 +28,44 @@ public class ServerFacade {
         );
         record registerResponse(String username, String authToken){}
         var response = this.makeRequest("POST", path, data, registerResponse.class,null);
-        return response.username();
+        return new AuthData (response.username(), response.authToken());
     }
 
-    public Object createGame (String authToken) throws ResponseException {
+    public AuthData loginUser(String username, String password) throws ResponseException{
+        var path = "/session";
+        Map<String, String> data = Map.of(
+                "username", username,
+                "password", password
+        );
+        record loginResponse (String username, String authToken){}
+        var response = this.makeRequest("POST", path, data, loginResponse.class,null);
+        return new AuthData (response.username(), response.authToken());
+    }
+
+    public void logoutUser(String authToken) throws ResponseException{
+        var path = "/session";
+        this.makeRequest("DELETE", path, null, null,authToken);
+    }
+
+    public Object createGame (String gameName, String authToken) throws ResponseException {
         var path = "/game";
-        return this.makeRequest("POST", path, null, null, authToken);
+        record GameRequest(String gameName) {}
+        record createGameResponse(int gameID){}
+        return this.makeRequest("POST", path, new GameRequest(gameName), createGameResponse.class, authToken);
     }
 
-//    public Pet[] listPets() throws ResponseException {
-//        var path = "/pet";
-//        record listPetResponse(Pet[] pet) {
-//        }
-//        var response = this.makeRequest("GET", path, null, listPetResponse.class);
-//        return response.pet();
-//    }
+    public GameData[] listGames(String authToken) throws ResponseException {
+        var path = "/game";
+        record listGamesResponse(GameData[] gameList) {
+        }
+        return this.makeRequest("GET", path, null, listGamesResponse.class, authToken).gameList();
+    }
+
+    public void joinGame(String authToken,String playerColor,Integer gameID) throws ResponseException {
+        var path = "/game";
+        record joinGameReq(String playerColor, Integer gameID){}
+        this.makeRequest("PUT",path,new joinGameReq(playerColor,gameID),null,authToken);
+    }
 
     public void clearAll() throws ResponseException {
         var path = "/db";
