@@ -1,4 +1,4 @@
-package java.clients;
+package clients;
 
 import clients.Repl;
 

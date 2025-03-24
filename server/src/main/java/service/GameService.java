@@ -3,13 +3,14 @@ package service;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
 import request.ListGamesRequest;
-import result.*;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
+import result.CreateGameResult;
+import result.ListGamesResult;
 
 import java.util.ArrayList;
 
@@ -37,7 +38,7 @@ public class GameService {
 
 
     static int x = 1;
-    public CreateGameResult createGame(String authToken,CreateGameRequest createGameRequest) throws DataAccessException {
+    public CreateGameResult createGame(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
         try {
             if(authDAO.getAuth(authToken) != null){
                 if(gameDAO.findGame(createGameRequest.gameName()) == null){

@@ -40,3 +40,9 @@ Service class that can be shared by multiple services. pick whether to do it in 
 -serialize response obj to JSON
 -send HTTP response back to client w/status code and response body
 
+
+
+Questions for Phase 5:
+need to start SQL server in the background to test ServerFacade?
+How are the request/response objects supposed to reach the facade if they're in Server module?
+How are is ServerFacadeTests supposed to reach ServerFacade if it's in the shared module?

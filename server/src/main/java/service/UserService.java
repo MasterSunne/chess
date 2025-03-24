@@ -1,12 +1,13 @@
 package service;
 
-import request.*;
-import result.*;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import dataaccess.DataAccessException;
-import org.mindrot.jbcrypt.BCrypt;
+import request.LoginRequest;
+import request.LogoutRequest;
+import request.RegisterRequest;
+import result.RegLogResult;
 
 public class UserService {
 

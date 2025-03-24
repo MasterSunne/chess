@@ -1,21 +1,29 @@
 package clients;
 
-import java.websocket.NotificationHandler;
-import webSocketMessages.Notification;
-
-import java.clients.PostLoginClient;
+import clients.*;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class Repl implements NotificationHandler {
-    private final java.clients.PreLoginClient preLoginClient;
+public class Repl {
+    private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
+    private final GameplayClient gameplayClient;
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
     private State state = State.LOGGED_OUT;
 
     public Repl(String serverUrl) {
-        preLoginClient = new java.clients.PreLoginClient(serverUrl, this);
+        preLoginClient = new PreLoginClient(serverUrl, this);
         postLoginClient = new PostLoginClient(serverUrl, this);
+        gameplayClient = new GameplayClient(serverUrl, this);
     }
 
     public void run() {
@@ -38,8 +46,6 @@ public class Repl implements NotificationHandler {
                 }
             }
             else if (state == State.LOGGED_IN) {
-
-
                 try {
                     result = postLoginClient.eval(line);
                     System.out.print(SET_TEXT_COLOR_BLUE + result);
@@ -50,11 +56,6 @@ public class Repl implements NotificationHandler {
             }
         }
         System.out.println();
-    }
-
-    public void notify(Notification notification,State state) {
-        System.out.println(SET_TEXT_COLOR_RED + notification.message());
-        printPrompt(state);
     }
 
     private void printPrompt(State state) {

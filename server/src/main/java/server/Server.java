@@ -2,12 +2,12 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import request.*;
+import result.*;
 import service.GameService;
 import dataaccess.DataAccessException;
 import service.UserService;
 import spark.*;
-import request.*;
-import result.*;
 
 public class Server {
 

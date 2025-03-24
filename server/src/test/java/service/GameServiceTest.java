@@ -2,10 +2,8 @@ package service;
 
 import chess.ChessGame;
 import model.GameData;
-import request.*;
 import result.CreateGameResult;
 import result.ListGamesResult;
-import result.RegLogResult;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import java.sql.Array;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;

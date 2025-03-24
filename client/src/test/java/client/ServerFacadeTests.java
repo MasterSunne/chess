@@ -1,8 +1,10 @@
 package client;
 
 import org.junit.jupiter.api.*;
-import server.Server;
+import server.Server; //from the server module not the client module
 import static org.junit.jupiter.api.Assertions.*;
+import server.ServerFacade;
+import server.ResponseException;
 
 
 public class ServerFacadeTests {
