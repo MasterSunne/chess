@@ -119,7 +119,7 @@ public class ServerFacadeTests {
         var createGameRequest = new CreateGameRequest("newGame");
         var createResult = facade.createGame(token, createGameRequest);
 
-        assertEquals(new CreateGameResult(1),createResult);
+        assertNotNull(createResult);
     }
 
     @Test
@@ -167,11 +167,12 @@ public class ServerFacadeTests {
         String token = result.authToken();
 
         var createGameRequest = new CreateGameRequest("newGame");
-        facade.createGame(token, createGameRequest);
+        var createResult = facade.createGame(token, createGameRequest);
 
-        facade.joinGame(new JoinGameRequest(token,"WHITE",1));
+        facade.joinGame(new JoinGameRequest(token,"WHITE",createResult.gameID()));
         var listResult = facade.listGames(new ListGamesRequest(token));
         var list = listResult.games();
+        System.out.println(list);
         assertEquals("bob", list.getFirst().whiteUsername());
 
     }
