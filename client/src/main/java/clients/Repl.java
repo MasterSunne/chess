@@ -56,28 +56,16 @@ public class Repl {
             else if (state == State.LOGGED_IN) {
                 System.out.print(SET_TEXT_COLOR_BLUE);
                 printPrompt(state);
+                System.out.print(RESET_TEXT_COLOR);
                 String line = scanner.nextLine();
                 try {
                     result = postLoginClient.eval(line);
-                    System.out.print(SET_TEXT_COLOR_BLUE + result);
+                    System.out.print(RESET_TEXT_COLOR + result);
                 } catch (Throwable e) {
                     var msg = e.toString();
                     System.out.print(msg);
                 }
             }
-//            else if (state == State.IN_GAME){
-//                System.out.print(SET_TEXT_COLOR_CHESS_GREEN);
-//                printPrompt(state);
-//                DrawBoard.main();
-//                String line = scanner.nextLine();
-//                try {
-//                    result = postLoginClient.eval(line);
-//                    System.out.print(SET_TEXT_COLOR_CHESS_GREEN + result);
-//                } catch (Throwable e) {
-//                    var msg = e.toString();
-//                    System.out.print(msg);
-//                }
-//            }
         }
         System.out.println();
     }

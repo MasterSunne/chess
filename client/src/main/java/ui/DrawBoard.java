@@ -18,16 +18,17 @@ public class DrawBoard {
     private static final int SQUARE_SIZE_IN_PADDED_CHESS_CHARS = 1;
     private static final int BORDER_SIZE_IN_PADDED_NORMAL_CHARS = 3;
 
-    public static void main() {
+    public static void main(ChessGame.TeamColor teamColor) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
         ChessBoard board = new ChessBoard();
         board.resetBoard();
 
-        drawWhiteView(out,board);
-        out.println();
-        drawBlackView(out,board);
+        if (teamColor.equals(ChessGame.TeamColor.WHITE)){
+        drawWhiteView(out,board);} else{
+            drawBlackView(out,board);
+        }
 
         // Reset terminal to default colors
         out.print(RESET_TEXT_COLOR);
@@ -47,7 +48,8 @@ public class DrawBoard {
     }
 
     private static void drawLetterForward(PrintStream out) {
-        String[] headers = {"   ", "\u2005 a\u2003", "\u2004\u2005b", SPACER+"c", SPACER+"d", SPACER+"e", SPACER+"f", SPACER+"g", SPACER+"h", "\u2003\u2006\u2006  " };
+        String[] headers = {"   ", "\u2005 a\u2003", "\u2004\u2005b", SPACER+"c",
+                SPACER+"d", SPACER+"e", SPACER+"f", SPACER+"g", SPACER+"h", "\u2003\u2006\u2006  " };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             printHeaderText(out, headers[boardCol]);
         }
@@ -55,7 +57,8 @@ public class DrawBoard {
     }
 
     private static void drawLetterBackward(PrintStream out) {
-        String[] headers = {"   ", "\u2005 h\u2003", "\u2004\u2005g", SPACER+"f", SPACER+"e", SPACER+"d", SPACER+"c", SPACER+"b", SPACER+"a", "\u2003\u2006\u2006  " };
+        String[] headers = {"   ", "\u2005 h\u2003", "\u2004\u2005g", SPACER+"f",
+                SPACER+"e", SPACER+"d", SPACER+"c", SPACER+"b", SPACER+"a", "\u2003\u2006\u2006  " };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             printHeaderText(out, headers[boardCol]);
         }

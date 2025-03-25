@@ -26,15 +26,17 @@ public class ServerFacadeTests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade("http://localhost:"+port);
+    }
 
-        // Clear the database before all tests
+    @BeforeEach
+    // Clear the database before all tests
+    public void clear() {
         try {
             facade.clearAll();
         } catch (ResponseException e) {
             System.err.println("Failed to clear database: " + e.getMessage());
         }
     }
-
 
     @AfterAll
     static void stopServer() {

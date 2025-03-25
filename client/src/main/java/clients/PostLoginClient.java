@@ -1,5 +1,6 @@
 package clients;
 
+import chess.ChessGame;
 import model.GameData;
 import request.*;
 import result.*;
@@ -31,11 +32,12 @@ public class PostLoginClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "logout" -> logout(repl,params);
+                case "logout" -> logout(repl);
                 case "create" -> createGame(repl, params);
                 case "list" -> listGames(repl);
                 case "join" -> joinGame(repl,params);
                 case "observe" -> observeGame(repl,params);
+                case "clear" -> clearDB(repl,params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -44,8 +46,21 @@ public class PostLoginClient {
         }
     }
 
-    public String logout(Repl repl, String... params) throws ResponseException {
-        LogoutRequest lr = new LogoutRequest(params[0]);
+    private String clearDB(Repl repl,String[] params) throws ResponseException{
+        if(params.length == 0){
+            return "Invalid permissions";
+        }
+        if (params[0].equals("987")){
+            logout(repl);
+            server.clearAll();
+        } else{
+            return "Invalid permissions";
+        }
+        return "";
+    }
+
+    public String logout(Repl repl) throws ResponseException {
+        LogoutRequest lr = new LogoutRequest(repl.getAuthToken());
         server.logoutUser(lr);
         repl.setState(State.LOGGED_OUT);
         return "Successfully logged out";
@@ -53,15 +68,13 @@ public class PostLoginClient {
 
     private String createGame(Repl repl, String... params) throws ResponseException {
         CreateGameRequest cgr = new CreateGameRequest(params[0]);//pass in game name
-        CreateGameResult result = server.createGame(repl.getAuthToken(),cgr);
+        server.createGame(repl.getAuthToken(),cgr);
         return String.format("Created game: " + params[0]);
     }
 
     private String listGames(Repl repl) throws ResponseException {
         ListGamesRequest lgr = new ListGamesRequest(repl.getAuthToken());
         ListGamesResult result = server.listGames(lgr);
-        //need to make a new list of games and remember the numbering given to the user and return as string
-        //displays the games in a numbered list, including the game name and players (not observers) in the game
         setGameList(result.games());
 
         StringBuilder sb = new StringBuilder();
@@ -89,16 +102,26 @@ public class PostLoginClient {
 
     private String joinGame(Repl repl, String[] params) throws ResponseException {
         try {
-            int db_gameID = 0;
+            String x = checkJoinInput(params);
+            if (x != null) {
+                return x;
+            }
+            int dbgameID = 0;
             if (!gameMap.isEmpty()) {
-                db_gameID = gameMap.get(Integer.valueOf(params[0]));
+                dbgameID = gameMap.get(Integer.valueOf(params[0]));
             } else{
                 throw new ResponseException(400, "Error: no games to join");
             }
-            JoinGameRequest jgr = new JoinGameRequest(repl.getAuthToken(),params[1],db_gameID);
+            JoinGameRequest jgr = new JoinGameRequest(repl.getAuthToken(),params[1].toUpperCase(), dbgameID);
             server.joinGame(jgr);
-            repl.setState(State.IN_GAME);
-            DrawBoard.main();
+//            repl.setState(State.IN_GAME);
+            if (params[1].equalsIgnoreCase("WHITE")) {
+                DrawBoard.main(ChessGame.TeamColor.WHITE);
+            } else if (params[1].equalsIgnoreCase("BLACK")){
+                DrawBoard.main(ChessGame.TeamColor.BLACK);
+            } else {
+                throw new ResponseException(400, "teamColor not valid");
+            }
             return "Successfully joined game";
         } catch (NumberFormatException e) {
             throw new RuntimeException(e.getMessage());
@@ -107,8 +130,31 @@ public class PostLoginClient {
         }
     }
 
+    private String checkJoinInput(String[] params) {
+        if (params.length < 2 ){
+            return "Expected: join <ID> [WHITE|BLACK]";
+        }
+        try {
+            int i = Integer.parseInt(params[0]);
+            if (gameMap.isEmpty()){
+                return "Please use \"list\" first to view available games and IDs";
+            }
+            if (gameMap.get(Integer.parseInt(params[0])) == null){
+                return "Invalid ID try using \"list\" to refresh valid game IDs";
+            }
+        } catch (NumberFormatException e) {
+            return params[0] + " is not a valid gameID";
+        }
+        if (params[1] == null) {
+            return "Expected: join <ID> [WHITE|BLACK]";
+        } else if (!params[1].equals("white") && !params[1].equals("black")){
+            return "Expected: join <ID> [WHITE|BLACK]";
+        }
+        return null;
+    }
+
     private String observeGame(Repl repl, String[] params) throws ResponseException {
-        DrawBoard.main();
+        DrawBoard.main(ChessGame.TeamColor.WHITE);
         return "";
     }
 
