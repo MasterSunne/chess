@@ -40,7 +40,7 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, null,lr.authToken());
     }
 
-    public CreateGameResult createGame (CreateGameRequest cgr,String authToken) throws ResponseException {
+    public CreateGameResult createGame (String authToken, CreateGameRequest cgr) throws ResponseException {
         var path = "/game";
         return this.makeRequest("POST", path, cgr, CreateGameResult.class, authToken);
     }

@@ -1,9 +1,5 @@
 package clients;
 
-import clients.Repl;
-import clients.State;
-import com.google.gson.Gson;
-import model.AuthData;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.RegLogResult;
@@ -14,13 +10,10 @@ import java.util.Arrays;
 
 public class PreLoginClient {
     private final Repl repl;
-    private String visitorName = null;
     private final ServerFacade server;
-    private final String serverUrl;
 
     public PreLoginClient(String serverUrl, Repl repl) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
         this.repl = repl;
     }
 
@@ -43,10 +36,10 @@ public class PreLoginClient {
     public String login(Repl repl, String... params) throws ResponseException {
         if (params.length >= 1) {
             repl.setState(State.LOGGED_IN);
-            visitorName = String.join("-", params);
             LoginRequest lr = new LoginRequest(params[0], params[1]);
             RegLogResult result = server.loginUser(lr);
-            return String.format("You signed in as %s.", result.username());
+            repl.setAuthToken(result.authToken());
+            return String.format("Now logged in as %s.", result.username());
         }
         throw new ResponseException(400, "Expected: <yourName>, <yourPassword>");
     }
@@ -54,10 +47,10 @@ public class PreLoginClient {
     public String register(Repl repl, String... params) throws ResponseException {
         if (params.length >= 1) {
             repl.setState(State.LOGGED_IN);
-            visitorName = String.join("-", params);
             RegisterRequest rr = new RegisterRequest(params[0],params[1],params[2]);
             RegLogResult result = server.registerUser(rr);
-            return String.format("You registered as %s.", result.username());
+            repl.setAuthToken(result.authToken());
+            return String.format("Now registered as %s.", result.username());
         }
         throw new ResponseException(400, "Expected: <yourname>, <yourpassword>, <youremail>");
     }

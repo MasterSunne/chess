@@ -37,20 +37,21 @@ public class ServerFacadeTests {
         assertTrue(result.authToken().length() > 10);
     }
 
-//    @Test
-//    public void testRegisterUser_Failure() {
-//        // Arrange
-//        String serverUrl = "http://test-server.com";
-//        ServerFacade serverFacade = new ServerFacade(serverUrl);
-//        String username = "existingUser";
-//        String password = "testPass123";
-//        String email = "existing@example.com";
-//        serverFacade.registerUser(username, password, email);
-//
-//        // Act & Assert
-//        assertThrows(ResponseException.class, () -> {
-//            serverFacade.registerUser(username, password, email);
-//        });
-//    }
+    @Test
+    public void testRegisterUser_Failure() throws ResponseException {
+        // Arrange
+        String serverUrl = "http://test-server.com";
+        ServerFacade serverFacade = new ServerFacade(serverUrl);
+        String username = "existingUser";
+        String password = "testPass123";
+        String email = "existing@example.com";
+        RegisterRequest rr = new RegisterRequest(username, password, email);
+        facade.registerUser(rr);
+
+        // Act & Assert
+        assertThrows(ResponseException.class, () -> {
+            serverFacade.registerUser(rr);
+        });
+    }
 
 }

@@ -47,7 +47,7 @@ public class DrawBoard {
     }
 
     private static void drawLetterForward(PrintStream out) {
-        String[] headers = {"   ", "\u2005 a\u2003", "\u2004\u2005b", SPACER+"c", SPACER+"d", SPACER+"e", SPACER+"f", SPACER+"g", SPACER+"h", "\u2003\u2005\u2006  " };
+        String[] headers = {"   ", "\u2005 a\u2003", "\u2004\u2005b", SPACER+"c", SPACER+"d", SPACER+"e", SPACER+"f", SPACER+"g", SPACER+"h", "\u2003\u2006\u2006  " };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             printHeaderText(out, headers[boardCol]);
         }
@@ -55,7 +55,7 @@ public class DrawBoard {
     }
 
     private static void drawLetterBackward(PrintStream out) {
-        String[] headers = {"   ", "\u2005 h\u2003", "\u2004\u2005g", SPACER+"f", SPACER+"e", SPACER+"d", SPACER+"c", SPACER+"b", SPACER+"a", "\u2003\u2005\u2006  " };
+        String[] headers = {"   ", "\u2005 h\u2003", "\u2004\u2005g", SPACER+"f", SPACER+"e", SPACER+"d", SPACER+"c", SPACER+"b", SPACER+"a", "\u2003\u2006\u2006  " };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             printHeaderText(out, headers[boardCol]);
         }
