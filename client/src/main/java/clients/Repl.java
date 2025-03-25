@@ -1,6 +1,8 @@
 package clients;
 
 import clients.*;
+import ui.DrawBoard;
+
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -63,6 +65,19 @@ public class Repl {
                     System.out.print(msg);
                 }
             }
+//            else if (state == State.IN_GAME){
+//                System.out.print(SET_TEXT_COLOR_CHESS_GREEN);
+//                printPrompt(state);
+//                DrawBoard.main();
+//                String line = scanner.nextLine();
+//                try {
+//                    result = postLoginClient.eval(line);
+//                    System.out.print(SET_TEXT_COLOR_CHESS_GREEN + result);
+//                } catch (Throwable e) {
+//                    var msg = e.toString();
+//                    System.out.print(msg);
+//                }
+//            }
         }
         System.out.println();
     }

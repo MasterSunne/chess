@@ -18,7 +18,7 @@ public class DrawBoard {
     private static final int SQUARE_SIZE_IN_PADDED_CHESS_CHARS = 1;
     private static final int BORDER_SIZE_IN_PADDED_NORMAL_CHARS = 3;
 
-    public static void main(String[] args) {
+    public static void main() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);

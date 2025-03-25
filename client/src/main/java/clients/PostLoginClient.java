@@ -5,6 +5,7 @@ import request.*;
 import result.*;
 import server.ResponseException;
 import server.ServerFacade;
+import ui.DrawBoard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,16 +98,18 @@ public class PostLoginClient {
             JoinGameRequest jgr = new JoinGameRequest(repl.getAuthToken(),params[1],db_gameID);
             server.joinGame(jgr);
             repl.setState(State.IN_GAME);
+            DrawBoard.main();
             return "Successfully joined game";
         } catch (NumberFormatException e) {
             throw new RuntimeException(e.getMessage());
         } catch (ResponseException e) {
-            throw new ResponseException(400,"Error: invalid gameID");
+            throw new ResponseException(400,e.getMessage());
         }
     }
 
     private String observeGame(Repl repl, String[] params) throws ResponseException {
-        return null;
+        DrawBoard.main();
+        return "";
     }
 
 

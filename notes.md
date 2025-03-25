@@ -46,3 +46,15 @@ Questions for Phase 5:
 need to start SQL server in the background to test ServerFacade?
 How are the request/response objects supposed to reach the facade if they're in Server module?
 How are is ServerFacadeTests supposed to reach ServerFacade if it's in the shared module?
+
+
+
+need to implement clear function for phase 5?
+is it an all or nothing pass off?
+need a way to quit from being in a game?
+how to get it to remember the list of games given last? (should it be persistent for different instances of clientMain?)
+debugging join
+how to clear before each test
+
+
+note to self: make it so that joining games will ask to list games first and then list games will say if there are any
