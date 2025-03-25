@@ -34,23 +34,32 @@ public class PreLoginClient {
     }
 
     public String login(Repl repl, String... params) throws ResponseException {
-        if (params.length >= 1) {
-            repl.setState(State.LOGGED_IN);
-            LoginRequest lr = new LoginRequest(params[0], params[1]);
-            RegLogResult result = server.loginUser(lr);
-            repl.setAuthToken(result.authToken());
-            return String.format("Now logged in as %s.", result.username());
+        try {
+            if (params.length == 2) {
+                LoginRequest lr = new LoginRequest(params[0], params[1]);
+                RegLogResult result = server.loginUser(lr);
+                repl.setAuthToken(result.authToken());
+                repl.setState(State.LOGGED_IN);
+                return String.format("Now logged in as %s.", result.username());
+            }
+        } catch (Exception e) {
+            throw new ResponseException(400, "Error: user not registered");
         }
         throw new ResponseException(400, "Expected: <yourName>, <yourPassword>");
     }
 
+
     public String register(Repl repl, String... params) throws ResponseException {
-        if (params.length >= 1) {
-            repl.setState(State.LOGGED_IN);
-            RegisterRequest rr = new RegisterRequest(params[0],params[1],params[2]);
-            RegLogResult result = server.registerUser(rr);
-            repl.setAuthToken(result.authToken());
-            return String.format("Now registered as %s.", result.username());
+        try {
+            if (params.length == 3 ) {
+                RegisterRequest rr = new RegisterRequest(params[0],params[1],params[2]);
+                RegLogResult result = server.registerUser(rr);
+                repl.setAuthToken(result.authToken());
+                repl.setState(State.LOGGED_IN);
+                return String.format("Now registered as %s.", result.username());
+            }
+        } catch (Exception e) {
+            throw new ResponseException(400, e.getMessage());
         }
         throw new ResponseException(400, "Expected: <yourname>, <yourpassword>, <youremail>");
     }
@@ -66,3 +75,4 @@ public class PreLoginClient {
 
     }
 }
+

@@ -10,8 +10,7 @@ import service.UserService;
 import spark.*;
 
 public class Server {
-
-    AuthDAO aDAO;
+    private final SQLAuthDAO aDAO;
 
     {
         try {

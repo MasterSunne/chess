@@ -8,6 +8,7 @@ import server.ServerFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
@@ -15,8 +16,8 @@ import static ui.EscapeSequences.RESET_TEXT_COLOR;
 public class PostLoginClient {
     private final Repl repl;
     private final ServerFacade server;
-    private ArrayList<String> gameList;
-    private Map<Integer, Integer> gameMap;
+    private ArrayList<String> gameList = new ArrayList<>();
+    private Map<Integer, Integer> gameMap = new HashMap<>();
 
     public PostLoginClient(String serverUrl, Repl repl) {
         server = new ServerFacade(serverUrl);
@@ -43,9 +44,9 @@ public class PostLoginClient {
     }
 
     public String logout(Repl repl, String... params) throws ResponseException {
-        repl.setState(State.LOGGED_OUT);
         LogoutRequest lr = new LogoutRequest(params[0]);
         server.logoutUser(lr);
+        repl.setState(State.LOGGED_OUT);
         return "Successfully logged out";
     }
 
@@ -73,22 +74,35 @@ public class PostLoginClient {
     }
 
     private void setGameList(ArrayList<GameData> gameDataList){
-        int i = 0;
+        int i = 1;
+        gameList.clear();
         for (GameData gData : gameDataList){
             gameMap.put(i, gData.gameID());
             String gameString = String.format("Game " + i + ": " + gData.gameName()
                     + "\n  White Player: " + gData.whiteUsername()
                     + "\n  Black Player: " + gData.blackUsername() + "\n");
             gameList.add(gameString);
+            i++;
         }
     }
 
     private String joinGame(Repl repl, String[] params) throws ResponseException {
-        repl.setState(State.IN_GAME);
-        int db_gameID = gameMap.get(Integer.valueOf(params[1]));
-        JoinGameRequest jgr = new JoinGameRequest(repl.getAuthToken(),params[0],db_gameID);
-        server.joinGame(jgr);
-        return "Successfully joined game";
+        try {
+            int db_gameID = 0;
+            if (!gameMap.isEmpty()) {
+                db_gameID = gameMap.get(Integer.valueOf(params[0]));
+            } else{
+                throw new ResponseException(400, "Error: no games to join");
+            }
+            JoinGameRequest jgr = new JoinGameRequest(repl.getAuthToken(),params[1],db_gameID);
+            server.joinGame(jgr);
+            repl.setState(State.IN_GAME);
+            return "Successfully joined game";
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (ResponseException e) {
+            throw new ResponseException(400,"Error: invalid gameID");
+        }
     }
 
     private String observeGame(Repl repl, String[] params) throws ResponseException {
