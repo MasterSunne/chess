@@ -83,7 +83,9 @@ public class PostLoginClient {
         }
         // Remove the trailing space
         String stringResult = sb.toString().trim();
-
+        if (stringResult.equals("")){
+            stringResult = "No games exist yet! Use \"create\" to make a new game.";
+        }
         return stringResult;
     }
 
