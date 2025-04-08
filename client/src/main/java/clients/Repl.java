@@ -2,12 +2,14 @@ package clients;
 
 import clients.*;
 import ui.DrawBoard;
+import websocket.NotificationHandler;
+import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class Repl {
+public class Repl implements NotificationHandler {
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final GameplayClient gameplayClient;
@@ -25,6 +27,8 @@ public class Repl {
     public void setState(State state) {
         this.state = state;
     }
+
+    public State getState(){return this.state;}
 
 
 
@@ -66,12 +70,19 @@ public class Repl {
                     System.out.print(msg);
                 }
             }
+            // else if (State == State.IN_GAME){}
         }
         System.out.println();
     }
+
 
     private void printPrompt(State state) {
         System.out.print("\n[" + state + "]"+ RESET_TEXT_COLOR + " >>> " + SET_TEXT_COLOR_GREEN);
     }
 
+    @Override
+    public void notify(ServerMessage notification) {
+        System.out.println(SET_TEXT_COLOR_BLUE + notification.message());
+        printPrompt(getState());
+    }
 }
