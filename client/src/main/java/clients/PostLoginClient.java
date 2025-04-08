@@ -7,6 +7,8 @@ import result.*;
 import server.ResponseException;
 import server.ServerFacade;
 import ui.DrawBoard;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,12 +20,16 @@ import static ui.EscapeSequences.RESET_TEXT_COLOR;
 public class PostLoginClient {
     private final Repl repl;
     private final ServerFacade server;
-    private ArrayList<String> gameList = new ArrayList<>();
-    private Map<Integer, Integer> gameMap = new HashMap<>();
+    private final ArrayList<String> gameList = new ArrayList<>();
+    private final Map<Integer, Integer> gameMap = new HashMap<>();
+    private final String url;
+    private final NotificationHandler notificationHandler;
 
-    public PostLoginClient(String serverUrl, Repl repl) {
+    public PostLoginClient(String serverUrl, Repl repl, NotificationHandler notificationHandler) {
+        url = serverUrl;
         server = new ServerFacade(serverUrl);
         this.repl = repl;
+        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input) {
@@ -114,17 +120,21 @@ public class PostLoginClient {
             } else{
                 throw new ResponseException(400, "Error: no games to join");
             }
-            JoinGameRequest jgr = new JoinGameRequest(repl.getAuthToken(),params[1].toUpperCase(), dbgameID);
-            server.joinGame(jgr);
-//            repl.setState(State.IN_GAME);
             if (params[1].equalsIgnoreCase("WHITE")) {
-                DrawBoard.main(ChessGame.TeamColor.WHITE);
+                repl.setPlayerColor("white");
             } else if (params[1].equalsIgnoreCase("BLACK")){
-                DrawBoard.main(ChessGame.TeamColor.BLACK);
+                repl.setPlayerColor("black");
             } else {
                 throw new ResponseException(400, "teamColor not valid");
             }
+
+            JoinGameRequest jgr = new JoinGameRequest(repl.getAuthToken(),params[1].toUpperCase(), dbgameID);
+            server.joinGame(jgr);
+            WebSocketFacade ws = new WebSocketFacade(url,notificationHandler);
+            repl.setWebSocketFacade();
+            repl.setState(State.IN_GAME);
             return "Successfully joined game";
+
         } catch (NumberFormatException e) {
             throw new RuntimeException(e.getMessage());
         } catch (ResponseException e) {
@@ -156,6 +166,9 @@ public class PostLoginClient {
     }
 
     private String observeGame(Repl repl, String[] params) throws ResponseException {
+        repl.setState(State.IN_GAME);
+        repl.setPlayerColor("white");
+        repl.setObserver(true);
         DrawBoard.main(ChessGame.TeamColor.WHITE);
         return "";
     }

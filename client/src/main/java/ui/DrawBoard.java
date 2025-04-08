@@ -15,15 +15,13 @@ public class DrawBoard {
 
     // Board dimensions.
     private static final int BOARD_SIZE_IN_SQUARES = 10;
-    private static final int SQUARE_SIZE_IN_PADDED_CHESS_CHARS = 1;
-    private static final int BORDER_SIZE_IN_PADDED_NORMAL_CHARS = 3;
 
-    public static void main(ChessGame.TeamColor teamColor) {
+    public static void main(ChessGame.TeamColor teamColor, ChessBoard board) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
+//        ChessBoard board = new ChessBoard();
+//        board.resetBoard();
 
         if (teamColor.equals(ChessGame.TeamColor.WHITE)){
         drawWhiteView(out,board);} else{

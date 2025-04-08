@@ -3,6 +3,7 @@ package clients;
 import clients.*;
 import ui.DrawBoard;
 import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -15,6 +16,12 @@ public class Repl implements NotificationHandler {
     private final GameplayClient gameplayClient;
     public String authToken;
     public State state = State.LOGGED_OUT;
+    public String playerColor;
+    public WebSocketFacade ws;
+
+
+
+    public Boolean isObserver;
 
     public void setAuthToken(String authToken){
         this.authToken = authToken;
@@ -30,6 +37,17 @@ public class Repl implements NotificationHandler {
 
     public State getState(){return this.state;}
 
+    public void setPlayerColor(String pc){ this.playerColor = pc;}
+
+    public String getPlayerColor(){return this.playerColor;}
+
+    public void setObserver(Boolean observer) {isObserver = observer;}
+
+    public Boolean getObserver() {return isObserver;}
+
+    public void setWebSocketFacade(WebSocketFacade new_ws) {this.ws = new_ws;}
+
+    public WebSocketFacade getWebSocketFacade() {return this.ws;}
 
 
     public Repl(String serverUrl) {
@@ -37,6 +55,9 @@ public class Repl implements NotificationHandler {
         postLoginClient = new PostLoginClient(serverUrl, this);
         gameplayClient = new GameplayClient(serverUrl, this);
         authToken = "";
+        playerColor = null;
+        isObserver = false;
+        ws = null;
     }
 
     public void run() {
@@ -70,7 +91,19 @@ public class Repl implements NotificationHandler {
                     System.out.print(msg);
                 }
             }
-            // else if (State == State.IN_GAME){}
+             else if (state == State.IN_GAME){
+                System.out.print(SET_TEXT_COLOR_GREEN);
+                printPrompt(state);
+                System.out.print(RESET_TEXT_COLOR);
+                String line = scanner.nextLine();
+                try {
+                    result = gameplayClient.eval(line);
+                    System.out.print(RESET_TEXT_COLOR + result);
+                } catch (Throwable e) {
+                    var msg = e.toString();
+                    System.out.print(msg);
+                }
+            }
         }
         System.out.println();
     }

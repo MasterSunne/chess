@@ -41,13 +41,10 @@ Service class that can be shared by multiple services. pick whether to do it in 
 -send HTTP response back to client w/status code and response body
 
 
-
 Questions for Phase 5:
 need to start SQL server in the background to test ServerFacade?
 How are the request/response objects supposed to reach the facade if they're in Server module?
 How are is ServerFacadeTests supposed to reach ServerFacade if it's in the shared module?
-
-
 
 need to implement clear function for phase 5?
 is it an all or nothing pass off?
@@ -56,5 +53,10 @@ how to get it to remember the list of games given last? (should it be persistent
 debugging join
 how to clear before each test
 
-
 note to self: make it so that joining games will ask to list games first and then list games will say if there are any
+
+
+Questions for Phase 6:
+- how to store a variable in the client that updates anytime a LOAD_GAME msg is 
+received from the server
+- this way I have the game/board stored on the client-side to redraw at any time
