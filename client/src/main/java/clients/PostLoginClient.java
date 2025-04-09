@@ -9,6 +9,7 @@ import server.ServerFacade;
 import ui.DrawBoard;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
+import websocket.commands.UserGameCommand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,12 +112,11 @@ public class PostLoginClient {
     private String joinGame(ClientData clientData, String[] params) throws ResponseException {
         try {
             String x = checkJoinInput(params);
-            if (x != null) {
-                return x;
-            }
+            if (x != null) {return x;}
             int dbgameID = 0;
             if (!gameMap.isEmpty()) {
                 dbgameID = gameMap.get(Integer.valueOf(params[0]));
+                clientData.setGameID(dbgameID);
             } else{
                 throw new ResponseException(400, "Error: no games to join");
             }
@@ -132,6 +132,7 @@ public class PostLoginClient {
             server.joinGame(jgr);
             WebSocketFacade ws = new WebSocketFacade(url,repl);
             clientData.setWsf(ws);
+            ws.connect(clientData);
             clientData.setState(State.IN_GAME);
             return "Successfully joined game";
 
@@ -166,11 +167,13 @@ public class PostLoginClient {
     }
 
     private String observeGame(ClientData clientData, String[] params) throws ResponseException {
-        clientData.setState(State.IN_GAME);
+
         clientData.setPlayerColor("white");
         clientData.setIsObserver(true);
         WebSocketFacade ws = new WebSocketFacade(url,repl);
         clientData.setWsf(ws);
+        ws.connect(clientData);
+        clientData.setState(State.IN_GAME);
         return "";
     }
 
