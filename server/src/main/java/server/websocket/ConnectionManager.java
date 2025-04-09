@@ -1,6 +1,10 @@
 package server.websocket;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -10,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(String visitorName, Session session) {
-        var connection = new Connection(visitorName, session);
+    public void add(String visitorName, Integer gameID, Session session) {
+        var connection = new Connection(gameID, session);
         connections.put(visitorName, connection);
     }
 
@@ -19,21 +23,50 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(String excludeVisitorName, ServerMessage notification) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.visitorName.equals(excludeVisitorName)) {
-                    c.send(notification.toString());
+    public void broadcast(String excludeVisitorName, Integer gameID, ServerMessage notification) throws IOException {
+        ArrayList<String> removeList = new ArrayList<>();
+        for (var entry : connections.entrySet()) {
+            var c = entry.getValue();
+            if (!excludeVisitorName.equals(entry.getKey())) {
+                if (c.session.isOpen()) {
+                    if (c.gameID.equals(gameID)) {
+                        c.send(notification.toString());
+                    }
+                } else {
+                    removeList.add(entry.getKey());
                 }
-            } else {
-                removeList.add(c);
             }
         }
 
         // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.visitorName);
+        for (String visitorName : removeList) {
+            connections.remove(visitorName);
         }
     }
+
+    public void sendGame(String username, ChessGame game) throws IOException {
+        var c = connections.get(username);
+        if (c.session.isOpen()) {
+            var gameJSON = new Gson().toJson(game);
+            var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameJSON);
+            c.send(notification.toString());
+        } else {
+            connections.remove(username);
+        }
+    }
+
+    public boolean containsPair(String visitorName, Connection connection) {
+        // Iterate through all entries in the ConcurrentHashMap
+        for (var entry : connections.entrySet()) {
+            String key = entry.getKey();
+            Connection value = entry.getValue();
+
+            // Check if both key and value match
+            if (key.equals(visitorName) && value.equals(connection)) {
+                return true; // Pair found
+            }
+        }
+        return false; // Pair not found
+    }
+
 }

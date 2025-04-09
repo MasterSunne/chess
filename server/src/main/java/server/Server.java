@@ -13,17 +13,18 @@ import spark.*;
 public class Server {
     private final SQLAuthDAO aDAO;
     private final WebSocketHandler webSocketHandler;
+    GameDAO gDAO = new SQLGameDAO();
 
     {
         try {
             aDAO = new SQLAuthDAO();
-            webSocketHandler = new WebSocketHandler();
+            webSocketHandler = new WebSocketHandler(aDAO,gDAO);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    GameDAO gDAO = new SQLGameDAO();
+
     UserDAO uDAO = new SQLUserDAO();
     GameService gService = new GameService(aDAO,gDAO);
     UserService uService = new UserService(aDAO,uDAO);

@@ -23,23 +23,23 @@ public class GameplayClient {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            if (!repl.getObserver()) {
+            if (!clientData.getIsObserver()) {
                 return switch (cmd) {
-                    case "move" -> move(repl, params);
-                    case "redraw" -> redraw(repl);
-                    case "check" -> check();
-                    case "resign" -> resign(repl);
-                    case "leave" -> leave(repl);
-                    case "help" -> help(repl);
-                    default -> help(repl);
+//                    case "move" -> move(clientData, params);
+                    case "redraw" -> redraw(clientData);
+//                    case "check" -> check();
+//                    case "resign" -> resign(clientData);
+//                    case "leave" -> leave(clientData);
+                    case "help" -> help(clientData);
+                    default -> help(clientData);
                 };
             } else {
                 return switch (cmd) {
-                    case "redraw" -> redraw(repl);
-                    case "check" -> check();
-                    case "leave" -> leave(repl);
-                    case "help" -> help(repl);
-                    default -> help(repl);
+                    case "redraw" -> redraw(clientData);
+//                    case "check" -> check();
+//                    case "leave" -> leave(clientData);
+                    case "help" -> help(clientData);
+                    default -> help(clientData);
                 };
             }
         } catch (ResponseException ex) {
@@ -47,20 +47,21 @@ public class GameplayClient {
         }
     }
 
-    private void redraw(Repl repl){
-        if(!repl.getObserver()){
-            if(repl.getPlayerColor().equals("white")){
-                DrawBoard.main(ChessGame.TeamColor.WHITE);
-            } else if (repl.getPlayerColor().equals("black")){
-                DrawBoard.main(ChessGame.TeamColor.BLACK);
+    private String redraw(ClientData clientData){
+        if(!clientData.getIsObserver()){
+            if(clientData.getPlayerColor().equals("white")){
+                DrawBoard.main(ChessGame.TeamColor.WHITE,clientData.getGameBoard());
+            } else if (clientData.getPlayerColor().equals("black")){
+                DrawBoard.main(ChessGame.TeamColor.BLACK,clientData.getGameBoard());
             }
         } else {
-            DrawBoard.main(ChessGame.TeamColor.WHITE);
+            DrawBoard.main(ChessGame.TeamColor.WHITE,clientData.getGameBoard());
         }
+        return "";
     }
 
-    public String help(Repl repl) {
-        if (!repl.getObserver()) {
+    public String help(ClientData clientData) {
+        if (!clientData.getIsObserver()) {
             return RESET_TEXT_COLOR + """
                     move <START_POSITION> <END_POSITION> - a piece
                     redraw - the chess board

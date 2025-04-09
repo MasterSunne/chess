@@ -1,5 +1,6 @@
 package clients;
 
+import chess.ChessBoard;
 import websocket.WebSocketFacade;
 
 public class ClientData {
@@ -8,6 +9,7 @@ public class ClientData {
     private State state;
     private String playerColor;
     private Boolean isObserver;
+    private ChessBoard gameBoard;
 
     // Constructor
     public ClientData() {
@@ -16,6 +18,7 @@ public class ClientData {
         this.playerColor = "";
         this.isObserver = false;
         this.state = State.LOGGED_OUT;
+        this.gameBoard = null;
     }
 
     // Getters and Setters
@@ -58,4 +61,13 @@ public class ClientData {
     public void setIsObserver(Boolean isObserver) {
         this.isObserver = isObserver;
     }
+
+    public ChessBoard getGameBoard(){
+        return gameBoard;
+    }
+
+    public void setGameBoard(ChessBoard gb){
+        this.gameBoard = gb;
+    }
+
 }

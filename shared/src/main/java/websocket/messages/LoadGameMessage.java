@@ -4,10 +4,10 @@ import chess.ChessGame;
 
 public class LoadGameMessage extends ServerMessage {
 
-    ChessGame game;
+    String gameJSON;
 
-    public LoadGameMessage(ServerMessageType type, ChessGame game) {
+    public LoadGameMessage(ServerMessageType type, String gameJSON) {
         super(type);
-        this.game = game;
+        this.gameJSON = gameJSON;
     }
 }
