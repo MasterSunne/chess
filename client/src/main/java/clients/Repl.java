@@ -8,7 +8,9 @@ import server.ResponseException;
 import ui.DrawBoard;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -29,7 +31,7 @@ public class Repl implements NotificationHandler {
     }
 
     public void run() {
-        System.out.println(BLACK_QUEEN + " Welcome to Will Larsen's 240 Chess Program! " + BLACK_QUEEN);
+        System.out.println("\n"+BLACK_QUEEN + " Welcome to Will Larsen's 240 Chess Program! " + BLACK_QUEEN+"\n");
         System.out.print(preLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
@@ -88,19 +90,25 @@ public class Repl implements NotificationHandler {
         if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
 
             LoadGameMessage lgm = new Gson().fromJson(message, LoadGameMessage.class);
-            ChessGame game = new Gson().fromJson(lgm.message(), ChessGame.class);
-            clientData.setGame(game);
+            clientData.setGame(lgm.getGame());
             ChessBoard board = clientData.getGame().getBoard();
             DrawBoard.main(ChessGame.TeamColor.WHITE,board);
+            System.out.println("received load game");
 
         } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
 
+            NotificationMessage nm = new Gson().fromJson(message,NotificationMessage.class);
+            System.out.println(SET_TEXT_COLOR_BLUE + nm.getMessage());
+
         } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
+
+            ErrorMessage em = new Gson().fromJson(message,ErrorMessage.class);
+            System.out.println(SET_TEXT_COLOR_BLUE + em.getErrorMessage());
 
         } else{
             throw new RuntimeException("Error: invalid ServerMessageType");
         }
-        System.out.println(SET_TEXT_COLOR_BLUE + notification.message());
+        System.out.print(RESET_TEXT_COLOR);
         printPrompt(clientData.getState());
     }
 }

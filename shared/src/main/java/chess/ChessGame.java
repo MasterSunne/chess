@@ -21,6 +21,7 @@ public class ChessGame {
     private boolean queenSideCastleBlack = true;
     public boolean canEnPassantWhite = false;
     public boolean canEnPassantBlack = false;
+    public boolean gameOver = false;
 
     public boolean getKingSideCastleWhite() {
         return kingSideCastleWhite;
@@ -43,16 +44,18 @@ public class ChessGame {
     }
 
     public void setQueenSideCastleWhite(boolean queenSideCastleWhite) {
-        this.queenSideCastleWhite = queenSideCastleWhite;
-    }
+        this.queenSideCastleWhite = queenSideCastleWhite;}
 
     public boolean getQueenSideCastleBlack() {
         return queenSideCastleBlack;
     }
 
     public void setQueenSideCastleBlack(boolean queenSideCastleBlack) {
-        this.queenSideCastleBlack = queenSideCastleBlack;
-    }
+        this.queenSideCastleBlack = queenSideCastleBlack;}
+
+    public boolean getGameOver(){return gameOver;}
+
+    public void setGameOver(boolean bool){ this.gameOver = bool;}
 
     // have a no-argument constructor for default values
     public ChessGame() {
@@ -175,8 +178,10 @@ public class ChessGame {
                     //check to see if it's checkmate or stalemate and the game should stop, not able to make more moves
                     if(isInCheckmate(getTeamTurn())){
                         boolean checkmate = true;
+                        setGameOver(true);
                     } else if (isInStalemate(getTeamTurn())){
                         boolean stalemate = true;
+                        setGameOver(true);
                     }
                     //check if a king or rook moved and set king or queen side booleans to true or false accordingly
                 } else if(validMoveList.isEmpty()){

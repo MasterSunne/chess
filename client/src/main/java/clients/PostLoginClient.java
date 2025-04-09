@@ -132,7 +132,7 @@ public class PostLoginClient {
             server.joinGame(jgr);
             WebSocketFacade ws = new WebSocketFacade(url,repl);
             clientData.setWsf(ws);
-            ws.connect(clientData);
+            clientData.getWsf().connect(clientData);
             clientData.setState(State.IN_GAME);
             return "Successfully joined game";
 
@@ -170,9 +170,10 @@ public class PostLoginClient {
 
         clientData.setPlayerColor("white");
         clientData.setIsObserver(true);
+        clientData.setGameID(Integer.valueOf(params[0]));
         WebSocketFacade ws = new WebSocketFacade(url,repl);
         clientData.setWsf(ws);
-        ws.connect(clientData);
+        clientData.getWsf().connect(clientData);
         clientData.setState(State.IN_GAME);
         return "";
     }

@@ -11,11 +11,11 @@ import java.util.Scanner;
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
 
 public class GameplayClient {
-    private final WebSocketFacade wsf;
+//    private final WebSocketFacade wsf;
     private ClientData clientData;
 
     public GameplayClient(ClientData cd) throws ResponseException {
-        wsf = cd.getWsf();
+//        wsf = cd.getWsf();
         this.clientData = cd;
     }
 
@@ -64,13 +64,14 @@ public class GameplayClient {
             promotionPiece = ChessPiece.PieceType.valueOf(params[2]);
         }
         ChessMove chessMove = new ChessMove(startPos, endPos, promotionPiece);
-        wsf.makeMove(clientData,chessMove);
+        clientData.getWsf().makeMove(clientData,chessMove);
         return "";
     }
 
     private String leave(ClientData clientData){
         try {
-            wsf.leave(clientData);
+            clientData.getWsf().leave(clientData);
+            clientData.setWsf(null);
             clientData.setState(State.LOGGED_IN);
             return "Successfully left game";
         } catch (ResponseException e) {
@@ -89,7 +90,8 @@ public class GameplayClient {
                 line = scanner.nextLine().trim().toLowerCase();
 
                 if (line.equals("yes")) {
-                    wsf.resign(clientData);
+                    clientData.getWsf().resign(clientData);
+                    clientData.setWsf(null);
                     exitMsg = "Resignation successful";
                     break;
                 } else if (line.equals("no")) {
