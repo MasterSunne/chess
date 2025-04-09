@@ -1,10 +1,14 @@
 package clients;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import clients.*;
+import com.google.gson.Gson;
 import server.ResponseException;
 import ui.DrawBoard;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -78,8 +82,16 @@ public class Repl implements NotificationHandler {
     }
 
     @Override
-    public void notify(ServerMessage notification) {
+    public void notify(String message) {
+        ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+
         if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+
+            LoadGameMessage lgm = new Gson().fromJson(message, LoadGameMessage.class);
+            ChessGame game = new Gson().fromJson(lgm.message(), ChessGame.class);
+            clientData.setGame(game);
+            ChessBoard board = clientData.getGame().getBoard();
+            DrawBoard.main(ChessGame.TeamColor.WHITE,board);
 
         } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
 

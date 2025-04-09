@@ -47,8 +47,7 @@ public class ConnectionManager {
     public void sendGame(String username, ChessGame game) throws IOException {
         var c = connections.get(username);
         if (c.session.isOpen()) {
-            var gameJSON = new Gson().toJson(game);
-            var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameJSON);
+            var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
             c.send(notification.toString());
         } else {
             connections.remove(username);
