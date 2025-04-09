@@ -10,12 +10,12 @@ import java.util.Arrays;
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
 
 public class GameplayClient {
-    private final Repl repl;
+    private ClientData clientData;
     private final ServerFacade server;
 
-    public GameplayClient(String serverUrl, Repl repl) {
+    public GameplayClient(String serverUrl, ClientData cd) {
         server = new ServerFacade(serverUrl);
-        this.repl = repl;
+        this.clientData = cd;
     }
 
     public String eval(String input) {

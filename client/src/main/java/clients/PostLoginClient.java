@@ -18,18 +18,18 @@ import java.util.Map;
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
 
 public class PostLoginClient {
-    private final Repl repl;
+    private ClientData clientData;
+    private Repl repl;
     private final ServerFacade server;
     private final ArrayList<String> gameList = new ArrayList<>();
     private final Map<Integer, Integer> gameMap = new HashMap<>();
     private final String url;
-    private final NotificationHandler notificationHandler;
 
-    public PostLoginClient(String serverUrl, Repl repl, NotificationHandler notificationHandler) {
+    public PostLoginClient(String serverUrl, ClientData cd, Repl repl) {
         url = serverUrl;
         server = new ServerFacade(serverUrl);
+        this.clientData = cd;
         this.repl = repl;
-        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input) {
@@ -38,12 +38,12 @@ public class PostLoginClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "logout" -> logout(repl);
-                case "create" -> createGame(repl, params);
-                case "list" -> listGames(repl);
-                case "join" -> joinGame(repl,params);
-                case "observe" -> observeGame(repl,params);
-                case "clear" -> clearDB(repl,params);
+                case "logout" -> logout(clientData);
+                case "create" -> createGame(clientData, params);
+                case "list" -> listGames(clientData);
+                case "join" -> joinGame(clientData,params);
+                case "observe" -> observeGame(clientData,params);
+                case "clear" -> clearDB(clientData,params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -52,12 +52,12 @@ public class PostLoginClient {
         }
     }
 
-    private String clearDB(Repl repl,String[] params) throws ResponseException{
+    private String clearDB(ClientData clientData,String[] params) throws ResponseException{
         if(params.length == 0){
             return "Invalid permissions";
         }
         if (params[0].equals("987")){
-            logout(repl);
+            logout(clientData);
             server.clearAll();
         } else{
             return "Invalid permissions";
@@ -65,21 +65,21 @@ public class PostLoginClient {
         return "";
     }
 
-    public String logout(Repl repl) throws ResponseException {
-        LogoutRequest lr = new LogoutRequest(repl.getAuthToken());
+    public String logout(ClientData clientData) throws ResponseException {
+        LogoutRequest lr = new LogoutRequest(clientData.getAuthToken());
         server.logoutUser(lr);
-        repl.setState(State.LOGGED_OUT);
+        clientData.setState(State.LOGGED_OUT);
         return "Successfully logged out";
     }
 
-    private String createGame(Repl repl, String... params) throws ResponseException {
+    private String createGame(ClientData clientData, String... params) throws ResponseException {
         CreateGameRequest cgr = new CreateGameRequest(params[0]);//pass in game name
-        server.createGame(repl.getAuthToken(),cgr);
+        server.createGame(clientData.getAuthToken(),cgr);
         return String.format("Created game: " + params[0]);
     }
 
-    private String listGames(Repl repl) throws ResponseException {
-        ListGamesRequest lgr = new ListGamesRequest(repl.getAuthToken());
+    private String listGames(ClientData clientData) throws ResponseException {
+        ListGamesRequest lgr = new ListGamesRequest(clientData.getAuthToken());
         ListGamesResult result = server.listGames(lgr);
         setGameList(result.games());
 
@@ -108,7 +108,7 @@ public class PostLoginClient {
         }
     }
 
-    private String joinGame(Repl repl, String[] params) throws ResponseException {
+    private String joinGame(ClientData clientData, String[] params) throws ResponseException {
         try {
             String x = checkJoinInput(params);
             if (x != null) {
@@ -121,18 +121,18 @@ public class PostLoginClient {
                 throw new ResponseException(400, "Error: no games to join");
             }
             if (params[1].equalsIgnoreCase("WHITE")) {
-                repl.setPlayerColor("white");
+                clientData.setPlayerColor("white");
             } else if (params[1].equalsIgnoreCase("BLACK")){
-                repl.setPlayerColor("black");
+                clientData.setPlayerColor("black");
             } else {
                 throw new ResponseException(400, "teamColor not valid");
             }
 
-            JoinGameRequest jgr = new JoinGameRequest(repl.getAuthToken(),params[1].toUpperCase(), dbgameID);
+            JoinGameRequest jgr = new JoinGameRequest(clientData.getAuthToken(),params[1].toUpperCase(), dbgameID);
             server.joinGame(jgr);
-            WebSocketFacade ws = new WebSocketFacade(url,notificationHandler);
-            repl.setWebSocketFacade();
-            repl.setState(State.IN_GAME);
+            WebSocketFacade ws = new WebSocketFacade(url,repl);
+            clientData.setWsf(ws);
+            clientData.setState(State.IN_GAME);
             return "Successfully joined game";
 
         } catch (NumberFormatException e) {
@@ -165,11 +165,12 @@ public class PostLoginClient {
         return null;
     }
 
-    private String observeGame(Repl repl, String[] params) throws ResponseException {
-        repl.setState(State.IN_GAME);
-        repl.setPlayerColor("white");
-        repl.setObserver(true);
-        DrawBoard.main(ChessGame.TeamColor.WHITE);
+    private String observeGame(ClientData clientData, String[] params) throws ResponseException {
+        clientData.setState(State.IN_GAME);
+        clientData.setPlayerColor("white");
+        clientData.setIsObserver(true);
+        WebSocketFacade ws = new WebSocketFacade(url,repl);
+        clientData.setWsf(ws);
         return "";
     }
 

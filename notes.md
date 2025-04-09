@@ -60,3 +60,5 @@ Questions for Phase 6:
 - how to store a variable in the client that updates anytime a LOAD_GAME msg is 
 received from the server
 - this way I have the game/board stored on the client-side to redraw at any time
+
+- how to get the gameID and username data to create the CONNECT userGameCommand
