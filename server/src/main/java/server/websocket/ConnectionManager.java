@@ -3,8 +3,8 @@ package server.websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -54,6 +54,16 @@ public class ConnectionManager {
             connections.remove(username);
         }
     }
+
+    public void sendError(Session session, String msg) throws IOException {
+        if (session.isOpen()){
+            var errorNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,msg);
+            session.getRemote().sendString(errorNotification.toString());
+        }else {
+            session.close();
+        }
+    }
+
 
     public boolean containsPair(String visitorName, Connection connection) {
         // Iterate through all entries in the ConcurrentHashMap

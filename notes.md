@@ -62,3 +62,7 @@ received from the server
 - this way I have the game/board stored on the client-side to redraw at any time
 
 - how to get the gameID and username data to create the CONNECT userGameCommand
+
+- how to mark the game as over when resigning a player?
+
+- do we have to serialize and deserialize every serverMessage and UserGameCommand between server and client?

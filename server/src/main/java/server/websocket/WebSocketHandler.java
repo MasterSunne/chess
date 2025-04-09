@@ -6,6 +6,8 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
+import org.eclipse.jetty.server.Authentication;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -31,28 +33,27 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String msg) {
+    public void onMessage(Session session, String msg) throws IOException {
         try {
             UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
 
-            // Throws a custom UnauthorizedException. Yours may work differently.
-
-            String username = getUsername(command);
+            AuthData aData = aDAO.getAuth(command.getAuthToken());
+            String username = aData.username();
 
             saveSession(command.getGameID(), username, session);
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, command); //(ConnectCommand)
-                case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
-                case LEAVE -> leaveGame(session, username,  command); //(LeaveGameCommand)
-                case RESIGN -> resign(session, username,  command); //(ResignCommand)
+                case MAKE_MOVE -> makeMove( username, command); //(MakeMoveCommand)
+                case LEAVE -> leave( username,  command ); //(LeaveGameCommand)
+                case RESIGN -> resign( username,  command ); //(ResignCommand)
             }
-        } catch (UnauthorizedException ex) {
+        } catch (DataAccessException ex) {
             // Serializes and sends the error message
-            sendMessage(session.getRemote(), new ErrorMessage("Error: unauthorized"));
+            connections.sendError(session,"Error: unauthorized");
         } catch (Exception ex) {
             ex.printStackTrace();
-            sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+            connections.sendError(session,"Error: " + ex.getMessage());
         }
     }
 
@@ -62,19 +63,64 @@ public class WebSocketHandler {
         connections.add(username, gID, session);
         GameData gData = gDAO.getGame(gID);
         String playerColor;
+        var message = "";
         if (username.equals(gData.whiteUsername())){
             playerColor = "white";
+            message = String.format("%s is now playing as &s", username, playerColor);
         } else if (username.equals(gData.blackUsername())) {
             playerColor = "black";
+            message = String.format("%s is now playing as &s",username,playerColor);
         } else {
-            throw new RuntimeException();
+            message = String.format("%s is now watching as an observer",username);
         }
         // send LOAD_GAME message back to the root client including the current game state
         connections.sendGame(username,gData.game());
         // broadcast to remaining player and observers
-        var message = String.format("%s is now playing as &s",username,playerColor);
         var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(username,gID,notification);
+    }
+
+    private void makeMove(String username, UserGameCommand command){
+        // verify validity of move
+        // update game to represent move, then update database
+        // send LOAD_GAME msg to all clients in the game
+        // send a notification to all other clients informing them what move was made
+        // if the move results in check, checkmate, or stalemate server sends another notification to all clients
+    }
+
+    private void leave(String username, UserGameCommand command) throws DataAccessException, IOException {
+        // close connection
+        connections.remove(username);
+        // update game in Database
+        GameData gData = gDAO.getGame(command.getGameID());
+        var message = "";
+        if (username.equals(gData.whiteUsername())){
+            gDAO.updateGame(null,"WHITE", command.getGameID());
+            message = String.format("%s has stopped playing as white",username);
+        } else if (username.equals(gData.blackUsername())) {
+            gDAO.updateGame(null,"BLACK", command.getGameID());
+            message = String.format("%s has stopped playing as black",username);
+        } else {
+            message = String.format("%s is no longer observing the game",username);
+        }
+        // broadcast to all other clients
+        var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(username,command.getGameID(),notification);
+    }
+
+    private void resign(String username, UserGameCommand command) throws DataAccessException, IOException {
+        // mark the game as over
+        // update the game in the database
+        // broadcast to all clients
+        GameData gData = gDAO.getGame(command.getGameID());
+        if (username.equals(gData.whiteUsername())) {
+            String otherUser = String.format(gData.blackUsername());
+        } else if (username.equals(gData.blackUsername())) {
+            String otherUser = String.format(gData.whiteUsername());
+            var message = String.format("%s has resigned. Congratulations &s!", username, otherUser);
+            var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(username, command.getGameID(), notification);
+        }
     }
 
     private void saveSession(Integer gameID, String username, Session session) {
@@ -84,9 +130,5 @@ public class WebSocketHandler {
         }
     }
 
-    private String getUsername(UserGameCommand command) throws DataAccessException {
-        AuthData aData = aDAO.getAuth(command.getAuthToken());
-        return aData.username();
-    }
 
 }
