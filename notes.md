@@ -61,19 +61,15 @@ note to self: make it so that joining games will ask to list games first and the
 Questions for Phase 6:
 - how to store a variable in the client that updates anytime a LOAD_GAME msg is 
 received from the server [going to try storing it inside of ClientData] (this way I have the game/board stored on the client-side to redraw at any time)
-- - how do I represent no more moves possible within the game (how to mark the game as over when resigning a player?)
-
+- how do I represent no more moves possible within the game (how to mark the game as over when resigning a player?)
 - how to get the gameID and username data to create the CONNECT userGameCommand
 - where do I call the connect method on wsf so that it only happens when desired?
+- is there a way to know what type of notification you're receiving and cast it to the right class before deserialization?
+- ideas for how to pass the valid moves to the client to highlight the board spaces?
 
 - do we have to serialize and deserialize every serverMessage and UserGameCommand between server and client?
 
-- - - is there a way to know what type of notification you're receiving and cast it to the right class before deserialization?
-
-- ideas for how to pass the valid moves to the client to highlight the board spaces?
-
-- how to handle promotion pieces? add it as an optional parameter when calling makeMove?
-
+- - gData returning null and leaving a game throwing nullPointerException
 
 
 

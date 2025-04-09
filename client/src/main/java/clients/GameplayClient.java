@@ -6,6 +6,7 @@ import ui.DrawBoard;
 import websocket.WebSocketFacade;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
@@ -28,7 +29,7 @@ public class GameplayClient {
                 return switch (cmd) {
                     case "move" -> move(clientData, params);
                     case "redraw" -> redraw(clientData);
-//                    case "check" -> check();
+                    case "check" -> check(clientData, params);
                     case "resign" -> resign(clientData);
                     case "leave" -> leave(clientData);
                     case "help" -> help(clientData);
@@ -37,7 +38,7 @@ public class GameplayClient {
             } else {
                 return switch (cmd) {
                     case "redraw" -> redraw(clientData);
-//                    case "check" -> check();
+                    case "check" -> check(clientData, params);
                     case "leave" -> leave(clientData);
                     case "help" -> help(clientData);
                     default -> help(clientData);
@@ -49,23 +50,69 @@ public class GameplayClient {
     }
 
     private String move(ClientData clientData, String[] params) throws ResponseException {
+        try {
+            if (!clientData.getGame().getGameOver()) {
+                String startString = params[0];
+                char startChar = startString.charAt(0);
+                int startColumnValue = Character.getNumericValue(startChar) - Character.getNumericValue('a') + 1;
+                ChessPosition startPos = new ChessPosition(startString.charAt(1), startColumnValue);
+
+                String endString = params[1];
+                char endChar = endString.charAt(0);
+                int endColumnValue = Character.getNumericValue(endChar) - Character.getNumericValue('a') + 1;
+                ChessPosition endPos = new ChessPosition(endString.charAt(1), endColumnValue);
+
+                ChessPiece.PieceType promotionPiece = null;
+                if (params.length > 2){
+                    promotionPiece = ChessPiece.PieceType.valueOf(params[2]);
+                }
+                ChessMove chessMove = new ChessMove(startPos, endPos, promotionPiece);
+                clientData.getWsf().makeMove(clientData,chessMove);
+                return "";
+            } else {
+                throw new ResponseException(407,"Error: the game has ended");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String redraw(ClientData clientData){
+        ChessBoard board = clientData.getGame().getBoard();
+
+        if(!clientData.getIsObserver()){
+            if(clientData.getPlayerColor().equals("white")){
+                DrawBoard.main(ChessGame.TeamColor.WHITE,board);
+            } else if (clientData.getPlayerColor().equals("black")){
+                DrawBoard.main(ChessGame.TeamColor.BLACK,board);
+            }
+        } else {
+            DrawBoard.main(ChessGame.TeamColor.WHITE,board);
+        }
+        return "";
+    }
+
+    private String check(ClientData clientData, String[] params){
+        ChessGame game = clientData.getGame();
+        ChessGameValidMoves validMovesObj = new ChessGameValidMoves(game);
+
         String startString = params[0];
         char startChar = startString.charAt(0);
         int startColumnValue = Character.getNumericValue(startChar) - Character.getNumericValue('a') + 1;
         ChessPosition startPos = new ChessPosition(startString.charAt(1), startColumnValue);
-
-        String endString = params[1];
-        char endChar = endString.charAt(0);
-        int endColumnValue = Character.getNumericValue(endChar) - Character.getNumericValue('a') + 1;
-        ChessPosition endPos = new ChessPosition(endString.charAt(1), endColumnValue);
-
-        ChessPiece.PieceType promotionPiece = null;
-        if (params.length > 2){
-            promotionPiece = ChessPiece.PieceType.valueOf(params[2]);
+        Collection<ChessMove> validMovesList = validMovesObj.validMoves(startPos);
+        StringBuilder positionsOutput = new StringBuilder("Valid Moves: ");
+        for (ChessMove move : validMovesList) {
+            positionsOutput.append(move.toString()).append(", ");
         }
-        ChessMove chessMove = new ChessMove(startPos, endPos, promotionPiece);
-        clientData.getWsf().makeMove(clientData,chessMove);
-        return "";
+
+        // Remove the trailing comma and space if the list is not empty
+        if (!validMovesList.isEmpty()) {
+            positionsOutput.setLength(positionsOutput.length() - 2);
+        }
+        return positionsOutput.toString();
     }
 
     private String leave(ClientData clientData){
@@ -90,6 +137,7 @@ public class GameplayClient {
                 line = scanner.nextLine().trim().toLowerCase();
 
                 if (line.equals("yes")) {
+                    clientData.getGame().setGameOver(true);
                     clientData.getWsf().resign(clientData);
                     clientData.setWsf(null);
                     exitMsg = "Resignation successful";
@@ -109,20 +157,6 @@ public class GameplayClient {
         }
     }
 
-    private String redraw(ClientData clientData){
-        ChessBoard board = clientData.getGame().getBoard();
-
-        if(!clientData.getIsObserver()){
-            if(clientData.getPlayerColor().equals("white")){
-                DrawBoard.main(ChessGame.TeamColor.WHITE,board);
-            } else if (clientData.getPlayerColor().equals("black")){
-                DrawBoard.main(ChessGame.TeamColor.BLACK,board);
-            }
-        } else {
-            DrawBoard.main(ChessGame.TeamColor.WHITE,board);
-        }
-        return "";
-    }
 
     public String help(ClientData clientData) {
         if (!clientData.getIsObserver()) {

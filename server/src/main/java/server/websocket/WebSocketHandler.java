@@ -58,7 +58,7 @@ public class WebSocketHandler {
     }
 
     private void connect(Session session, String username, UserGameCommand command) throws DataAccessException, IOException {
-
+//        System.out.println("received connect message");
         var gID = command.getGameID();
         connections.add(username, gID, session);
         GameData gData = gDAO.getGame(gID);

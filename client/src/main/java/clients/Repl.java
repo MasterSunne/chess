@@ -86,14 +86,13 @@ public class Repl implements NotificationHandler {
     @Override
     public void notify(String message) {
         ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-
         if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
 
+//            System.out.println("received load game");
             LoadGameMessage lgm = new Gson().fromJson(message, LoadGameMessage.class);
             clientData.setGame(lgm.getGame());
             ChessBoard board = clientData.getGame().getBoard();
             DrawBoard.main(ChessGame.TeamColor.WHITE,board);
-            System.out.println("received load game");
 
         } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
 

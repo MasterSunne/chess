@@ -48,7 +48,8 @@ public class ConnectionManager {
         var c = connections.get(username);
         if (c.session.isOpen()) {
             var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
-            c.send(notification.toString());
+            String gameJson = new Gson().toJson(notification);
+            c.send(gameJson);
         } else {
             connections.remove(username);
         }
