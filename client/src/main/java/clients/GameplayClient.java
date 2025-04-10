@@ -53,12 +53,12 @@ public class GameplayClient {
                 String startString = params[0];
                 char startChar = startString.charAt(0);
                 int startColumnValue = Character.getNumericValue(startChar) - Character.getNumericValue('a') + 1;
-                ChessPosition startPos = new ChessPosition(startString.charAt(1), startColumnValue);
+                ChessPosition startPos = new ChessPosition(Character.getNumericValue(startString.charAt(1)), startColumnValue);
 
                 String endString = params[1];
                 char endChar = endString.charAt(0);
                 int endColumnValue = Character.getNumericValue(endChar) - Character.getNumericValue('a') + 1;
-                ChessPosition endPos = new ChessPosition(endString.charAt(1), endColumnValue);
+                ChessPosition endPos = new ChessPosition(Character.getNumericValue(endString.charAt(1)), endColumnValue);
 
                 ChessPiece.PieceType promotionPiece = null;
                 if (params.length > 2){

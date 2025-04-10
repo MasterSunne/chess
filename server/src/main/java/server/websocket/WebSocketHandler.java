@@ -91,6 +91,15 @@ public class WebSocketHandler {
         if(gData.game().gameOver){
             throw new InvalidMoveException("Error: the game has ended and no more moves can be made.");
         }
+        ChessGame.TeamColor movingColor;
+        if (mmcmd.getPlayerColor().equals("white")){
+            movingColor = ChessGame.TeamColor.WHITE;
+        } else{
+            movingColor = ChessGame.TeamColor.BLACK;
+        }
+        if(gData.game().getTeamTurn() != movingColor){
+            throw new InvalidMoveException("Error: it is not your turn to move.");
+        }
         ChessGameValidMoves validMovesObj = new ChessGameValidMoves(gData.game());
         Collection<ChessMove> validMovesList = validMovesObj.validMoves(mmcmd.getMove().getStartPosition());
         if(validMovesList.contains(mmcmd.getMove())){
@@ -108,12 +117,7 @@ public class WebSocketHandler {
             connections.broadcast(username, mmcmd.getGameID(), message);
 
             // if the move results in check, checkmate, or stalemate server sends another notification to all clients
-            ChessGame.TeamColor movingColor;
-            if (mmcmd.getPlayerColor().equals("white")){
-                movingColor = ChessGame.TeamColor.WHITE;
-            } else{
-                movingColor = ChessGame.TeamColor.BLACK;
-            }
+
             if (gData.game().gameOver && gData.game().isInCheckmate(movingColor)){
                 msg = String.format("CHECKMATE\nCongratulations %s!",username);
                 connections.broadcast(null, mmcmd.getGameID(), msg);

@@ -103,7 +103,7 @@ public class Repl implements NotificationHandler {
 
             ErrorMessage em = new Gson().fromJson(message,ErrorMessage.class);
             System.out.println();
-            System.out.println(SET_TEXT_COLOR_RED + em.getErrorMessage());
+            System.out.println(SET_TEXT_COLOR_GREEN + em.getErrorMessage());
 
         } else{
             throw new RuntimeException("Error: invalid ServerMessageType");
