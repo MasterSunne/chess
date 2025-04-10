@@ -187,12 +187,10 @@ public class WebSocketHandler {
 
         // broadcast to all clients
         if (username.equals(gData.whiteUsername())) {
-            String otherUser = String.format(gData.blackUsername());
-            var message = String.format("%s has resigned. Congratulations %s!", username, otherUser);
+            var message = String.format("%s has resigned. Black wins!", username);
             connections.broadcast(username, command.getGameID(), message);
         } else if (username.equals(gData.blackUsername())) {
-            String otherUser = String.format(gData.whiteUsername());
-            var message = String.format("%s has resigned. Congratulations %s!", username, otherUser);
+            var message = String.format("%s has resigned. White wins!", username);
             connections.broadcast(username, command.getGameID(), message);
         }
     }

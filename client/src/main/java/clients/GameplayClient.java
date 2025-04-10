@@ -5,6 +5,9 @@ import server.ResponseException;
 import ui.DrawBoard;
 import websocket.WebSocketFacade;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
@@ -38,7 +41,6 @@ public class GameplayClient {
                     case "redraw" -> redraw(clientData);
                     case "check" -> check(clientData, params);
                     case "leave" -> leave(clientData);
-                    case "help" -> help(clientData);
                     default -> help(clientData);
                 };
             }
@@ -125,21 +127,19 @@ public class GameplayClient {
 
     private String resign(ClientData clientData){
         try {
-            Scanner scanner = new Scanner(System.in);
-            String line;
             String exitMsg;
 
             while (true) {
                 System.out.println("Are you sure you want to resign? <YES|NO>");
-                line = scanner.nextLine().trim().toLowerCase();
-
-                if (line.equals("yes")) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                String input = reader.readLine();
+                if (input.equals("yes")) {
                     clientData.getGame().setGameOver(true);
                     clientData.getWsf().resign(clientData);
                     clientData.setWsf(null);
                     exitMsg = "Resignation successful";
                     break;
-                } else if (line.equals("no")) {
+                } else if (input.equals("no")) {
                     exitMsg = "Resignation canceled";
                     break;
                 } else {
@@ -147,9 +147,8 @@ public class GameplayClient {
                     System.out.println("Invalid input: options are \"yes\" or \"no\". Please try again.");
                 }
             }
-            scanner.close();
             return exitMsg;
-        } catch (ResponseException e) {
+        } catch (ResponseException | IOException e) {
             throw new RuntimeException(e);
         }
     }

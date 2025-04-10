@@ -28,10 +28,14 @@ public class DrawBoard {
 //        ChessBoard board = new ChessBoard();
 //        board.resetBoard();
         String currentTurn;
-        if (game.getTeamTurn() == ChessGame.TeamColor.WHITE){
-            currentTurn = "White's Move";
-        } else {
-            currentTurn = "Black's Move";
+        if (!game.gameOver) {
+            if (game.getTeamTurn() == ChessGame.TeamColor.WHITE){
+                currentTurn = "White's Move";
+            } else {
+                currentTurn = "Black's Move";
+            }
+        } else{
+            currentTurn = "Game Over";
         }
 
         ChessBoard board = game.getBoard();
@@ -55,10 +59,14 @@ public class DrawBoard {
         out.print(ERASE_SCREEN);
         System.out.println();
         String currentTurn;
-        if (clientData.getGame().getTeamTurn() == ChessGame.TeamColor.WHITE){
-            currentTurn = "White's Move";
-        } else {
-            currentTurn = "Black's Move";
+        if (!clientData.getGame().gameOver) {
+            if (clientData.getGame().getTeamTurn() == ChessGame.TeamColor.WHITE){
+                currentTurn = "White's Move";
+            } else {
+                currentTurn = "Black's Move";
+            }
+        } else{
+            currentTurn = "Game Over";
         }
 
         ChessBoard board = clientData.getGame().getBoard();
