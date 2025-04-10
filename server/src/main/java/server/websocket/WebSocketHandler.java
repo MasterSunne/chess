@@ -115,7 +115,7 @@ public class WebSocketHandler {
             String otherUser = String.format(gData.blackUsername());
         } else if (username.equals(gData.blackUsername())) {
             String otherUser = String.format(gData.whiteUsername());
-            var message = String.format("%s has resigned. Congratulations &s!", username, otherUser);
+            var message = String.format("%s has resigned. Congratulations %s!", username, otherUser);
             connections.broadcast(username, command.getGameID(), message);
         }
     }

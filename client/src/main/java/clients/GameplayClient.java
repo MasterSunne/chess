@@ -5,9 +5,7 @@ import server.ResponseException;
 import ui.DrawBoard;
 import websocket.WebSocketFacade;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Scanner;
+import java.util.*;
 
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
 
@@ -101,25 +99,34 @@ public class GameplayClient {
         String startString = params[0];
         char startChar = startString.charAt(0);
         int startColumnValue = Character.getNumericValue(startChar) - Character.getNumericValue('a') + 1;
-        ChessPosition startPos = new ChessPosition(startString.charAt(1), startColumnValue);
-        Collection<ChessMove> validMovesList = validMovesObj.validMoves(startPos);
-        StringBuilder positionsOutput = new StringBuilder("Valid Moves: ");
-        for (ChessMove move : validMovesList) {
-            positionsOutput.append(move.toString()).append(", ");
-        }
+        int startRowValue = Character.getNumericValue(startString.charAt(1));
+        ChessPosition startPos = new ChessPosition(startRowValue, startColumnValue);
 
-        // Remove the trailing comma and space if the list is not empty
-        if (!validMovesList.isEmpty()) {
-            positionsOutput.setLength(positionsOutput.length() - 2);
+        Collection<ChessMove> validMovesList = validMovesObj.validMoves(startPos);
+        ArrayList<ChessPosition> validMovePositions = new java.util.ArrayList<>();
+        for (ChessMove move : validMovesList){
+            validMovePositions.add(move.getEndPosition());
         }
-        return positionsOutput.toString();
+        DrawBoard.checker(clientData,startPos,validMovePositions);
+//        StringBuilder positionsOutput = new StringBuilder("Valid Moves: ");
+//        for (ChessMove move : validMovesList) {
+//            positionsOutput.append(move.toString()).append(", ");
+//        }
+//
+//        // Remove the trailing comma and space if the list is not empty
+//        if (!validMovesList.isEmpty()) {
+//            positionsOutput.setLength(positionsOutput.length() - 2);
+//        }
+//        return positionsOutput.toString();
+
+        return "";
     }
 
     private String leave(ClientData clientData){
         try {
             clientData.getWsf().leave(clientData);
-            clientData.setWsf(null);
             clientData.setState(State.LOGGED_IN);
+            clientData.setWsf(null);
             return "Successfully left game";
         } catch (ResponseException e) {
             throw new RuntimeException(e);
