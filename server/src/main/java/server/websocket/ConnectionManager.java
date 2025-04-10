@@ -59,6 +59,17 @@ public class ConnectionManager {
         }
     }
 
+    public void sendMessage(String username, String msg) throws IOException {
+        var c = connections.get(username);
+        if (c.session.isOpen()) {
+            NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,msg);
+            String notificationJson = new Gson().toJson(notificationMessage);
+            c.send(notificationJson);
+        } else {
+            connections.remove(username);
+        }
+    }
+
     public void broadcastGame(String excludeVisitorName, Integer gameID, ChessGame game) throws IOException {
         ArrayList<String> removeList = new ArrayList<>();
 

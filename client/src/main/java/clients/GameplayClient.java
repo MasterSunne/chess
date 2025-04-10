@@ -136,7 +136,6 @@ public class GameplayClient {
                 if (input.equals("yes")) {
                     clientData.getGame().setGameOver(true);
                     clientData.getWsf().resign(clientData);
-                    clientData.setWsf(null);
                     exitMsg = "Resignation successful";
                     break;
                 } else if (input.equals("no")) {

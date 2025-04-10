@@ -13,6 +13,7 @@ import result.CreateGameResult;
 import result.ListGamesResult;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameService {
     private final AuthDAO authDAO;
@@ -37,23 +38,34 @@ public class GameService {
     }
 
 
-    static int x = 1;
+
     public CreateGameResult createGame(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
         try {
-            if(authDAO.getAuth(authToken) != null){
-                if(gameDAO.findGame(createGameRequest.gameName()) == null){
-                    ChessGame newGame = new ChessGame();
-                    GameData gData = new GameData(x++, null, null,createGameRequest.gameName(),newGame);
-                    gameDAO.createGame(gData);
-                    return new CreateGameResult(gData.gameID());
-                }
-            } else{
+            if (authDAO.getAuth(authToken) == null) {
                 throw new DataAccessException(401, "Error: unauthorized");
+            }
+            if (gameDAO.findGame(createGameRequest.gameName()) != null) {
+                throw new DataAccessException(400, "Error: game name already exists");
+            }
+            // generate unique 4-digit ID
+            Random rand = new Random();
+            int gameID;
+            int maxAttempts = 100;
+            do {
+                gameID = 100 + rand.nextInt(900);
+                if (maxAttempts-- <= 0){
+                    throw new DataAccessException(500, "Error: couldn't generate game ID");
                 }
-        } catch (DataAccessException e) {
+            } while(gameDAO.getGame(gameID) != null);
+
+            // create new game and put in database
+            ChessGame newGame = new ChessGame();
+            GameData gData = new GameData(gameID, null, null, createGameRequest.gameName(), newGame);
+            gameDAO.createGame(gData);
+            return new CreateGameResult(gData.gameID());
+        } catch (DataAccessException e){
             throw new DataAccessException(e.statusCode(),e.getMessage());
         }
-        return null;
     }
 
     public void joinGame(String authToken,JoinGameRequest joinGameRequest) throws DataAccessException {

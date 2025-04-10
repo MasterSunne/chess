@@ -179,6 +179,9 @@ public class WebSocketHandler {
     private void resign(String username, UserGameCommand command) throws DataAccessException, IOException {
 
         GameData gData = gDAO.getGame(command.getGameID());
+        if (gData.game().gameOver) {
+            throw new IOException("Game is over, can't resign");
+        }
         // mark the game as over
         gData.game().gameOver = true;
         String json = new Gson().toJson(gData.game());
@@ -189,10 +192,15 @@ public class WebSocketHandler {
         if (username.equals(gData.whiteUsername())) {
             var message = String.format("%s has resigned. Black wins!", username);
             connections.broadcast(username, command.getGameID(), message);
+            connections.sendMessage(username,message);
         } else if (username.equals(gData.blackUsername())) {
             var message = String.format("%s has resigned. White wins!", username);
             connections.broadcast(username, command.getGameID(), message);
+            connections.sendMessage(username,message);
+        } else{
+            throw new IOException("Observer can't resign");
         }
+
     }
 
     private void saveSession(Integer gameID, String username, Session session) {

@@ -28,7 +28,6 @@ class GameServiceTest {
         authDAO = new MemoryAuthDAO();
         gameDAO = new MemoryGameDAO();
         gService = new GameService(authDAO, gameDAO);
-        GameService.x = 1;
     }
 
     @Test
