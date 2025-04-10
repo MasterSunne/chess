@@ -29,7 +29,7 @@ public class ConnectionManager {
 
         for (var entry : connections.entrySet()) {
             var c = entry.getValue();
-            if (!excludeVisitorName.equals(entry.getKey())) {
+            if (excludeVisitorName == null || !excludeVisitorName.equals(entry.getKey())) {
                 if (c.session.isOpen()) {
                     if (c.gameID.equals(gameID)) {
                         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,notification);

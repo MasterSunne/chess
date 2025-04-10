@@ -1,27 +1,20 @@
 package server.websocket;
 
-import chess.ChessGame;
-import chess.ChessGameValidMoves;
-import chess.ChessMove;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
-import org.eclipse.jetty.server.Authentication;
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ErrorMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 
@@ -92,7 +85,7 @@ public class WebSocketHandler {
             throw new InvalidMoveException("Error: the game has ended and no more moves can be made.");
         }
         ChessGame.TeamColor movingColor;
-        if (mmcmd.getPlayerColor().equals("white")){
+        if (gData.whiteUsername().equals(username)){
             movingColor = ChessGame.TeamColor.WHITE;
         } else{
             movingColor = ChessGame.TeamColor.BLACK;
@@ -102,39 +95,66 @@ public class WebSocketHandler {
         }
         ChessGameValidMoves validMovesObj = new ChessGameValidMoves(gData.game());
         Collection<ChessMove> validMovesList = validMovesObj.validMoves(mmcmd.getMove().getStartPosition());
-        if(validMovesList.contains(mmcmd.getMove())){
-            // update game to represent move, then update database
-            gData.game().makeMove(mmcmd.getMove());
-            String json = new Gson().toJson(gData.game());
-            gDAO.updateGameJSON(mmcmd.getGameID(),json);
-
-            // send LOAD_GAME msg to all clients in the game
-            connections.sendGame(username,gData.game());
-            connections.broadcastGame(username,gData.gameID(),gData.game());
-
-            // send a notification to all other clients informing them what move was made
-            String message = String.format("%s moved %s to %s",username,mmcmd.getStartPos(),mmcmd.getEndPos());
-            connections.broadcast(username, mmcmd.getGameID(), message);
-
-            // if the move results in check, checkmate, or stalemate server sends another notification to all clients
-
-            if (gData.game().gameOver && gData.game().isInCheckmate(movingColor)){
-                msg = String.format("CHECKMATE\nCongratulations %s!",username);
-                connections.broadcast(null, mmcmd.getGameID(), msg);
-            } else if(gData.game().gameOver && gData.game().isInStalemate(movingColor)){
-                msg = "STALEMATE\nGreat game!";
-                connections.broadcast(null, mmcmd.getGameID(), msg);
-            } else if(gData.game().whiteCheck){
-                msg = String.format("CHECK : %s (white) is in check!",gData.whiteUsername());
-                connections.broadcast(null, mmcmd.getGameID(), msg);
-            } else if(gData.game().blackCheck){
-                msg = String.format("CHECK : %s (black) is in check!",gData.blackUsername());
-                connections.broadcast(null, mmcmd.getGameID(), msg);
-            }
-        } else{
+        ChessMove move = mmcmd.getMove();
+        if(!validMovesList.contains(move)) {
             throw new InvalidMoveException("Error: invalid move! Try \"check <PiecePosition>\" to see valid moves for a particular piece");
         }
+        // update game to represent move, then update database
+        gData.game().makeMove(move);
+        String json = new Gson().toJson(gData.game());
+        gDAO.updateGameJSON(mmcmd.getGameID(),json);
 
+        // send LOAD_GAME msg to all clients in the game
+        connections.sendGame(username,gData.game());
+        connections.broadcastGame(username,gData.gameID(),gData.game());
+
+        ArrayList<String> coordList = stringForm(move);
+        // send a notification to all other clients informing them what move was made
+        String message = String.format("%s moved %s to %s",username, coordList.get(0),coordList.get(1));
+        connections.broadcast(username, mmcmd.getGameID(), message);
+
+        // if the move results in check, checkmate, or stalemate server sends another notification to all clients
+
+        if (gData.game().gameOver && gData.game().isInCheckmate(movingColor)){
+            msg = String.format("CHECKMATE\nCongratulations %s!",username);
+            connections.broadcast(null, mmcmd.getGameID(), msg);
+        } else if(gData.game().gameOver && gData.game().isInStalemate(movingColor)){
+            msg = "STALEMATE\nGreat game!";
+            connections.broadcast(null, mmcmd.getGameID(), msg);
+        } else if(gData.game().whiteCheck){
+            msg = String.format("CHECK : %s (white) is in check!",gData.whiteUsername());
+            connections.broadcast(null, mmcmd.getGameID(), msg);
+        } else if(gData.game().blackCheck){
+            msg = String.format("CHECK : %s (black) is in check!",gData.blackUsername());
+            connections.broadcast(null, mmcmd.getGameID(), msg);
+        }
+
+    }
+
+    private ArrayList<String> stringForm(ChessMove move) {
+        ArrayList<String> returnList = new ArrayList<>();
+
+        ChessPosition startPos = move.getStartPosition();
+        ChessPosition endPos = move.getEndPosition();
+        int startRow = startPos.getRow();
+        int startCol = startPos.getColumn();
+        int endRow = endPos.getRow();
+        int endCol = endPos.getColumn();
+
+        if (startRow < 1 || startRow > 8 || startCol < 1 || startCol > 8
+        || endRow < 1 || endRow > 8 || endCol < 1 || endCol > 8) {
+            throw new IllegalArgumentException("Row values must be from a - h\nColumn values must be from 1 - 8.");
+        }
+
+        char startRowChar = (char) ('a' + (startRow - 1));
+        char endRowChar = (char) ('a'+ (endRow - 1));
+
+        String startString = String.valueOf(startRowChar)+startCol;
+        String endString = String.valueOf(endRowChar)+endCol;
+        returnList.add(startString);
+        returnList.add(endString);
+
+        return returnList;
     }
 
     private void leave(String username, UserGameCommand command) throws DataAccessException, IOException {

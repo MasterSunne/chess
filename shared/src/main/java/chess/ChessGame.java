@@ -179,8 +179,12 @@ public class ChessGame {
                     }
                     disableCastleAbility(movingPiece, startPosition);
                     if(getTeamTurn() == TeamColor.WHITE){
+                        // white just moved so black may now be in check
+                        blackCheck = isInCheck(TeamColor.BLACK);
                         setTeamTurn(TeamColor.BLACK);
                     }else{
+                        // if black just moved then white may be in check
+                        whiteCheck = isInCheck(TeamColor.WHITE);
                         setTeamTurn(TeamColor.WHITE);
                     }
                     //check to see if it's checkmate or stalemate and the game should stop, not able to make more moves

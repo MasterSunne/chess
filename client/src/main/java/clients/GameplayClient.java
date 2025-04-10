@@ -65,7 +65,7 @@ public class GameplayClient {
                     promotionPiece = ChessPiece.PieceType.valueOf(params[2]);
                 }
                 ChessMove chessMove = new ChessMove(startPos, endPos, promotionPiece);
-                clientData.getWsf().makeMove(clientData,chessMove,startString,endString);
+                clientData.getWsf().makeMove(clientData,chessMove);
                 return "";
             } else {
                 throw new ResponseException(407,"Error: the game has ended and no more moves can be made");
@@ -113,6 +113,7 @@ public class GameplayClient {
 
     private String leave(ClientData clientData){
         try {
+            clientData.setIsObserver(false);
             clientData.getWsf().leave(clientData);
             clientData.setState(State.LOGGED_IN);
             clientData.setWsf(null);

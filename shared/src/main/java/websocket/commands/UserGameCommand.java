@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class UserGameCommand {
 
-    private CommandType commandType;
+    private final CommandType commandType;
 
     private final String authToken;
 
@@ -32,8 +32,6 @@ public class UserGameCommand {
     public CommandType getCommandType() {
         return commandType;
     }
-
-    public void setCommandType(CommandType type){ this.commandType = type;}
 
     public String getAuthToken() {
         return authToken;
