@@ -41,10 +41,10 @@ public class WebSocketHandler {
             saveSession(command.getGameID(), username, session);
 
             switch (command.getCommandType()) {
-                case CONNECT -> connect(session, username, command); //(ConnectCommand)
-                case MAKE_MOVE -> makeMove( username, msg); //(MakeMoveCommand)
-                case LEAVE -> leave( username,  command ); //(LeaveGameCommand)
-                case RESIGN -> resign( username,  command ); //(ResignCommand)
+                case CONNECT -> connect(session, username, command);
+                case MAKE_MOVE -> makeMove( username, msg);
+                case LEAVE -> leave( username,  command );
+                case RESIGN -> resign( username,  command );
             }
         } catch (DataAccessException ex) {
             // Serializes and sends the error message

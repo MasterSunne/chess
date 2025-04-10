@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -143,38 +144,42 @@ public class SQLGameDAO extends SqlDaoBase implements GameDAO {
                 psSelect.setInt(1, id);
                 try (var rs = psSelect.executeQuery()) {
                     if (rs.next()) {
-                        // extract existing data
-                        String whiteUsername = rs.getString("whiteUsername");
-                        String blackUsername = rs.getString("blackUsername");
-                        String gameName = rs.getString("gameName");
-                        String gameJSON = rs.getString("gameJSON");
-
-                        // set correct username to null for replacement data
-                        if ("white".equalsIgnoreCase(leavingColor)) {
-                            whiteUsername = null;
-                        } else if ("black".equalsIgnoreCase(leavingColor)) {
-                            blackUsername = null;
-                        } else {
-                            throw new IllegalArgumentException("Invalid color specified. Must be 'white' or 'black'.");
-                        }
-
-                        // replace row in database
-                        var insertStatement = "REPLACE INTO gamedata (id, whiteUsername, blackUsername, gameName, gameJSON) VALUES (?, ?, ?, ?, ?)";
-                        try (var psInsert = conn.prepareStatement(insertStatement)) {
-                            psInsert.setInt(1, id);
-                            psInsert.setString(2, whiteUsername);
-                            psInsert.setString(3, blackUsername);
-                            psInsert.setString(4, gameName);
-                            psInsert.setString(5, gameJSON);
-                            psInsert.executeUpdate();
-                        } catch(Exception e){
-                            throw new DataAccessException(404, "Game not found with ID: " + id);
-                        }
+                        dataReplaceTool(leavingColor, id, rs, conn);
                     }
                 }
             }
         } catch (SQLException e) {
             throw new DataAccessException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
+    }
+
+    private static void dataReplaceTool(String leavingColor, Integer id, ResultSet rs, Connection conn) throws SQLException, DataAccessException {
+        // extract existing data
+        String whiteUsername = rs.getString("whiteUsername");
+        String blackUsername = rs.getString("blackUsername");
+        String gameName = rs.getString("gameName");
+        String gameJSON = rs.getString("gameJSON");
+
+        // set correct username to null for replacement data
+        if ("white".equalsIgnoreCase(leavingColor)) {
+            whiteUsername = null;
+        } else if ("black".equalsIgnoreCase(leavingColor)) {
+            blackUsername = null;
+        } else {
+            throw new IllegalArgumentException("Invalid color specified. Must be 'white' or 'black'.");
+        }
+
+        // replace row in database
+        var insertStatement = "REPLACE INTO gamedata (id, whiteUsername, blackUsername, gameName, gameJSON) VALUES (?, ?, ?, ?, ?)";
+        try (var psInsert = conn.prepareStatement(insertStatement)) {
+            psInsert.setInt(1, id);
+            psInsert.setString(2, whiteUsername);
+            psInsert.setString(3, blackUsername);
+            psInsert.setString(4, gameName);
+            psInsert.setString(5, gameJSON);
+            psInsert.executeUpdate();
+        } catch(Exception e){
+            throw new DataAccessException(404, "Game not found with ID: " + id);
         }
     }
 

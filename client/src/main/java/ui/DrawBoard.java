@@ -156,43 +156,36 @@ public class DrawBoard {
         ChessPiece piece = board.getPiece(position);
 
         if (isEven(row)) {
-            if(isOdd(column)){
-                if (startPos.equals(position)) {
-                    out.print(SET_BG_START_COLOR);
-                } else if (endPositions != null && endPositions.contains(position)){
-                    out.print(SET_BG_CHECKER_CHESS_CREAM);
-                } else {
-                    out.print(SET_BG_COLOR_CHESS_CREAM);
-                }
-            } else {
-                if (startPos.equals(position)) {
-                    out.print(SET_BG_START_COLOR);
-                } else if (endPositions != null && endPositions.contains(position)){
-                    out.print(SET_BG_CHECKER_CHESS_GREEN);
-                } else {
-                    out.print(SET_BG_COLOR_CHESS_GREEN);
-                }
-            }
+            checkerLogic(out, column, position, SET_BG_CHECKER_CHESS_CREAM, SET_BG_COLOR_CHESS_CREAM, SET_BG_CHECKER_CHESS_GREEN, SET_BG_COLOR_CHESS_GREEN);
         } else{
-            if(isOdd(column)){
-                if (startPos.equals(position)) {
-                    out.print(SET_BG_START_COLOR);
-                } else if (endPositions != null && endPositions.contains(position)){
-                    out.print(SET_BG_CHECKER_CHESS_GREEN);
-                } else {
-                    out.print(SET_BG_COLOR_CHESS_GREEN);
-                }
-            } else {
-                if (startPos.equals(position)) {
-                    out.print(SET_BG_START_COLOR);
-                } else if (endPositions != null && endPositions.contains(position)){
-                    out.print(SET_BG_CHECKER_CHESS_CREAM);
-                } else {
-                    out.print(SET_BG_COLOR_CHESS_CREAM);
-                }
-            }
+            checkerLogic(out, column, position, SET_BG_CHECKER_CHESS_GREEN, SET_BG_COLOR_CHESS_GREEN, SET_BG_CHECKER_CHESS_CREAM, SET_BG_COLOR_CHESS_CREAM);
         }
 
+        printPieces(out, column, piece);
+    }
+
+    private static void checkerLogic(PrintStream out, int column, ChessPosition position, String setBgCheckerChessGreen,
+                                     String setBgColorChessGreen, String setBgCheckerChessCream, String setBgColorChessCream) {
+        if(isOdd(column)){
+            if (startPos.equals(position)) {
+                out.print(SET_BG_START_COLOR);
+            } else if (endPositions != null && endPositions.contains(position)){
+                out.print(setBgCheckerChessGreen);
+            } else {
+                out.print(setBgColorChessGreen);
+            }
+        } else {
+            if (startPos.equals(position)) {
+                out.print(SET_BG_START_COLOR);
+            } else if (endPositions != null && endPositions.contains(position)){
+                out.print(setBgCheckerChessCream);
+            } else {
+                out.print(setBgColorChessCream);
+            }
+        }
+    }
+
+    private static void printPieces(PrintStream out, int column, ChessPiece piece) {
         String pieceChar = EMPTY;
         if (piece != null) {
             if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
@@ -255,25 +248,7 @@ public class DrawBoard {
             }
         }
 
-        String pieceChar = EMPTY;
-        if (piece != null) {
-            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                setWhitePiece(out);
-                pieceChar = TYPE_TO_CHAR_MAP_WHITE.get(piece.getPieceType());
-                out.print(pieceChar);
-            }
-            else if (piece.getTeamColor() == ChessGame.TeamColor.BLACK){
-                setBlackPiece(out);
-                pieceChar = TYPE_TO_CHAR_MAP_BLACK.get(piece.getPieceType());
-                out.print(pieceChar);
-            }
-        } else if (isOdd(column)) {
-            setWhiteSquare(out);
-            out.print(pieceChar);
-        } else if (isEven(column)){
-            setBlackSquare(out);
-            out.print(pieceChar);
-        }
+        printPieces(out, column, piece);
     }
 
 
