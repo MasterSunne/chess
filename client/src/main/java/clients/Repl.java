@@ -108,7 +108,12 @@ public class Repl implements NotificationHandler {
         } else{
             throw new RuntimeException("Error: invalid ServerMessageType");
         }
-        System.out.print(SET_TEXT_COLOR_GREEN);
-        printPrompt(clientData.getState());
+        if (clientData.getState() == State.IN_GAME) {
+            System.out.print(SET_TEXT_COLOR_GREEN);
+            printPrompt(clientData.getState());
+        } else {
+            System.out.print(SET_TEXT_COLOR_BLUE);
+            printPrompt(clientData.getState());
+        }
     }
 }

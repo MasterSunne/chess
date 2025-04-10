@@ -114,7 +114,6 @@ public class SQLAuthDAO extends SqlDaoBase implements AuthDAO{
               `username` VARCHAR(30) NOT NULL,
               `email` VARCHAR(150) NOT NULL,
               `password` VARCHAR(100) NOT NULL,
-              UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
               UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
               UNIQUE INDEX `password_UNIQUE` (`password` ASC) VISIBLE,
               PRIMARY KEY (`id`),

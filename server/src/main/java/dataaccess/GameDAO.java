@@ -15,4 +15,8 @@ public interface GameDAO {
     public void updateGame(String newUser, String newColor, int id) throws DataAccessException;
 
     void clear() throws DataAccessException;
+
+    void leaveGame(String leavingColor, Integer id) throws DataAccessException;
+
+    public void updateGameJSON(int id, String newGameJSON) throws DataAccessException;
 }

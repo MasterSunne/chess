@@ -59,6 +59,30 @@ public class ConnectionManager {
         }
     }
 
+    public void broadcastGame(String excludeVisitorName, Integer gameID, ChessGame game) throws IOException {
+        ArrayList<String> removeList = new ArrayList<>();
+
+        for (var entry : connections.entrySet()) {
+            var c = entry.getValue();
+            if (!excludeVisitorName.equals(entry.getKey())) {
+                if (c.session.isOpen()) {
+                    if (c.gameID.equals(gameID)) {
+                        var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
+                        String gameJson = new Gson().toJson(notification);
+                        c.send(gameJson);
+                    }
+                } else {
+                    removeList.add(entry.getKey());
+                }
+            }
+        }
+
+        // Clean up any connections that were left open.
+        for (String visitorName : removeList) {
+            connections.remove(visitorName);
+        }
+    }
+
     public void sendError(Session session, String msg) throws IOException {
         if (session.isOpen()){
             var errorNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,msg);

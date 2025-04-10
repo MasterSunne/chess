@@ -151,7 +151,7 @@ public class DrawBoard {
             if(isOdd(column)){
                 if (startPos.equals(position)) {
                     out.print(SET_BG_START_COLOR);
-                } else if (endPositions.contains(position)){
+                } else if (endPositions != null && endPositions.contains(position)){
                     out.print(SET_BG_CHECKER_CHESS_CREAM);
                 } else {
                     out.print(SET_BG_COLOR_CHESS_CREAM);
@@ -159,7 +159,7 @@ public class DrawBoard {
             } else {
                 if (startPos.equals(position)) {
                     out.print(SET_BG_START_COLOR);
-                } else if (endPositions.contains(position)){
+                } else if (endPositions != null && endPositions.contains(position)){
                     out.print(SET_BG_CHECKER_CHESS_GREEN);
                 } else {
                     out.print(SET_BG_COLOR_CHESS_GREEN);
@@ -169,7 +169,7 @@ public class DrawBoard {
             if(isOdd(column)){
                 if (startPos.equals(position)) {
                     out.print(SET_BG_START_COLOR);
-                } else if (endPositions.contains(position)){
+                } else if (endPositions != null && endPositions.contains(position)){
                     out.print(SET_BG_CHECKER_CHESS_GREEN);
                 } else {
                     out.print(SET_BG_COLOR_CHESS_GREEN);
@@ -177,7 +177,7 @@ public class DrawBoard {
             } else {
                 if (startPos.equals(position)) {
                     out.print(SET_BG_START_COLOR);
-                } else if (endPositions.contains(position)){
+                } else if (endPositions != null && endPositions.contains(position)){
                     out.print(SET_BG_CHECKER_CHESS_CREAM);
                 } else {
                     out.print(SET_BG_COLOR_CHESS_CREAM);

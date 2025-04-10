@@ -65,14 +65,12 @@ public class GameplayClient {
                     promotionPiece = ChessPiece.PieceType.valueOf(params[2]);
                 }
                 ChessMove chessMove = new ChessMove(startPos, endPos, promotionPiece);
-                clientData.getWsf().makeMove(clientData,chessMove);
+                clientData.getWsf().makeMove(clientData,chessMove,startString,endString);
                 return "";
             } else {
-                throw new ResponseException(407,"Error: the game has ended");
+                throw new ResponseException(407,"Error: the game has ended and no more moves can be made");
             }
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (ResponseException e) {
+        } catch (IllegalArgumentException | ResponseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -104,21 +102,12 @@ public class GameplayClient {
 
         Collection<ChessMove> validMovesList = validMovesObj.validMoves(startPos);
         ArrayList<ChessPosition> validMovePositions = new java.util.ArrayList<>();
-        for (ChessMove move : validMovesList){
-            validMovePositions.add(move.getEndPosition());
+        if (validMovesList != null) {
+            for (ChessMove move : validMovesList){
+                validMovePositions.add(move.getEndPosition());
+            }
         }
         DrawBoard.checker(clientData,startPos,validMovePositions);
-//        StringBuilder positionsOutput = new StringBuilder("Valid Moves: ");
-//        for (ChessMove move : validMovesList) {
-//            positionsOutput.append(move.toString()).append(", ");
-//        }
-//
-//        // Remove the trailing comma and space if the list is not empty
-//        if (!validMovesList.isEmpty()) {
-//            positionsOutput.setLength(positionsOutput.length() - 2);
-//        }
-//        return positionsOutput.toString();
-
         return "";
     }
 

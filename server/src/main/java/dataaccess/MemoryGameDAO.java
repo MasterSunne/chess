@@ -90,4 +90,15 @@ public class MemoryGameDAO implements GameDAO{
             throw new DataAccessException(500, e.getMessage());
         }
     }
+
+    @Override
+    public void leaveGame(String leavingColor, Integer id) throws DataAccessException {
+
+    }
+
+    @Override
+    public void updateGameJSON(int id, String newGameJSON) throws DataAccessException{
+
+    }
+
 }

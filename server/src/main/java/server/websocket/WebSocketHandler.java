@@ -1,5 +1,9 @@
 package server.websocket;
 
+import chess.ChessGame;
+import chess.ChessGameValidMoves;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -18,6 +22,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Collection;
 
 
 @WebSocket
@@ -44,7 +49,7 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, command); //(ConnectCommand)
-                case MAKE_MOVE -> makeMove( username, command); //(MakeMoveCommand)
+                case MAKE_MOVE -> makeMove( username, msg); //(MakeMoveCommand)
                 case LEAVE -> leave( username,  command ); //(LeaveGameCommand)
                 case RESIGN -> resign( username,  command ); //(ResignCommand)
             }
@@ -58,7 +63,6 @@ public class WebSocketHandler {
     }
 
     private void connect(Session session, String username, UserGameCommand command) throws DataAccessException, IOException {
-//        System.out.println("received connect message");
         var gID = command.getGameID();
         connections.add(username, gID, session);
         GameData gData = gDAO.getGame(gID);
@@ -79,12 +83,54 @@ public class WebSocketHandler {
         connections.broadcast(username,gID,message);
     }
 
-    private void makeMove(String username, UserGameCommand command){
+    private void makeMove(String username, String msg) throws DataAccessException, InvalidMoveException, IOException {
+        // deserialize command
+        MakeMoveCommand mmcmd = new Gson().fromJson(msg,MakeMoveCommand.class);
+        GameData gData = gDAO.getGame(mmcmd.getGameID());
         // verify validity of move
-        // update game to represent move, then update database
-        // send LOAD_GAME msg to all clients in the game
-        // send a notification to all other clients informing them what move was made
-        // if the move results in check, checkmate, or stalemate server sends another notification to all clients
+        if(gData.game().gameOver){
+            throw new InvalidMoveException("Error: the game has ended and no more moves can be made.");
+        }
+        ChessGameValidMoves validMovesObj = new ChessGameValidMoves(gData.game());
+        Collection<ChessMove> validMovesList = validMovesObj.validMoves(mmcmd.getMove().getStartPosition());
+        if(validMovesList.contains(mmcmd.getMove())){
+            // update game to represent move, then update database
+            gData.game().makeMove(mmcmd.getMove());
+            String json = new Gson().toJson(gData.game());
+            gDAO.updateGameJSON(mmcmd.getGameID(),json);
+
+            // send LOAD_GAME msg to all clients in the game
+            connections.sendGame(username,gData.game());
+            connections.broadcastGame(username,gData.gameID(),gData.game());
+
+            // send a notification to all other clients informing them what move was made
+            String message = String.format("%s moved %s to %s",username,mmcmd.getStartPos(),mmcmd.getEndPos());
+            connections.broadcast(username, mmcmd.getGameID(), message);
+
+            // if the move results in check, checkmate, or stalemate server sends another notification to all clients
+            ChessGame.TeamColor movingColor;
+            if (mmcmd.getPlayerColor().equals("white")){
+                movingColor = ChessGame.TeamColor.WHITE;
+            } else{
+                movingColor = ChessGame.TeamColor.BLACK;
+            }
+            if (gData.game().gameOver && gData.game().isInCheckmate(movingColor)){
+                msg = String.format("CHECKMATE\nCongratulations %s!",username);
+                connections.broadcast(null, mmcmd.getGameID(), msg);
+            } else if(gData.game().gameOver && gData.game().isInStalemate(movingColor)){
+                msg = "STALEMATE\nGreat game!";
+                connections.broadcast(null, mmcmd.getGameID(), msg);
+            } else if(gData.game().whiteCheck){
+                msg = String.format("CHECK : %s (white) is in check!",gData.whiteUsername());
+                connections.broadcast(null, mmcmd.getGameID(), msg);
+            } else if(gData.game().blackCheck){
+                msg = String.format("CHECK : %s (black) is in check!",gData.blackUsername());
+                connections.broadcast(null, mmcmd.getGameID(), msg);
+            }
+        } else{
+            throw new InvalidMoveException("Error: invalid move! Try \"check <PiecePosition>\" to see valid moves for a particular piece");
+        }
+
     }
 
     private void leave(String username, UserGameCommand command) throws DataAccessException, IOException {
@@ -94,10 +140,10 @@ public class WebSocketHandler {
         GameData gData = gDAO.getGame(command.getGameID());
         var message = "";
         if (username.equals(gData.whiteUsername())){
-            gDAO.updateGame(null,"WHITE", command.getGameID());
+            gDAO.leaveGame("WHITE", command.getGameID());
             message = String.format("%s has stopped playing as white",username);
         } else if (username.equals(gData.blackUsername())) {
-            gDAO.updateGame(null,"BLACK", command.getGameID());
+            gDAO.leaveGame("BLACK", command.getGameID());
             message = String.format("%s has stopped playing as black",username);
         } else {
             message = String.format("%s is no longer observing the game",username);
@@ -107,12 +153,19 @@ public class WebSocketHandler {
     }
 
     private void resign(String username, UserGameCommand command) throws DataAccessException, IOException {
-        // mark the game as over
-        // update the game in the database
-        // broadcast to all clients
+
         GameData gData = gDAO.getGame(command.getGameID());
+        // mark the game as over
+        gData.game().gameOver = true;
+        String json = new Gson().toJson(gData.game());
+        // update the game in the database
+        gDAO.updateGameJSON(gData.gameID(), json);
+
+        // broadcast to all clients
         if (username.equals(gData.whiteUsername())) {
             String otherUser = String.format(gData.blackUsername());
+            var message = String.format("%s has resigned. Congratulations %s!", username, otherUser);
+            connections.broadcast(username, command.getGameID(), message);
         } else if (username.equals(gData.blackUsername())) {
             String otherUser = String.format(gData.whiteUsername());
             var message = String.format("%s has resigned. Congratulations %s!", username, otherUser);

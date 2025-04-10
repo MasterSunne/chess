@@ -21,6 +21,9 @@ public class ChessGame {
     private boolean queenSideCastleBlack = true;
     public boolean canEnPassantWhite = false;
     public boolean canEnPassantBlack = false;
+
+    public boolean whiteCheck = false;
+    public boolean blackCheck = false;
     public boolean gameOver = false;
 
     public boolean getKingSideCastleWhite() {
@@ -83,14 +86,19 @@ public class ChessGame {
                 && getQueenSideCastleBlack() == chessGame.getQueenSideCastleBlack()
                 && canEnPassantWhite == chessGame.canEnPassantWhite
                 && canEnPassantBlack == chessGame.canEnPassantBlack
+                && whiteCheck == chessGame.whiteCheck
+                && blackCheck == chessGame.blackCheck
+                && getGameOver() == chessGame.getGameOver()
                 && getTeamTurn() == chessGame.getTeamTurn()
                 && Objects.equals(currentBoard, chessGame.currentBoard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTeamTurn(), currentBoard, checkmate, stalemate, getKingSideCastleWhite(),
-                getKingSideCastleBlack(), getQueenSideCastleWhite(), getQueenSideCastleBlack(), canEnPassantWhite, canEnPassantBlack);
+        return Objects.hash(getTeamTurn(), currentBoard, checkmate, stalemate,
+                getKingSideCastleWhite(), getKingSideCastleBlack(),
+                getQueenSideCastleWhite(), getQueenSideCastleBlack(),
+                canEnPassantWhite, canEnPassantBlack, whiteCheck, blackCheck, getGameOver());
     }
 
     /**
@@ -309,9 +317,19 @@ public class ChessGame {
             for(ChessMove enemyMove : enemyMoves){
                 ChessPosition targetPosition = enemyMove.getEndPosition();
                 if (targetPosition.equals(kingLocation)){
+                    if(teamColor.equals(TeamColor.WHITE)){
+                        whiteCheck = true;
+                    } else{
+                        blackCheck = true;
+                    }
                     return true;
                 }
             }
+        }
+        if(teamColor.equals(TeamColor.WHITE)){
+            whiteCheck = false;
+        } else{
+            blackCheck = false;
         }
         return false;
     }

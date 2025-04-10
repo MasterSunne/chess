@@ -4,10 +4,8 @@ import chess.ChessMove;
 import clients.ClientData;
 import com.google.gson.Gson;
 import server.ResponseException;
-import websocket.commands.ConnectCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -44,18 +42,18 @@ public class WebSocketFacade extends Endpoint {
 
     public void connect(ClientData clientData) throws ResponseException {
         try {
-            var connectCmd = new ConnectCommand(UserGameCommand.CommandType.CONNECT, clientData.getAuthToken(),
-                    clientData.getGameID(),clientData.getPlayerColor());
+            var connectCmd = new UserGameCommand(UserGameCommand.CommandType.CONNECT, clientData.getAuthToken(),
+                    clientData.getGameID());
             this.session.getBasicRemote().sendText(new Gson().toJson(connectCmd));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
     }
 
-    public void makeMove(ClientData clientData, ChessMove move) throws ResponseException {
+    public void makeMove(ClientData clientData, ChessMove move, String startPos, String endPos) throws ResponseException {
         try {
             var makeMoveCommand = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, clientData.getAuthToken(),
-                    clientData.getGameID(),move);
+                    clientData.getGameID(),move, startPos, endPos, clientData.getPlayerColor());
             this.session.getBasicRemote().sendText(new Gson().toJson(makeMoveCommand));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());

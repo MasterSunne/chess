@@ -98,6 +98,7 @@ public class SQLGameDAO extends SqlDaoBase implements GameDAO {
         }
     }
 
+
     private void updateGameHelper(String newUser, String newColor, int id, ResultSet rs) throws SQLException, DataAccessException {
         if (rs.next()) {
             GameData changingGame = readGame(rs);
@@ -132,4 +133,68 @@ public class SQLGameDAO extends SqlDaoBase implements GameDAO {
         var statement = "TRUNCATE gamedata";
         executeUpdate(statement);
     }
+
+    @Override
+    public void leaveGame(String leavingColor, Integer id) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            // retrieve existing gameData
+            var selectStatement = "SELECT id, whiteUsername, blackUsername, gameName, gameJSON FROM gamedata WHERE id=?";
+            try (var psSelect = conn.prepareStatement(selectStatement)) {
+                psSelect.setInt(1, id);
+                try (var rs = psSelect.executeQuery()) {
+                    if (rs.next()) {
+                        // extract existing data
+                        String whiteUsername = rs.getString("whiteUsername");
+                        String blackUsername = rs.getString("blackUsername");
+                        String gameName = rs.getString("gameName");
+                        String gameJSON = rs.getString("gameJSON");
+
+                        // set correct username to null for replacement data
+                        if ("white".equalsIgnoreCase(leavingColor)) {
+                            whiteUsername = null;
+                        } else if ("black".equalsIgnoreCase(leavingColor)) {
+                            blackUsername = null;
+                        } else {
+                            throw new IllegalArgumentException("Invalid color specified. Must be 'white' or 'black'.");
+                        }
+
+                        // replace row in database
+                        var insertStatement = "REPLACE INTO gamedata (id, whiteUsername, blackUsername, gameName, gameJSON) VALUES (?, ?, ?, ?, ?)";
+                        try (var psInsert = conn.prepareStatement(insertStatement)) {
+                            psInsert.setInt(1, id);
+                            psInsert.setString(2, whiteUsername);
+                            psInsert.setString(3, blackUsername);
+                            psInsert.setString(4, gameName);
+                            psInsert.setString(5, gameJSON);
+                            psInsert.executeUpdate();
+                        } catch(Exception e){
+                            throw new DataAccessException(404, "Game not found with ID: " + id);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
+    }
+
+    public void updateGameJSON(int id, String newGameJSON) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            // SQL query to update only the gameJSON column
+            var updateStatement = "UPDATE gamedata SET gameJSON = ? WHERE id = ?";
+            try (var ps = conn.prepareStatement(updateStatement)) {
+                ps.setString(1, newGameJSON); // Set the new JSON value
+                ps.setInt(2, id);            // Specify the game ID
+                int rowsUpdated = ps.executeUpdate();
+
+                // Check if any rows were updated
+                if (rowsUpdated == 0) {
+                    throw new DataAccessException(404, "No game found with ID: " + id);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(500, String.format("Unable to update game JSON: %s", e.getMessage()));
+        }
+    }
+
 }
