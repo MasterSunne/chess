@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
-    String message;
+    String msg;
 
     public ServerMessage(ServerMessageType serverMessageType,String message){
         this.serverMessageType = serverMessageType;
@@ -30,7 +30,7 @@ public class ServerMessage {
         return this.serverMessageType;
     }
 
-    public String message(){return this.message;}
+    public String message(){return this.msg;}
 
     @Override
     public boolean equals(Object o) {

@@ -27,7 +27,7 @@ public class SQLGameDAO extends SqlDaoBase implements GameDAO {
         } catch (DataAccessException e) {
             throw new DataAccessException(500,e.getMessage());
         }
-    }
+    } // could add functionality to reject creating games with existing names
 
     @Override
     public GameData findGame(String gameName) throws DataAccessException {

@@ -88,26 +88,27 @@ public class Repl implements NotificationHandler {
         ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
         if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
 
-//            System.out.println("received load game");
             LoadGameMessage lgm = new Gson().fromJson(message, LoadGameMessage.class);
             clientData.setGame(lgm.getGame());
-            ChessBoard board = clientData.getGame().getBoard();
-            DrawBoard.main(ChessGame.TeamColor.WHITE,board);
+
+            DrawBoard.main(clientData.getPlayerColor(),clientData.getGame());
 
         } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
 
             NotificationMessage nm = new Gson().fromJson(message,NotificationMessage.class);
-            System.out.println(SET_TEXT_COLOR_BLUE + nm.getMessage());
+            System.out.println();
+            System.out.print(SET_TEXT_COLOR_CHESS_CREAM + nm.getMessage());
 
         } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
 
             ErrorMessage em = new Gson().fromJson(message,ErrorMessage.class);
-            System.out.println(SET_TEXT_COLOR_BLUE + em.getErrorMessage());
+            System.out.println();
+            System.out.println(SET_TEXT_COLOR_RED + em.getErrorMessage());
 
         } else{
             throw new RuntimeException("Error: invalid ServerMessageType");
         }
-        System.out.print(RESET_TEXT_COLOR);
+        System.out.print(SET_TEXT_COLOR_GREEN);
         printPrompt(clientData.getState());
     }
 }

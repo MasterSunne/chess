@@ -74,9 +74,13 @@ public class PostLoginClient {
     }
 
     private String createGame(ClientData clientData, String... params) throws ResponseException {
-        CreateGameRequest cgr = new CreateGameRequest(params[0]);//pass in game name
-        server.createGame(clientData.getAuthToken(),cgr);
-        return String.format("Created game: " + params[0]);
+        try {
+            CreateGameRequest cgr = new CreateGameRequest(params[0]);//pass in game name
+            server.createGame(clientData.getAuthToken(),cgr);
+            return String.format("Created game: " + params[0]);
+        } catch (ResponseException e) {
+            throw new RuntimeException("Game already exists");
+        }
     }
 
     private String listGames(ClientData clientData) throws ResponseException {
@@ -98,6 +102,7 @@ public class PostLoginClient {
 
     private void setGameList(ArrayList<GameData> gameDataList){
         int i = 1;
+        gameMap.clear();
         gameList.clear();
         for (GameData gData : gameDataList){
             gameMap.put(i, gData.gameID());
@@ -167,15 +172,40 @@ public class PostLoginClient {
     }
 
     private String observeGame(ClientData clientData, String[] params) throws ResponseException {
-
+        String x = checkObserveInput(params);
+        if (x != null) {return x;}
+        int dbgameID = 0;
+        if (!gameMap.isEmpty()) {
+            dbgameID = gameMap.get(Integer.valueOf(params[0]));
+            clientData.setGameID(dbgameID);
+        } else{
+            throw new ResponseException(400, "Error: no games to join");
+        }
         clientData.setPlayerColor("white");
         clientData.setIsObserver(true);
-        clientData.setGameID(Integer.valueOf(params[0]));
         WebSocketFacade ws = new WebSocketFacade(url,repl);
         clientData.setWsf(ws);
         clientData.getWsf().connect(clientData);
         clientData.setState(State.IN_GAME);
         return "";
+    }
+
+    private String checkObserveInput(String[] params) {
+        if (params.length < 1 ){
+            return "Expected: observe <ID>";
+        }
+        try {
+            int i = Integer.parseInt(params[0]);
+            if (gameMap.isEmpty()){
+                return "Please use \"list\" first to view available games and IDs";
+            }
+            if (gameMap.get(Integer.parseInt(params[0])) == null){
+                return "Invalid ID try using \"list\" to refresh valid game IDs";
+            }
+        } catch (NumberFormatException e) {
+            return params[0] + " is not a valid gameID";
+        }
+        return null;
     }
 
 

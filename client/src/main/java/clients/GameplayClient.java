@@ -84,12 +84,12 @@ public class GameplayClient {
 
         if(!clientData.getIsObserver()){
             if(clientData.getPlayerColor().equals("white")){
-                DrawBoard.main(ChessGame.TeamColor.WHITE,board);
+                DrawBoard.main(clientData.getPlayerColor(),clientData.getGame());
             } else if (clientData.getPlayerColor().equals("black")){
-                DrawBoard.main(ChessGame.TeamColor.BLACK,board);
+                DrawBoard.main(clientData.getPlayerColor(),clientData.getGame());
             }
         } else {
-            DrawBoard.main(ChessGame.TeamColor.WHITE,board);
+            DrawBoard.main(clientData.getPlayerColor(),clientData.getGame());
         }
         return "";
     }

@@ -50,7 +50,7 @@ public class WebSocketHandler {
             }
         } catch (DataAccessException ex) {
             // Serializes and sends the error message
-            connections.sendError(session,"Error: unauthorized");
+            connections.sendError(session,ex.getMessage());
         } catch (Exception ex) {
             ex.printStackTrace();
             connections.sendError(session,"Error: " + ex.getMessage());
@@ -64,20 +64,19 @@ public class WebSocketHandler {
         GameData gData = gDAO.getGame(gID);
         String playerColor;
         var message = "";
-        if (username.equals(gData.whiteUsername())){
+        if (gData != null && username.equals(gData.whiteUsername())){
             playerColor = "white";
-            message = String.format("%s is now playing as &s", username, playerColor);
-        } else if (username.equals(gData.blackUsername())) {
+            message = String.format("%s is now playing as %s", username, playerColor);
+        } else if (gData != null && username.equals(gData.blackUsername())) {
             playerColor = "black";
-            message = String.format("%s is now playing as &s",username,playerColor);
+            message = String.format("%s is now playing as %s",username,playerColor);
         } else {
             message = String.format("%s is now watching as an observer",username);
         }
         // send LOAD_GAME message back to the root client including the current game state
         connections.sendGame(username,gData.game());
         // broadcast to remaining player and observers
-        var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(username,gID,notification);
+        connections.broadcast(username,gID,message);
     }
 
     private void makeMove(String username, UserGameCommand command){
@@ -104,8 +103,7 @@ public class WebSocketHandler {
             message = String.format("%s is no longer observing the game",username);
         }
         // broadcast to all other clients
-        var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(username,command.getGameID(),notification);
+        connections.broadcast(username,command.getGameID(),message);
     }
 
     private void resign(String username, UserGameCommand command) throws DataAccessException, IOException {
@@ -118,8 +116,7 @@ public class WebSocketHandler {
         } else if (username.equals(gData.blackUsername())) {
             String otherUser = String.format(gData.whiteUsername());
             var message = String.format("%s has resigned. Congratulations &s!", username, otherUser);
-            var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-            connections.broadcast(username, command.getGameID(), notification);
+            connections.broadcast(username, command.getGameID(), message);
         }
     }
 

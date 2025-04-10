@@ -26,15 +26,16 @@ public class EscapeSequences {
 
     public static final String SET_TEXT_COLOR_BLACK = SET_TEXT_COLOR + "0m";
     public static final String SET_TEXT_COLOR_LIGHT_GREY = SET_TEXT_COLOR + "242m";
-    public static final String SET_TEXT_COLOR_DARK_GREY = SET_TEXT_COLOR + "235m";
+    public static final String SET_TEXT_COLOR_DARK_GREY = SET_TEXT_COLOR + "237m";
     public static final String SET_TEXT_COLOR_RED = SET_TEXT_COLOR + "160m";
     public static final String SET_TEXT_COLOR_GREEN = SET_TEXT_COLOR + "46m";
     public static final String SET_TEXT_COLOR_YELLOW = SET_TEXT_COLOR + "226m";
     public static final String SET_TEXT_COLOR_BLUE = SET_TEXT_COLOR + "12m";
     public static final String SET_TEXT_COLOR_MAGENTA = SET_TEXT_COLOR + "5m";
     public static final String SET_TEXT_COLOR_WHITE = SET_TEXT_COLOR + "240m";
+    public static final String SET_TEXT_COLOR_ACTUAL_WHITE = SET_TEXT_COLOR + "250m";
     public static final String SET_TEXT_COLOR_CHESS_GREEN = SET_TEXT_COLOR + "70m";
-    public static final String SET_TEXT_COLOR_CHESS_CREAM = SET_TEXT_COLOR + "229m";
+    public static final String SET_TEXT_COLOR_CHESS_CREAM = SET_TEXT_COLOR + "229m"; //229
     public static final String RESET_TEXT_COLOR = UNICODE_ESCAPE + "[39m";
 
     public static final String SET_BG_COLOR_BLACK = SET_BG_COLOR + "0m";

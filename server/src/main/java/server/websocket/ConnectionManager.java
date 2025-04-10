@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -23,14 +24,17 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(String excludeVisitorName, Integer gameID, ServerMessage notification) throws IOException {
+    public void broadcast(String excludeVisitorName, Integer gameID, String notification) throws IOException {
         ArrayList<String> removeList = new ArrayList<>();
+
         for (var entry : connections.entrySet()) {
             var c = entry.getValue();
             if (!excludeVisitorName.equals(entry.getKey())) {
                 if (c.session.isOpen()) {
                     if (c.gameID.equals(gameID)) {
-                        c.send(notification.toString());
+                        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,notification);
+                        String notificationJson = new Gson().toJson(notificationMessage);
+                        c.send(notificationJson);
                     }
                 } else {
                     removeList.add(entry.getKey());
@@ -58,7 +62,8 @@ public class ConnectionManager {
     public void sendError(Session session, String msg) throws IOException {
         if (session.isOpen()){
             var errorNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,msg);
-            session.getRemote().sendString(errorNotification.toString());
+            String errJson = new Gson().toJson(errorNotification);
+            session.getRemote().sendString(errJson);
         }else {
             session.close();
         }

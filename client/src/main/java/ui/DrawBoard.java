@@ -16,21 +16,39 @@ public class DrawBoard {
     // Board dimensions.
     private static final int BOARD_SIZE_IN_SQUARES = 10;
 
-    public static void main(ChessGame.TeamColor teamColor, ChessBoard board) {
+    public static void main(String teamColor, ChessGame game) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
+        System.out.println();
 //        ChessBoard board = new ChessBoard();
 //        board.resetBoard();
-
-        if (teamColor.equals(ChessGame.TeamColor.WHITE)){
-        drawWhiteView(out,board);} else{
-            drawBlackView(out,board);
+        String currentTurn;
+        if (game.getTeamTurn() == ChessGame.TeamColor.WHITE){
+            currentTurn = "White's Move";
+        } else {
+            currentTurn = "Black's Move";
         }
 
+        ChessBoard board = game.getBoard();
+        if (teamColor.equals("white")){
+            drawWhiteView(out,board);}
+        else if (teamColor.equals("black")){
+            drawBlackView(out,board);
+        } else{
+            drawWhiteView(out,board);
+        }
+        drawCurrentTurn(out,currentTurn);
         // Reset terminal to default colors
         out.print(RESET_TEXT_COLOR);
         out.print(RESET_BG_COLOR);
+    }
+
+    private static void drawCurrentTurn(PrintStream out, String currentTurn){
+        out.print(RESET_BG_COLOR + SET_TEXT_COLOR_CHESS_CREAM);
+        out.print(currentTurn);
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
     }
 
     private static void drawWhiteView(PrintStream out, ChessBoard board) {
@@ -47,7 +65,7 @@ public class DrawBoard {
 
     private static void drawLetterForward(PrintStream out) {
         String[] headers = {"   ", "\u2005 a\u2003", "\u2004\u2005b", SPACER+"c",
-                SPACER+"d", SPACER+"e", SPACER+"f", SPACER+"g", SPACER+"h", "\u2003\u2006\u2006  " };
+                SPACER+"d"+"\u2006", SPACER+"e", SPACER+"f"+"\u2006", SPACER+"g", SPACER+"h"+"\u2006", "    " };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             printHeaderText(out, headers[boardCol]);
         }
@@ -56,7 +74,7 @@ public class DrawBoard {
 
     private static void drawLetterBackward(PrintStream out) {
         String[] headers = {"   ", "\u2005 h\u2003", "\u2004\u2005g", SPACER+"f",
-                SPACER+"e", SPACER+"d", SPACER+"c", SPACER+"b", SPACER+"a", "\u2003\u2006\u2006  " };
+                SPACER+"e"+"\u2006", SPACER+"d", SPACER+"c"+"\u2006", SPACER+"b", SPACER+"a"+"\u2006", "    " };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             printHeaderText(out, headers[boardCol]);
         }
@@ -151,7 +169,7 @@ public class DrawBoard {
     }
 
     private static void setWhitePiece(PrintStream out) {
-        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(SET_TEXT_COLOR_DARK_GREY);
     }
 
     private static void setBlackSquare(PrintStream out) {
