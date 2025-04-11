@@ -52,7 +52,7 @@ public class EscapeSequences {
     public static final String SET_BG_COLOR_CHESS_CREAM = SET_BG_COLOR + "229m";
     public static final String SET_BG_START_COLOR = SET_BG_COLOR + "220m";
     public static final String SET_BG_CHECKER_CHESS_GREEN = SET_BG_COLOR + "34m";
-    public static final String SET_BG_CHECKER_CHESS_CREAM = SET_BG_COLOR + "157m";
+    public static final String SET_BG_CHECKER_CHESS_CREAM = SET_BG_COLOR + "121m";
     public static final String RESET_BG_COLOR = UNICODE_ESCAPE + "[49m";
 
     public static final String WHITE_KING = " ♔ ";

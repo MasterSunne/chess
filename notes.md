@@ -72,6 +72,11 @@ received from the server [going to try storing it inside of ClientData] (this wa
 - - gData returning null and leaving a game throwing nullPointerException
 
 
-
+Things to fix for passoffs:
+makeMove notification description incorrect
+when coordinates were swapped it printed a bad error output
+trying to move opponents piece returned Error: null
+fools mate: instead of checkmate just said check
+promotion in general
 
 
