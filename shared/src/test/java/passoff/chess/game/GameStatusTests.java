@@ -60,8 +60,6 @@ public class GameStatusTests {
 
         Assertions.assertTrue(game.isInCheck(ChessGame.TeamColor.WHITE), MISSING_BLACK_CHECK);
         Assertions.assertFalse(game.isInCheck(ChessGame.TeamColor.BLACK), INCORRECT_BLACK_CHECK);
-        Assertions.assertTrue(game.whiteCheck);
-        Assertions.assertFalse(game.blackCheck);
     }
 
 

@@ -156,9 +156,11 @@ public class DrawBoard {
         ChessPiece piece = board.getPiece(position);
 
         if (isEven(row)) {
-            checkerLogic(out, column, position, SET_BG_CHECKER_CHESS_CREAM, SET_BG_COLOR_CHESS_CREAM, SET_BG_CHECKER_CHESS_GREEN, SET_BG_COLOR_CHESS_GREEN);
+            checkerLogic(out, column, position, SET_BG_CHECKER_CHESS_CREAM, SET_BG_COLOR_CHESS_CREAM,
+                    SET_BG_CHECKER_CHESS_GREEN, SET_BG_COLOR_CHESS_GREEN);
         } else{
-            checkerLogic(out, column, position, SET_BG_CHECKER_CHESS_GREEN, SET_BG_COLOR_CHESS_GREEN, SET_BG_CHECKER_CHESS_CREAM, SET_BG_COLOR_CHESS_CREAM);
+            checkerLogic(out, column, position, SET_BG_CHECKER_CHESS_GREEN, SET_BG_COLOR_CHESS_GREEN,
+                    SET_BG_CHECKER_CHESS_CREAM, SET_BG_COLOR_CHESS_CREAM);
         }
 
         printPieces(out, column, piece);

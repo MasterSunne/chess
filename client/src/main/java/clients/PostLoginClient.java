@@ -195,12 +195,11 @@ public class PostLoginClient {
             return "Expected: observe <ID>";
         }
         try {
-            int i = Integer.parseInt(params[0]);
-            if (gameMap.isEmpty()){
-                return "Please use \"list\" first to view available games and IDs";
-            }
             if (gameMap.get(Integer.parseInt(params[0])) == null){
                 return "Invalid ID try using \"list\" to refresh valid game IDs";
+            }
+            if (gameMap.isEmpty()){
+                return "Please use \"list\" first to view available games and IDs";
             }
         } catch (NumberFormatException e) {
             return params[0] + " is not a valid gameID";
