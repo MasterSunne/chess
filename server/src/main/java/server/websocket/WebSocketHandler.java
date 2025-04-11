@@ -82,7 +82,7 @@ public class WebSocketHandler {
         GameData gData = gDAO.getGame(mmcmd.getGameID());
         // verify validity of move
         if(gData.game().gameOver){
-            throw new InvalidMoveException("Error: the game has ended and no more moves can be made.");
+            throw new InvalidMoveException("the game has ended and no more moves can be made.");
         }
         ChessGame.TeamColor movingColor;
         if (gData.whiteUsername().equals(username)){
@@ -91,13 +91,13 @@ public class WebSocketHandler {
             movingColor = ChessGame.TeamColor.BLACK;
         }
         if(gData.game().getTeamTurn() != movingColor){
-            throw new InvalidMoveException("Error: it is not your turn to move.");
+            throw new InvalidMoveException("it is not your turn to move.");
         }
         ChessGameValidMoves validMovesObj = new ChessGameValidMoves(gData.game());
         Collection<ChessMove> validMovesList = validMovesObj.validMoves(mmcmd.getMove().getStartPosition());
         ChessMove move = mmcmd.getMove();
         if(!validMovesList.contains(move)) {
-            throw new InvalidMoveException("Error: invalid move! Try \"check <PiecePosition>\" to see valid moves for a particular piece");
+            throw new InvalidMoveException("invalid move! Try \"check <PiecePosition>\" to see valid moves for a particular piece");
         }
         // update game to represent move, then update database
         gData.game().makeMove(move);

@@ -51,7 +51,7 @@ public class GameplayClient {
 
     private String move(ClientData clientData, String[] params) throws ResponseException {
         try {
-            if (!clientData.getGame().getGameOver()) {
+
                 String startString = params[0];
                 char startChar = startString.charAt(0);
                 int startColumnValue = Character.getNumericValue(startChar) - Character.getNumericValue('a') + 1;
@@ -69,9 +69,7 @@ public class GameplayClient {
                 ChessMove chessMove = new ChessMove(startPos, endPos, promotionPiece);
                 clientData.getWsf().makeMove(clientData,chessMove);
                 return "";
-            } else {
-                throw new ResponseException(407,"Error: the game has ended and no more moves can be made");
-            }
+
         } catch (IllegalArgumentException | ResponseException e) {
             throw new RuntimeException(e);
         }
